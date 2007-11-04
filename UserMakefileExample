@@ -1,0 +1,24 @@
+include $(ORDIR)/buildTools/config.mk
+
+APPS = orcaroot_KatrinLab
+
+ORFLAGS = -I$(ORDIR)/Util -I$(ORDIR)/Decoders -I$(ORDIR)/IO -I$(ORDIR)/Processors -I$(ORDIR)/Management
+ORLIBS = -L$(ORDIR)/lib -lORUtil -lORDecoders -lORIO -lORProcessors -lORManagement
+
+all: depend $(APPS) 
+
+.depend depend: 
+	@echo Checking dependencies...
+	@g++ -M $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) *.cc > .depend
+
+%.o: %.cc 
+	$(CXX) -c $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) $< 
+
+%: %.o
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -o $@ $< $(ORLIBS) $(ROOTLIBS) $(LDFLAGS)
+
+clean:
+	rm -f $(APPS)  *.o *~ .depend
+
+-include .depend
+

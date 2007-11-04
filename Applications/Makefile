@@ -1,0 +1,29 @@
+include ../buildTools/config.mk
+
+APPS = testUtil writeShaperTree orcaroot testStopper orcaroot_minesh getHeaderInRootFile testHeaderReadin orhexdump orcarootIgor
+
+ORFLAGS = -I../Util -I../Decoders -I../IO -I../Processors -I../Management
+ORLIBS = -L../lib -lORUtil -lORDecoders -lORIO -lORProcessors -lORManagement
+
+all: depend bin $(APPS) 
+
+.depend depend: 
+	@echo Checking dependencies...
+	@g++ -M $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) *.cc > .depend
+
+%.o: %.cc 
+	$(CXX) -c $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) $< 
+
+%: %.o
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -o $@ $< $(LDFLAGS) $(ORLIBS) $(ROOTLIBS) 
+	ln -sf ../Applications/$@ ../bin
+
+bin:
+	mkdir -p ../bin
+
+clean:
+	rm -f $(APPS)  *.o *~ .depend
+	rm -rf ../bin
+
+-include .depend
+

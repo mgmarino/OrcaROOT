@@ -1,0 +1,102 @@
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Document Info</key>
+	<dict>
+		<key>OrcaVersion</key>
+		<string>6.3</string>
+		<key>dataVersion</key>
+		<integer>2</integer>
+		<key>date</key>
+		<string>2007-04-17 09:52:25 -0700</string>
+		<key>documentName</key>
+		<string>/Users/markhowe/Untitled.Orca</string>
+	</dict>
+	<key>ExperimentModel</key>
+	<dict/>
+	<key>GPIB 0</key>
+	<dict>
+		<key>Class Name</key>
+		<string>ORHP6622aModel</string>
+		<key>OcProtectionOn0</key>
+		<integer>0</integer>
+		<key>OcProtectionOn1</key>
+		<integer>1</integer>
+		<key>OutputOn0</key>
+		<integer>1</integer>
+		<key>OutputOn1</key>
+		<integer>0</integer>
+		<key>overVoltage0</key>
+		<real>5</real>
+		<key>overVoltage1</key>
+		<real>6</real>
+		<key>primaryAddress</key>
+		<integer>0</integer>
+		<key>secondaryAddress</key>
+		<integer>0</integer>
+		<key>setCurrent0</key>
+		<real>3</real>
+		<key>setCurrent1</key>
+		<real>4</real>
+		<key>setVoltage0</key>
+		<real>1</real>
+		<key>setVoltage1</key>
+		<real>2</real>
+	</dict>
+	<key>Run Control</key>
+	<dict>
+		<key>Class Name</key>
+		<string>ORRunModel</string>
+		<key>RunNumber</key>
+		<integer>731</integer>
+		<key>quickStart</key>
+		<false/>
+		<key>refTime</key>
+		<real>198521552</real>
+		<key>remoteControl</key>
+		<false/>
+		<key>runType</key>
+		<integer>0</integer>
+		<key>startTime</key>
+		<integer>1176857545</integer>
+	</dict>
+	<key>crate 0</key>
+	<dict>
+		<key>Class Name</key>
+		<string>ORCamacCrateModel</string>
+		<key>JADC-L</key>
+		<dict>
+			<key>Class Name</key>
+			<string>ORJADCLModel</string>
+			<key>station</key>
+			<integer>1</integer>
+		</dict>
+		<key>count</key>
+		<integer>1</integer>
+	</dict>
+	<key>dataDescription</key>
+	<dict>
+		<key>ORCARootService</key>
+		<dict>
+			<key>ResponsePacket</key>
+			<dict>
+				<key>dataId</key>
+				<integer>0</integer>
+				<key>decoder</key>
+				<string>ORCARootServiceDecoder</string>
+				<key>length</key>
+				<integer>-1</integer>
+				<key>variable</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>slot 2</key>
+	<dict>
+		<key>Class Name</key>
+		<string>ORPciBit3Model</string>
+		<key>slot</key>
+		<integer>2</integer>
+	</dict>
+</dict>
+</plist>

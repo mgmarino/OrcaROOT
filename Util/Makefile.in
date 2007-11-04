@@ -1,0 +1,30 @@
+include ../buildTools/config.mk
+
+SHLIB = libORUtil.$(SOSUFFIX)
+    
+SOURCES = $(wildcard OR*.cc)
+HEADERS = $(wildcard OR*.hh)
+OBJECTS = $(SOURCES:.cc=.o)
+
+ORFLAGS = 
+ORLIBS =
+
+all: depend $(SHLIB)
+
+.depend depend:
+	@echo Checking dependencies...
+	@g++ -M $(CXXFLAGS) $(ORBIG_ENDIAN_MACHINE) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
+
+$(SHLIB): $(OBJECTS) 
+	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
+
+.cc.o: 
+	$(CXX) $(CXXFLAGS) $(ORBIG_ENDIAN_MACHINE) $(ORFLAGS) $(ROOTFLAGS) -c $<
+
+clean:
+	rm -f $(SHLIB) *.o *~ .depend
+
+ifneq ($(MAKECMDGOALS), clean)
+-include .depend
+endif
+

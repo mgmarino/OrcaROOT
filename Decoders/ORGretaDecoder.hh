@@ -1,0 +1,194 @@
+// ORGretaDecoder.hh
+
+#ifndef _ORGretaDecoder_hh_
+#define _ORGretaDecoder_hh_
+
+#include "ORVDataDecoder.hh"
+#include <vector>
+#include <map>
+using namespace std;
+
+class ORGretaDecoder: public ORVDataDecoder
+{
+  public:
+    ORGretaDecoder();
+    virtual ~ORGretaDecoder() {}
+    enum EGretaConsts {kBufHeadLen = 6};
+    
+    virtual std::string GetDataObjectPath() { return "ORGretinaModel:Gretina"; }  
+    //virtual void Swap(UInt_t* dataRecord);
+    /* Overloading swap, this is a 16-bit style record. */
+    virtual bool SetDataRecord(UInt_t* record);
+    virtual inline UInt_t CrateOf();
+    virtual inline UInt_t CardOf();
+    virtual inline ULong64_t BitConcat(UShort_t lo, UShort_t mid, UShort_t hi = 0x0);
+       
+    //Functions that return data from buffer header:
+    virtual inline UShort_t GetBoardId();
+    virtual inline UShort_t GetChannelNum();
+    virtual inline UShort_t GetPacketLength();
+    virtual inline UShort_t GetLEDExtTimeStampLo();
+    virtual inline UShort_t GetLEDExtTimeStampMed();
+    virtual inline UShort_t GetLEDExtTimeStampHi();
+    virtual inline ULong64_t GetLEDExtTimeStamp();
+    virtual inline UShort_t GetEnergyLo();
+    virtual inline UShort_t GetEnergyHi();
+    virtual inline UInt_t GetEnergy();
+    virtual inline Bool_t IsLEDCrossingNeg();
+    virtual inline Bool_t IsExternalTrigFlag();
+    virtual inline Bool_t IsCFDCrossingFlag();
+    virtual inline Bool_t IsPileupFlag();
+    virtual inline UShort_t GetCFDTimeStampLo();
+    virtual inline UShort_t GetCFDTimeStampMed();
+    virtual inline UShort_t GetCFDTimeStampHi();
+    virtual inline ULong64_t GetCFDTimeStamp();
+    virtual inline UShort_t GetCFDPointOne();
+    virtual inline UShort_t GetCFDPointTwo();
+
+    // Waveform Functions
+    virtual inline size_t GetWaveformLen(); 
+    virtual size_t CopyWaveformData(UShort_t* waveform, size_t len);
+    virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
+    virtual inline const UInt_t* GetWaveformDataPointer();
+ 
+    //Error checking:
+    virtual bool IsValid();
+    virtual void DumpBufferHeader();
+   
+    //debugging:
+    void Dump(UInt_t* dataRecord);
+    
+  protected:
+    UInt_t* fDataRecord;
+};
+
+//inline functions: ************************************************************************
+
+inline UInt_t ORGretaDecoder::CrateOf() //returns crate # of Greta card
+{ 
+  return (fDataRecord[1] & 0x01e00000) >> 21; 
+}
+
+inline UInt_t ORGretaDecoder::CardOf()
+{ 
+  return (fDataRecord[1] & 0x001f0000) >> 16; 
+}
+
+inline ULong64_t ORGretaDecoder::BitConcat(UShort_t lo, UShort_t mid, UShort_t hi)
+//Concatenates 16 bit high, middle, and low words to form a ULong64_t
+{ 
+  return ((ULong64_t)(lo) +  (((ULong64_t)(mid)) << 16) + (((ULong64_t)(hi)) << 32));  
+}
+
+inline UShort_t ORGretaDecoder::GetBoardId()
+{
+  return (UShort_t)(fDataRecord[2] & 0xffff) >> 3;
+}
+
+inline UShort_t ORGretaDecoder::GetChannelNum()
+{
+  return (UShort_t) (fDataRecord[2] & 0x7);
+}
+
+inline UShort_t ORGretaDecoder::GetPacketLength()
+{
+  return (UShort_t) (fDataRecord[2]  >> 16);
+}
+
+inline UShort_t ORGretaDecoder::GetLEDExtTimeStampLo()
+{
+  return (UShort_t) (fDataRecord[3] & 0xffff);
+}
+
+inline UShort_t ORGretaDecoder::GetLEDExtTimeStampMed()
+{
+  return (UShort_t) (fDataRecord[3]  >> 16);
+}
+
+inline UShort_t ORGretaDecoder::GetLEDExtTimeStampHi()
+{
+  return (UShort_t) (fDataRecord[4] & 0xffff);
+}
+
+inline ULong64_t ORGretaDecoder::GetLEDExtTimeStamp()
+{
+  return BitConcat(GetLEDExtTimeStampLo(), GetLEDExtTimeStampMed(), GetLEDExtTimeStampHi());
+}
+
+inline UShort_t ORGretaDecoder::GetEnergyLo()
+{
+  return (UShort_t) (fDataRecord[4] >> 16); 
+}
+
+inline UShort_t ORGretaDecoder::GetEnergyHi()
+{
+  return (UShort_t) (fDataRecord[5] & 0x7f); 
+}
+
+inline UInt_t ORGretaDecoder::GetEnergy()
+{
+  return (UInt_t) BitConcat(GetEnergyLo(), GetEnergyHi());
+}
+
+inline Bool_t ORGretaDecoder::IsLEDCrossingNeg()
+{
+  return fDataRecord[5]  >> 12;
+}
+
+inline Bool_t ORGretaDecoder::IsExternalTrigFlag()
+{
+  return fDataRecord[5]  >> 13;
+}
+
+inline Bool_t ORGretaDecoder::IsCFDCrossingFlag()
+{
+  return fDataRecord[5] >> 14;
+}
+
+inline Bool_t ORGretaDecoder::IsPileupFlag()
+{
+  return fDataRecord[5]  >> 15;
+}
+
+inline UShort_t ORGretaDecoder::GetCFDTimeStampLo()
+{
+  return (UShort_t) (fDataRecord[5]  >> 16); 
+}
+
+inline UShort_t ORGretaDecoder::GetCFDTimeStampMed()
+{
+  return (UShort_t) (fDataRecord[6] & 0xffff); 
+}
+
+inline UShort_t ORGretaDecoder::GetCFDTimeStampHi()
+{
+  return (UShort_t) (fDataRecord[6]  >> 16); 
+}
+
+inline ULong64_t ORGretaDecoder::GetCFDTimeStamp()
+{
+  return BitConcat(GetCFDTimeStampLo(), GetCFDTimeStampMed(), GetCFDTimeStampHi());
+}
+
+inline UShort_t ORGretaDecoder::GetCFDPointOne()
+{
+  return (UShort_t) (fDataRecord[7] & 0xffff); 
+}
+
+inline UShort_t ORGretaDecoder::GetCFDPointTwo()
+{
+  return (UShort_t) (fDataRecord[7] >> 16); 
+}
+
+inline size_t ORGretaDecoder::GetWaveformLen()
+{
+  // returns Waveform length in number of shorts
+  return (GetPacketLength() - kBufHeadLen)*2;
+}
+
+inline const UInt_t* ORGretaDecoder::GetWaveformDataPointer()
+{
+  return (fDataRecord + 2 + kBufHeadLen);
+}
+#endif
+

@@ -1,0 +1,14 @@
+Makefile
+*.o
+*.dylib
+.depend
+getHeaderInRootFile
+orcaroot
+orcarootIgor
+orcaroot_minesh
+orhexdump
+quit
+testHeaderReadin
+testStopper
+testUtil
+writeShaperTree
