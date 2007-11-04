@@ -1,9 +1,0 @@
-Makefile
-*.o
-*.dylib
-.depend
-bin*
-lib*
-config.status
-config.log
-autom4te.cache
