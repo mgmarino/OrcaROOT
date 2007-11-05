@@ -95,8 +95,9 @@ void* ORProcessStopper::StopperThread(void* /*arg*/)
 int ORProcessStopper::Join()
 {
   pthread_attr_destroy(&fAttr);
-  int status;
-  int retCode = pthread_join(fThread, (void**) &status);
+  //int status;
+  //int retCode = pthread_join(fThread, (void**) &status);
+  int retCode = pthread_join(fThread, NULL);
   if (retCode) {
     ORLog(kError) << "Join(): return code from pthread_join() is " 
                   << retCode << endl;
