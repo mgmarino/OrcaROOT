@@ -32,17 +32,21 @@ bool OROrcaRequestFFTProcessor::ExecuteProcess()
   if ((loc = fFFTOptions.find("WinBlack",0)) != std::string::npos ) {
     /* OK, we have to do Blackman windowing */
     for (size_t i=0;i<fWaveform.size();i++) {
-      fWaveform[i] = fWaveform[i]*(0.42 - 0.5*TMath::Cos(i*TMath::TwoPi()/(fWaveform.size()+1))
-        + TMath::Cos(2.*i*TMath::TwoPi()/(fWaveform.size()+1)));
+      fWaveform[i] = fWaveform[i]*(0.42 - 0.5*TMath::Cos(i*TMath::TwoPi()/(fWaveform.size()-1))
+        + TMath::Cos(2.*i*TMath::TwoPi()/(fWaveform.size()-1)));
     }
     fFFTOptions.erase(loc, 8);
   } else if ((loc = fFFTOptions.find("WinHamm")) != std::string::npos) {
     /* OK, we have to do Hamming windowing */
     for (size_t i=0;i<fWaveform.size();i++) {
-      fWaveform[i] = fWaveform[i]*(0.54 - 0.46*TMath::Cos(i*TMath::TwoPi()/(fWaveform.size()+1)));
+      fWaveform[i] = fWaveform[i]*(0.54 - 0.46*TMath::Cos(i*TMath::TwoPi()/(fWaveform.size()-1)));
     }
     fFFTOptions.erase(loc, 7);
   }
+  while ((loc = fFFTOptions.find(",")) != std::string::npos) {
+    /* Getting rid of commas */
+    fFFTOptions.erase(loc,1);
+  } 
 
   TFFTRealComplex theFFTer(fWaveform.size(), kFALSE); 
   theFFTer.Init(fFFTOptions.c_str(), 0, 0);

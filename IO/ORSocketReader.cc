@@ -39,5 +39,5 @@ size_t ORSocketReader::Read(char* buffer, size_t nBytes)
 
 void ORSocketReader::Close()
 {
-  fEOF = !ResetSocket(); 
+  if (fEOF) fEOF = !ResetSocket(); 
 }

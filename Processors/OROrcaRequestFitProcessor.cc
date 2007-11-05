@@ -56,14 +56,14 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     return false;
   }
   for (size_t i=0;i<fYVector.size();i++) {
-    hist->SetBinContent(i, fYVector[i]);
+    hist->SetBinContent(i+1, fYVector[i]);
   }
 
   /***************************************************/
   /* Checking the parameters.  If none have come in, then we zero them out. */
   /***************************************************/
   if (fInputParameters.size() != 0) {
-    if (fInputParameters.size() != f1->GetNpar()) { 
+    if (fInputParameters.size() != (size_t)f1->GetNpar()) { 
       ORLog(kError) << "Incorrect number of parameters...trying to continue" 
         << endl;
     }
@@ -83,10 +83,10 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     fIntUpper = fIntLower;
     fIntLower = temp;
   }
-  if (fYVector.size()<fIntUpper) fIntUpper = fYVector.size();
+  if (fYVector.size() < (size_t)fIntUpper) fIntUpper = fYVector.size();
 
   fFitOptions+="FN"; // Switch to Minuit and don't store.
-  hist->Fit(f1, fFitOptions.c_str(), "", fIntLower, fIntUpper);
+  hist->Fit(f1, fFitOptions.c_str(), "", fIntLower+1, fIntUpper+1);
   /* Actually performing the fit.  (All this for one line of code!!!) */
   /* The bin conventions are shifted by 1, so we add 1 to the bounds. */
 
@@ -103,9 +103,9 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
   for (size_t i=0;i<fOutputParamNamesVector.size();i++) {
     fOutputParamNamesVector[i] = f1->GetParName(i);
   }
-  fOutputYVector.resize((fIntUpper<=fYVector.size()) ? fIntUpper : fYVector.size());
+  fOutputYVector.resize(((size_t)fIntUpper<=fYVector.size()) ? fIntUpper : fYVector.size());
   for (size_t i=0;i<fOutputYVector.size();i++) {
-    fOutputYVector[i] = (i<fIntLower) ? 0. : f1->Eval(i);
+    fOutputYVector[i] = (i<(size_t)fIntLower) ? 0. : f1->Eval(i);
     /* Again the bin convenction is slightly different. */
   }
   fOutputEquation = f1->GetExpFormula();
