@@ -11,6 +11,8 @@ class ORTDC3377tdcDecoder : public ORVBasicRDTreeDecoder
     ORTDC3377tdcDecoder() {}
     virtual ~ORTDC3377tdcDecoder() {}
 
+    virtual void Swap(UInt_t* dataRecord);
+    /* Handling the correct swapping for this record. */
     virtual inline bool IsDoubleWordTimestamp(UInt_t* record)
       { return (record[1] & 0x02000000) >> 25; }
     virtual inline UInt_t CrateOf(UInt_t* record)

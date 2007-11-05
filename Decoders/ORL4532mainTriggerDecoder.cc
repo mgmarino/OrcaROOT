@@ -7,20 +7,31 @@
 
 using namespace std;
 
+void ORL4532mainTriggerDecoder::Swap(UInt_t* record)
+{
+  ORUtils::Swap(record[1]); 
+  ORUtils::Swap(record[2]); 
+  /* Swap so we can tell if this has a timestamp.*/
+  size_t startSwapFrom = 3;
+  if (HasDoubleWordTimestamp(record)) {
+    ORUtils::Swap(record[3]);
+    ORUtils::Swap(record[4]);
+    UInt_t dummy = record[3];
+    record[3] = record[4];
+    record[4] = dummy;
+    startSwapFrom = 5;
+  }
+  for (size_t i=startSwapFrom;i<LengthOf(record);i++) {
+    ORUtils::Swap(record[i]);
+  }
+}
+
 double ORL4532mainTriggerDecoder::ReferenceDateOf(UInt_t* record)
 {
   double refDate = 0.0;
-  float* rdAsFloats = (float*)(&refDate);
   if(HasDoubleWordTimestamp(record)) {
-    if(ORUtils::MustSwap()) {
-      rdAsFloats[0] = *((float*)(record + 3)) ;
-      rdAsFloats[1] = *((float*)(record + 4)) ;
-    } else {
-      rdAsFloats[1] = *((float*)(record + 3)) ;
-      rdAsFloats[0] = *((float*)(record + 4)) ;
-    }
+    refDate = (double)(*((double*)(record+3)));
   }
-  else  refDate = double(*((float*)(record + 2)));
   return refDate;
 }
 

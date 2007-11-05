@@ -11,6 +11,8 @@ class ORL4532mainTriggerDecoder : public ORVBasicRDTreeDecoder
     ORL4532mainTriggerDecoder() {}
     virtual ~ORL4532mainTriggerDecoder() {}
 
+    virtual void Swap(UInt_t* dataRecord);
+    /* Handling the correct swapping for this record. */
     virtual inline UInt_t EventCountOf(UInt_t* record) { return record[1]; }
     virtual inline bool HasDoubleWordTimestamp(UInt_t* record)
       { return (record[2] & 0x02000000) >> 25; }

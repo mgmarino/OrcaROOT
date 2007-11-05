@@ -12,6 +12,8 @@ class ORAD3511ADCDecoder : public ORVHistDecoder, public ORVBasicRDTreeDecoder
     ORAD3511ADCDecoder() {}
     virtual ~ORAD3511ADCDecoder() {}
 
+    virtual void Swap(UInt_t* dataRecord);
+    /* Handling the correct swapping for this record. */
     virtual inline bool HasReferenceDate(UInt_t* record)
       { return bool(record[1] & 0x02000000); }
     virtual inline UInt_t CrateOf(UInt_t* record)

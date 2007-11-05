@@ -7,20 +7,26 @@
 
 using namespace std;
 
+void ORVBasicADCDecoder::Swap(UInt_t* record)
+{
+  ORUtils::Swap(record[1]); 
+  /* Swap so we can tell if this is a single or double word timestamp.*/
+  size_t startSwapFrom = 4;
+  ORUtils::Swap(record[2]);
+  ORUtils::Swap(record[3]);
+  UInt_t dummy = record[2];
+  record[2] = record[3];
+  record[3] = dummy;
+  for (size_t i=startSwapFrom;i<LengthOf(record);i++) {
+    ORUtils::Swap(record[i]);
+  }
+}
 double ORVBasicADCDecoder::ReferenceDateOf(UInt_t* record)
 { 
   if(IsShort(record)) return 0.0;
   if(LengthOf(record) != 4) return 0.0;
 
-  double refDate = 0.0;
-  float* rdAsFloats = (float*)(&refDate);
-  if(ORUtils::MustSwap()) {
-    rdAsFloats[0] = *((float*)(record + 2)) ;
-    rdAsFloats[1] = *((float*)(record + 3)) ;
-  } else {
-    rdAsFloats[1] = *((float*)(record + 2)) ;
-    rdAsFloats[0] = *((float*)(record + 3)) ;
-  }
+  double refDate = (double)(*((double*)(record+2)));
   return refDate;
 }
 

@@ -7,20 +7,36 @@
 
 using namespace std;
 
+void ORTDC3377tdcDecoder::Swap(UInt_t* record)
+{
+  ORUtils::Swap(record[1]); 
+  /* Swap so we can tell if this is a single or double word timestamp.*/
+  size_t startSwapFrom = 3;
+  if (IsDoubleWordTimestamp(record)) {
+    startSwapFrom = 4;
+    ORUtils::Swap(record[2]);
+    ORUtils::Swap(record[3]);
+    UInt_t dummy = record[2];
+    record[2] = record[3];
+    record[3] = dummy;
+  } else {
+    ORUtils::Swap(record[2]);
+  }
+  /* the rest of the data is 16-bit packed into 32-bits. */
+  UShort_t* shortPtr = (UShort_t*) (record+startSwapFrom);; 
+  for (size_t i=0;i<LengthOf(record)-startSwapFrom;i++) {
+    ORUtils::Swap(shortPtr[2*i]);
+    ORUtils::Swap(shortPtr[2*i+1]);
+  }
+}
+
 double ORTDC3377tdcDecoder::ReferenceDateOf(UInt_t* record)
 {
   double refDate = 0.0;
-  float* rdAsFloats = (float*)(&refDate);
   if(IsDoubleWordTimestamp(record)) {
-    if(ORUtils::MustSwap()) {
-      rdAsFloats[0] = *((float*)(record + 2)) ;
-      rdAsFloats[1] = *((float*)(record + 3)) ;
-    } else {
-      rdAsFloats[1] = *((float*)(record + 2)) ;
-      rdAsFloats[0] = *((float*)(record + 3)) ;
-    }
+    refDate = (double)(*((double*)(record+2)));
   }
-  else  refDate = double(*((float*)(record + 2)));
+  else  refDate = (double)(*((float*)(record + 2)));
   return refDate;
 }
 

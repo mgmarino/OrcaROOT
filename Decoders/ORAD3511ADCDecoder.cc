@@ -6,19 +6,29 @@
 
 using namespace std;
 
+void ORAD3511ADCDecoder::Swap(UInt_t* record)
+{
+  ORUtils::Swap(record[1]); 
+  /* Swap so we can tell if this has a timestamp.*/
+  size_t startSwapFrom = 2;
+  if (HasReferenceDate(record)) {
+    ORUtils::Swap(record[2]);
+    ORUtils::Swap(record[3]);
+    UInt_t dummy = record[2];
+    record[2] = record[3];
+    record[3] = dummy;
+    startSwapFrom = 4;
+  }
+  for (size_t i=startSwapFrom;i<LengthOf(record);i++) {
+    ORUtils::Swap(record[i]);
+  }
+}
+
 double ORAD3511ADCDecoder::ReferenceDateOf(UInt_t* record)
 { 
   if(!HasReferenceDate(record)) return 0.0;
 
-  double refDate = 0.0;
-  float* rdAsFloats = (float*)(&refDate);
-  if(ORUtils::MustSwap()) {
-    rdAsFloats[0] = *((float*)(record + 2)) ;
-    rdAsFloats[1] = *((float*)(record + 3)) ;
-  } else {
-    rdAsFloats[1] = *((float*)(record + 2)) ;
-    rdAsFloats[0] = *((float*)(record + 3)) ;
-  }
+  double refDate = (double)(*((double*)(record+2)));
   return refDate;
 }
 
