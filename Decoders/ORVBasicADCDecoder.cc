@@ -26,7 +26,7 @@ double ORVBasicADCDecoder::ReferenceDateOf(UInt_t* record)
   if(IsShort(record)) return 0.0;
   if(LengthOf(record) != 4) return 0.0;
 
-  double refDate = (double)(*((double*)(record+2)));
+  double refDate = (*((double*)(record+2)));
   return refDate;
 }
 

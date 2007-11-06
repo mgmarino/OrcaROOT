@@ -28,7 +28,7 @@ double ORAD3511ADCDecoder::ReferenceDateOf(UInt_t* record)
 { 
   if(!HasReferenceDate(record)) return 0.0;
 
-  double refDate = (double)(*((double*)(record+2)));
+  double refDate = (*((double*)(record+2)));
   return refDate;
 }
 

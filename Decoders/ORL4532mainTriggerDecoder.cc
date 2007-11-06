@@ -30,7 +30,7 @@ double ORL4532mainTriggerDecoder::ReferenceDateOf(UInt_t* record)
 {
   double refDate = 0.0;
   if(HasDoubleWordTimestamp(record)) {
-    refDate = (double)(*((double*)(record+3)));
+    refDate = (*((double*)(record+3)));
   }
   return refDate;
 }

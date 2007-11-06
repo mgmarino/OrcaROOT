@@ -34,7 +34,7 @@ double ORTDC3377tdcDecoder::ReferenceDateOf(UInt_t* record)
 {
   double refDate = 0.0;
   if(IsDoubleWordTimestamp(record)) {
-    refDate = (double)(*((double*)(record+2)));
+    refDate = (*((double*)(record+2)));
   }
   else  refDate = (double)(*((float*)(record + 2)));
   return refDate;
