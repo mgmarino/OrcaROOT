@@ -32,8 +32,8 @@ bool ORGretaDecoder::SetDataRecord(UInt_t* dataRecord)
   fDataRecord = dataRecord;
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
-  if (GetPacketLength() == kBufHeadLen) {
-    //ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << endl;
+  if (GetPacketLength() == GetBufHeadLen()) {
+    ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << endl;
     return true;
   }	
   if(!IsValid()) {
@@ -66,8 +66,8 @@ size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
   // the data.
   for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = waveformData[i/2] & 0xfff;  
-    waveform[i+1] = (waveformData[i/2] & 0x0fff0000) >> 16;
+    waveform[i] = (UShort_t) waveformData[i/2] & 0xfff;  
+    waveform[i+1] = (UShort_t) (waveformData[i/2] & 0x0fff0000) >> 16;
   }
   return len;
 }
@@ -113,7 +113,7 @@ void ORGretaDecoder::DumpBufferHeader()
   {
     ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << endl;
     ORLog(kDebug) << "**************************************************" << endl;
-    for(size_t i=2;i<kBufHeadLen; i++)
+    for(size_t i=2;i<GetBufHeadLen(); i++)
     {
       ORLog(kDebug) << fDataRecord[i] << endl;
     }
@@ -128,9 +128,6 @@ void ORGretaDecoder::DumpBufferHeader()
 void ORGretaDecoder::Dump(UInt_t* dataRecord) //debugging 
 {
   size_t iChannel, iEvent;
-  size_t len; 
-  UShort_t* waveform; 
-  double* waveformDouble;
   
   cout << endl << endl << "ORGretaDecoder::Dump():" << endl ;
   iChannel = 0;
@@ -139,7 +136,7 @@ void ORGretaDecoder::Dump(UInt_t* dataRecord) //debugging
 	cout 
 	  << "  Header functions: " << endl
 	  << "    Crate = " << CrateOf() << "; card = " << CardOf() << endl
-	  << "    The buffer is " << kBufHeadLen << " (32-bit) words long" << endl
+	  << "    The buffer is " << GetBufHeadLen() << " (32-bit) words long" << endl
 	  << "    The Board Id is " << GetBoardId() << endl
 	  << "    The channel is " << GetChannelNum() << endl
 	  << "    The packet length is (32-bit words) " << GetPacketLength() 
@@ -155,12 +152,5 @@ void ORGretaDecoder::Dump(UInt_t* dataRecord) //debugging
 	  << "    Pileup Flag: " << IsPileupFlag() << endl  
 	  << "    The waveform data has " << GetWaveformLen() 
 	    << " (16-bit) words" << endl;
-	  unsigned short wavedata[GetWaveformLen()];
-	  waveform = wavedata;
-	  double wavedataDouble[GetWaveformLen()];
-	  waveformDouble = wavedataDouble;
-	  len = GetWaveformLen();
-	  CopyWaveformData(waveform, len);
-	  CopyWaveformDataDouble(waveformDouble, len);
 
 }

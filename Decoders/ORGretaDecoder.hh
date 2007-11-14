@@ -24,6 +24,7 @@ class ORGretaDecoder: public ORVDataDecoder
     virtual inline ULong64_t BitConcat(UShort_t lo, UShort_t mid, UShort_t hi = 0x0);
        
     //Functions that return data from buffer header:
+    virtual inline size_t GetBufHeadLen() {return (size_t) kBufHeadLen;}
     virtual inline UShort_t GetBoardId();
     virtual inline UShort_t GetChannelNum();
     virtual inline UShort_t GetPacketLength();
@@ -42,8 +43,8 @@ class ORGretaDecoder: public ORVDataDecoder
     virtual inline UShort_t GetCFDTimeStampMed();
     virtual inline UShort_t GetCFDTimeStampHi();
     virtual inline ULong64_t GetCFDTimeStamp();
-    virtual inline UShort_t GetCFDPointOne();
-    virtual inline UShort_t GetCFDPointTwo();
+    virtual inline UInt_t GetCFDPointOne();
+    virtual inline UInt_t GetCFDPointTwo();
 
     // Waveform Functions
     virtual inline size_t GetWaveformLen(); 
@@ -59,6 +60,9 @@ class ORGretaDecoder: public ORVDataDecoder
     void Dump(UInt_t* dataRecord);
     
   protected:
+    virtual inline size_t GetRecordOffset() {return 2;}
+    /* GetRecordOffset() returns how many words the record is offset from the 
+       beginning.  This is useful when additional headers are added. */
     UInt_t* fDataRecord;
 };
 
@@ -82,32 +86,32 @@ inline ULong64_t ORGretaDecoder::BitConcat(UShort_t lo, UShort_t mid, UShort_t h
 
 inline UShort_t ORGretaDecoder::GetBoardId()
 {
-  return (UShort_t)(fDataRecord[2] & 0xffff) >> 3;
+  return (UShort_t)(fDataRecord[GetRecordOffset()] & 0xffff) >> 3;
 }
 
 inline UShort_t ORGretaDecoder::GetChannelNum()
 {
-  return (UShort_t) (fDataRecord[2] & 0x7);
+  return (UShort_t) (fDataRecord[GetRecordOffset()] & 0x7);
 }
 
 inline UShort_t ORGretaDecoder::GetPacketLength()
 {
-  return (UShort_t) (fDataRecord[2]  >> 16);
+  return (UShort_t) (fDataRecord[GetRecordOffset()]  >> 16);
 }
 
 inline UShort_t ORGretaDecoder::GetLEDExtTimeStampLo()
 {
-  return (UShort_t) (fDataRecord[3] & 0xffff);
+  return (UShort_t) (fDataRecord[GetRecordOffset()+1] & 0xffff);
 }
 
 inline UShort_t ORGretaDecoder::GetLEDExtTimeStampMed()
 {
-  return (UShort_t) (fDataRecord[3]  >> 16);
+  return (UShort_t) (fDataRecord[GetRecordOffset()+1]  >> 16);
 }
 
 inline UShort_t ORGretaDecoder::GetLEDExtTimeStampHi()
 {
-  return (UShort_t) (fDataRecord[4] & 0xffff);
+  return (UShort_t) (fDataRecord[GetRecordOffset()+2] & 0xffff);
 }
 
 inline ULong64_t ORGretaDecoder::GetLEDExtTimeStamp()
@@ -117,12 +121,12 @@ inline ULong64_t ORGretaDecoder::GetLEDExtTimeStamp()
 
 inline UShort_t ORGretaDecoder::GetEnergyLo()
 {
-  return (UShort_t) (fDataRecord[4] >> 16); 
+  return (UShort_t) (fDataRecord[GetRecordOffset()+2] >> 16); 
 }
 
 inline UShort_t ORGretaDecoder::GetEnergyHi()
 {
-  return (UShort_t) (fDataRecord[5] & 0x7f); 
+  return (UShort_t) (fDataRecord[GetRecordOffset()+3] & 0x7f); 
 }
 
 inline UInt_t ORGretaDecoder::GetEnergy()
@@ -132,37 +136,37 @@ inline UInt_t ORGretaDecoder::GetEnergy()
 
 inline Bool_t ORGretaDecoder::IsLEDCrossingNeg()
 {
-  return fDataRecord[5]  >> 12;
+  return fDataRecord[GetRecordOffset()+3]  >> 12;
 }
 
 inline Bool_t ORGretaDecoder::IsExternalTrigFlag()
 {
-  return fDataRecord[5]  >> 13;
+  return fDataRecord[GetRecordOffset()+3]  >> 13;
 }
 
 inline Bool_t ORGretaDecoder::IsCFDCrossingFlag()
 {
-  return fDataRecord[5] >> 14;
+  return fDataRecord[GetRecordOffset()+3] >> 14;
 }
 
 inline Bool_t ORGretaDecoder::IsPileupFlag()
 {
-  return fDataRecord[5]  >> 15;
+  return fDataRecord[GetRecordOffset()+3]  >> 15;
 }
 
 inline UShort_t ORGretaDecoder::GetCFDTimeStampLo()
 {
-  return (UShort_t) (fDataRecord[5]  >> 16); 
+  return (UShort_t) (fDataRecord[GetRecordOffset()+3]  >> 16); 
 }
 
 inline UShort_t ORGretaDecoder::GetCFDTimeStampMed()
 {
-  return (UShort_t) (fDataRecord[6] & 0xffff); 
+  return (UShort_t) (fDataRecord[GetRecordOffset()+4] & 0xffff); 
 }
 
 inline UShort_t ORGretaDecoder::GetCFDTimeStampHi()
 {
-  return (UShort_t) (fDataRecord[6]  >> 16); 
+  return (UShort_t) (fDataRecord[GetRecordOffset()+4]  >> 16); 
 }
 
 inline ULong64_t ORGretaDecoder::GetCFDTimeStamp()
@@ -170,25 +174,25 @@ inline ULong64_t ORGretaDecoder::GetCFDTimeStamp()
   return BitConcat(GetCFDTimeStampLo(), GetCFDTimeStampMed(), GetCFDTimeStampHi());
 }
 
-inline UShort_t ORGretaDecoder::GetCFDPointOne()
+inline UInt_t ORGretaDecoder::GetCFDPointOne()
 {
-  return (UShort_t) (fDataRecord[7] & 0xffff); 
+  return (fDataRecord[GetRecordOffset()+5] & 0xffff); 
 }
 
-inline UShort_t ORGretaDecoder::GetCFDPointTwo()
+inline UInt_t ORGretaDecoder::GetCFDPointTwo()
 {
-  return (UShort_t) (fDataRecord[7] >> 16); 
+  return (fDataRecord[GetRecordOffset()+5] >> 16); 
 }
 
 inline size_t ORGretaDecoder::GetWaveformLen()
 {
   // returns Waveform length in number of shorts
-  return (GetPacketLength() - kBufHeadLen)*2;
+  return (GetPacketLength() - GetBufHeadLen())*2;
 }
 
 inline const UInt_t* ORGretaDecoder::GetWaveformDataPointer()
 {
-  return (fDataRecord + 2 + kBufHeadLen);
+  return (fDataRecord + GetRecordOffset() + GetBufHeadLen());
 }
 #endif
 
