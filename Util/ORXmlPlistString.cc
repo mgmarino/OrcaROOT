@@ -31,7 +31,6 @@ void ORXmlPlistString::LoadDictionary(const ORDictionary* aDict)
 
 void ORXmlPlistString::LoadDictValue(const ORVDictValue* dictValue)
 {
-  /* Takes care of everything except bools for a plist*/
   if(dictValue->GetValueType() == ORVDictValue::kDict) {
     const ORDictionary* dictValuePtr = 
       dynamic_cast<const ORDictionary*>(dictValue);
@@ -64,5 +63,9 @@ void ORXmlPlistString::LoadDictValue(const ORVDictValue* dictValue)
     append("<string>");
     append(dictValue->GetStringOfValue());
     append("</string>\n");
+  } else if (dictValue->GetValueType() == ORVDictValue::kBool) {
+    append("<");
+    append(dictValue->GetStringOfValue());
+    append("/>\n"); 
   } 
 }
