@@ -25,7 +25,7 @@ bool ORHeader::LoadHeaderString(const char* fullHeaderAsString, size_t lengthOfS
 
 bool ORHeader::LoadHeaderFile(const char* fileName)
 {
-  return LoadHeaderFile(fileName);
+  return LoadXmlPlistFromFile(fileName);
 }
 
 

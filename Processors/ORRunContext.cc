@@ -4,6 +4,7 @@
 #include "ORRunDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
+#include "ORXmlPlistString.hh"
 
 using namespace std;
 
@@ -18,11 +19,28 @@ ORRunContext::ORRunContext(ORHeader* header, const char* runCtrlPath)
   fStartTime = 0;
   fState = kIdle;
   if (header != NULL) LoadHeader(header, runCtrlPath);
+  fHardwareDict = NULL;
+}
+
+ORRunContext::~ORRunContext()
+{
+  if (fHardwareDict) delete fHardwareDict;
 }
 
 void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
 {
+  if (!header) {
+    ORLog(kError) << "Header is NULL!" << std::endl;
+    return;
+  }
   fHeader = header;
+  if (fHardwareDict) delete fHardwareDict;
+  fHardwareDict = new ORHardwareDictionary();
+  if(!fHardwareDict->LoadHardwareDictFromDict(fHeader->GetDictionary())) {
+    ORLog(kError) << "Error loading hardware dictionary!" << std::endl;
+    delete fHardwareDict;
+    fHardwareDict = NULL;
+  }
   ORDictionary* runCtrlDict = (ORDictionary*) header->LookUp(runCtrlPath);
   if(!runCtrlDict) {
     ORLog(kError) << runCtrlPath << " not found!" << endl;

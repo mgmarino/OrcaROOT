@@ -3,6 +3,8 @@
 #include "ORAcqirisDC440Decoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
+#include "ORDictionary.hh"
+#include <sstream>
 using namespace std;
 
 
@@ -36,7 +38,11 @@ bool ORAcqirisDC440Decoder::SetDataRecord(UInt_t* dataRecord)
   return true;
 }
 
-
+double ORAcqirisDC440Decoder::GetSamplingFrequency()
+{
+  //FixME this needs to be changed
+  return 1.;
+}
 
 size_t ORAcqirisDC440Decoder::CopyWaveformData(Short_t* waveform, size_t len)
 //copies the waveform data to the array pointed to by

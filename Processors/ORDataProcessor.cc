@@ -34,6 +34,18 @@ void ORDataProcessor::SetDataId()
   }
 }
 
+void ORDataProcessor::SetDecoderDictionary()
+{
+  ORHardwareDictionary* hardwareDict = fgRunContext.GetHardwareDict();
+  if (!hardwareDict) {
+    ORLog(kError) << "Hardware dictionary not found!  Some info may not be available" << std::endl; 
+    return;
+  }
+  fDataDecoder->SetDecoderDictionary(
+    hardwareDict->GetDecoderDictionary(fDataDecoder->GetDictionaryObjectPath()));
+  /* This sets to NULL if it doesn't exist. */
+}
+
 ORDataProcessor::EReturnCode ORDataProcessor::ProcessDataRecord(UInt_t* record)
 {
   if (!fDoProcess || !fDoProcessRun) return kFailure;

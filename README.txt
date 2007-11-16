@@ -179,7 +179,7 @@ IO
 - ORHeader: encapsulates Orca's xml-header.
 - ORDictionary: represents the header's xml-tree structure.
 
-Proccessors
+Processors
 - ORRunContext: stores global information common to all processors, for
   example the current run number, whether the run has started, etc.
 - ORDataProcessor: base class for data processors. Each data processor

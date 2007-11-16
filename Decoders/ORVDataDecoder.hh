@@ -5,11 +5,12 @@
 
 #include <string>
 #include "TROOT.h"
+#include "ORDecoderDictionary.hh"
 
 class ORVDataDecoder
 {
   public:
-    ORVDataDecoder() {}
+    ORVDataDecoder() {fDecoderDictionary = NULL;}
     virtual ~ORVDataDecoder() {}
 
     virtual inline bool IsShort(UInt_t* dataRecord) { return dataRecord[0] & 0x80000000; }
@@ -29,6 +30,14 @@ class ORVDataDecoder
     static UInt_t GetIllegalDataId() { return 0x1; } // useful for error checking in ORVDataProcessor
 
     virtual std::string GetDataObjectPath() = 0;
+
+    virtual std::string GetDictionaryObjectPath() {return "";}
+    virtual void SetDecoderDictionary(const ORDecoderDictionary* aDict) {fDecoderDictionary=aDict;}
+      /* This function allows us to grab things from the header. */
+      /* A decoder should define this and then fDecoderDictionary will be defined. */
+
+  protected:
+    const ORDecoderDictionary* fDecoderDictionary;
 };
 
 #endif

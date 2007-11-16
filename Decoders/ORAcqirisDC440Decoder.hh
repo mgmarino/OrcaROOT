@@ -3,12 +3,9 @@
 #ifndef _ORAcqirisDC440Decoder_hh_
 #define _ORAcqirisDC440Decoder_hh_
 
-#include "ORVDataDecoder.hh"
-#include <vector>
-#include <map>
-using namespace std;
+#include "ORVDigitizerDecoder.hh"
 
-class ORAcqirisDC440Decoder: public ORVDataDecoder
+class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
 {
   public:
     ORAcqirisDC440Decoder();
@@ -44,6 +41,19 @@ class ORAcqirisDC440Decoder: public ORVDataDecoder
     //debugging:
     void Dump(UInt_t* dataRecord);
     
+
+    /* Adhering to ORVDigitizerDecoder interface. */
+    virtual double GetSamplingFrequency();
+    virtual size_t GetNumberOfEvents() {return 1;}
+    virtual ULong64_t GetEventTime(size_t /*event*/) { return GetTimeStamp(); }
+    virtual UInt_t GetEventEnergy(size_t /*event*/) { return 0; }
+      /* This card doesn't calculate energy. */
+    virtual UShort_t GetEventChannel(size_t /*event*/) { return GetChannelNum();}
+    virtual size_t GetEventWaveformLength(size_t /*event*/) 
+      { return GetWaveformLen(); }
+    virtual void* GetEventWaveformPointer(size_t /*event*/) 
+      { return (void*) GetWaveformDataPointer();}
+
   protected:
     UInt_t* fDataRecord;
 };

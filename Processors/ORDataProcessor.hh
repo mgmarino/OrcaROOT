@@ -45,6 +45,7 @@ class ORDataProcessor
     virtual void KillRun() { fDoProcessRun = false; }
     virtual EReturnCode ProcessDataRecord(UInt_t* record);
     virtual void SetDataId();
+    virtual void SetDecoderDictionary();
     virtual void SetDoProcess() { fDoProcess = true; fDoProcessRun = true; }
     virtual void SetDoProcessRun() { fDoProcessRun = true; }
 

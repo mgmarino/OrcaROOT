@@ -5,6 +5,7 @@
 
 #include <string>
 #include "ORHeader.hh"
+#include "ORHardwareDictionary.hh"
 
 class ORRunContext
 {
@@ -12,7 +13,7 @@ class ORRunContext
     enum EState { kIdle, kStarting, kRunning, kStopping };
 
     ORRunContext(ORHeader* header = NULL, const char* runCtrlPath = NULL);
-    virtual ~ORRunContext() {}
+    virtual ~ORRunContext();
 
     virtual std::string GetClassName() { return fClassName; }
     virtual int GetRunNumber() const { return fRunNumber; }
@@ -22,6 +23,7 @@ class ORRunContext
     virtual void LoadHeader(ORHeader* header, const char* runCtrlPath = "Run Control");
     virtual void LoadRunStartRecord(UInt_t* record);
     virtual ORHeader* GetHeader() { return fHeader; }
+    virtual ORHardwareDictionary* GetHardwareDict() { return fHardwareDict; }
 
     virtual int* GetPointerToRunNumber() { return &fRunNumber; }
 
@@ -39,6 +41,7 @@ class ORRunContext
 
   protected:
     ORHeader* fHeader;
+    ORHardwareDictionary* fHardwareDict;
     std::string fClassName;
     int fRunNumber;
     bool fIsQuickStartRun;

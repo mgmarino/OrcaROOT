@@ -25,13 +25,15 @@ class ORDictionary : public ORVDictValue
   public:
     ORDictionary(std::string name = "") 
       { SetName(name);}
+    ORDictionary(const ORDictionary& dict);
+      /* Copy constructor to handle making a new dictionary from another.*/
     virtual ~ORDictionary();
 
     virtual EValType GetValueType() const { return kDict; }
 
     virtual const std::string& GetName() const { return fName; }
-    virtual const ORVDictValue* LookUp(std::string key, char delimiter = ':')
-const;
+    virtual const ORVDictValue* LookUp(std::string key, char delimiter = ':') const;
+    virtual ORVDictValue* LookUp(std::string key, char delimiter = ':');
     virtual void LoadEntry(std::string key, ORVDictValue* value) { fDictMap[key] = value; }
     virtual void SetName(std::string name) { fName = name; }
     virtual std::string GetStringOfValue() const {return "";}
@@ -39,12 +41,12 @@ const;
     
     // The following functions are useful for iterating over the contents of
     // the dictionary:
-    virtual const std::map<const std::string, const ORVDictValue*>* 
+    virtual const std::map<const std::string, ORVDictValue*>* 
       GetDictMap() const {return &fDictMap;}
 
   protected:
     std::string fName;
-    std::map<const std::string, const ORVDictValue*> fDictMap;
+    std::map<const std::string, ORVDictValue*> fDictMap;
 };
 
 class ORDictValueS : public ORVDictValue
@@ -115,6 +117,7 @@ class ORDictValueA : public ORVDictValue
 {
   public:
     ORDictValueA(std::string name = "") { SetName(name); }
+    ORDictValueA(const ORDictValueA& dictA);
     virtual ~ORDictValueA();
 
     virtual EValType GetValueType() const { return kArray; }
