@@ -294,7 +294,7 @@ double ORDGF4cEventDecoder::GetVOffset(size_t channel)
 
 UInt_t ORDGF4cEventDecoder::GetXWait(size_t channel)
 {
-  return GetRealValueFromKeyArray("xWait", CrateOf(), CardOf(), channel);
+  return GetIntValueFromKeyArray("xWait", CrateOf(), CardOf(), channel);
 }
 
 
