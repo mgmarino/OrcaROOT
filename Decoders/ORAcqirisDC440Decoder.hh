@@ -12,7 +12,31 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     virtual ~ORAcqirisDC440Decoder() {}
     enum EAcqirisDC440Consts {kBufHeadLen = 6};
     
-    virtual std::string GetDataObjectPath() { return "ORAcqirisCD440Model:Waveform"; }  
+    enum EAcqirisDC440TriggerSlope { kPositive = 0,
+                                     kNegative,
+                                     kOutOfWindow,
+                                     kIntoWindow,
+                                     kHFDivide,
+                                     kSpikeStretcher };
+  
+    enum EAcqirisDC440TriggerCoupling { kDC = 0,
+                                        kAC,
+                                        kHFReject,
+                                        kDC_50_Ohm,
+                                        kAC_50_Ohm }; 
+
+    enum EAcqirisDC440TriggerSource { kExternal = 0,
+                                      kChannelOne, 
+                                      kChannelTwo }; 
+    
+    enum EAcqirisDC440VerticalCoupling { kVC_Ground = 0,
+                                         kVC_DC_1_MOhm,
+                                         kVC_AC_1_MOhm,
+                                         kVC_DC_50_Ohm,
+                                         kVC_AC_50_Ohm };
+                                       
+    virtual std::string GetDataObjectPath() { return "ORAcqirisDC440Model:Waveform"; }  
+    virtual std::string GetDictionaryObjectPath() { return "ORAcqirisDC440Model"; }  
     virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
@@ -34,6 +58,20 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     virtual size_t CopyWaveformData(Short_t* waveform, size_t len);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
  
+    /* Functions that return information about card/channel settings. */
+    /* These are static throughout a run, so a processor should take  * 
+     * advantage of this and maybe not query during each record.      */
+    virtual double GetDelayTime();
+    virtual double GetFullScale();
+    virtual UInt_t GetNumberOfSamples();
+    virtual double GetSampleInterval();
+    virtual EAcqirisDC440TriggerCoupling GetTriggerCoupling();
+    virtual double GetTriggerLevel();
+    virtual EAcqirisDC440TriggerSlope GetTriggerSlope();
+    virtual EAcqirisDC440TriggerSource GetTriggerSource();
+    virtual EAcqirisDC440VerticalCoupling GetVerticalCoupling();
+    virtual double GetVerticalOffset();
+
     //Error checking:
     virtual bool IsValid();
     virtual void DumpBufferHeader();

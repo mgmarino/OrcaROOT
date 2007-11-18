@@ -18,6 +18,7 @@ class ORDGF4cEventDecoder: public ORVDataDecoder
       kStdFast = 0x200, kFastC1 = 0x201, kFastC2 = 0x202, kFastC3 = 0x203 };
     
     virtual std::string GetDataObjectPath() { return "ORDGF4cModel:Event"; }
+    virtual std::string GetDictionaryObjectPath() { return "ORDGF4cModel"; }
     virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
@@ -70,6 +71,28 @@ class ORDGF4cEventDecoder: public ORVDataDecoder
     virtual size_t CopyWaveformData(UShort_t* waveform, size_t len, size_t iEvent, size_t iChannel);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len, size_t iEvent, size_t iChannel);
     virtual inline const UShort_t* GetWaveformDataPointer(size_t iEvent, size_t iChannel);
+
+    /* Channel/Card settings. */
+    virtual UInt_t GetBinFactor(size_t channel);
+    virtual UInt_t GetCutoffEMin(size_t channel);
+    virtual double GetEnergyFlatTop(size_t channel);
+    virtual double GetEnergyRiseTime(size_t channel);
+    virtual Bool_t IsInSync();
+    virtual double GetPSAEnd(size_t channel);
+    virtual double GetPSAStart(size_t channel);
+    virtual UInt_t GetRunBehavior();
+    virtual Bool_t IsSyncWait();
+    virtual double GetTau(size_t channel);
+    virtual double GetTauSigma(size_t channel);
+    virtual double GetTraceDelay(size_t channel);
+    virtual double GetTraceLength(size_t channel);
+    virtual double GetTriggerFlatTop(size_t channel);
+    virtual double GetTriggerRiseTime(size_t channel);
+    virtual double GetTriggerThreshold(size_t channel);
+    virtual double GetVGain(size_t channel);
+    virtual double GetVOffset(size_t channel);
+    virtual UInt_t GetXWait(size_t channel);
+
     //Error checking:
     virtual bool IsValid();
     virtual bool PtrIsInDataRecord(UShort_t* ptr, bool verbose = true); 

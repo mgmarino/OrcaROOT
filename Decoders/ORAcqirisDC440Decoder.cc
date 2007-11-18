@@ -83,6 +83,57 @@ size_t ORAcqirisDC440Decoder::CopyWaveformDataDouble(double* waveform, size_t le
   return len;
 }
 
+/* Functions returning card/channel settings. */
+double ORAcqirisDC440Decoder::GetDelayTime()
+{
+  return GetRealValueFromKey("delayTime", CrateOf(), CardOf()); 
+}
+
+double ORAcqirisDC440Decoder::GetFullScale()
+{
+  return GetRealValueFromKey("fullScale", CrateOf(), CardOf());
+}
+
+UInt_t ORAcqirisDC440Decoder::GetNumberOfSamples()
+{
+  return GetIntValueFromKey("numberSamples", CrateOf(), CardOf());
+}
+
+double ORAcqirisDC440Decoder::GetSampleInterval()
+{
+  return GetRealValueFromKey("sampleInterval", CrateOf(), CardOf());
+}
+
+ORAcqirisDC440Decoder::EAcqirisDC440TriggerCoupling ORAcqirisDC440Decoder::GetTriggerCoupling()
+{
+  return (EAcqirisDC440TriggerCoupling) GetIntValueFromKey("triggerCoupling", CrateOf(), CardOf());
+}
+
+double ORAcqirisDC440Decoder::GetTriggerLevel()
+{
+  return GetRealValueFromKeyArray("triggerLevels", 
+    CrateOf(), CardOf(), GetChannelNum());
+}
+
+ORAcqirisDC440Decoder::EAcqirisDC440TriggerSlope ORAcqirisDC440Decoder::GetTriggerSlope()
+{
+  return (EAcqirisDC440TriggerSlope) GetIntValueFromKey("triggerSlope", CrateOf(), CardOf());
+}
+
+ORAcqirisDC440Decoder::EAcqirisDC440TriggerSource ORAcqirisDC440Decoder::GetTriggerSource()
+{
+  return (EAcqirisDC440TriggerSource) GetIntValueFromKey("triggerSource", CrateOf(), CardOf());
+}
+
+ORAcqirisDC440Decoder::EAcqirisDC440VerticalCoupling ORAcqirisDC440Decoder::GetVerticalCoupling()
+{
+  return (EAcqirisDC440VerticalCoupling) GetIntValueFromKey("verticalCoupling", CrateOf(), CardOf());
+}
+
+double ORAcqirisDC440Decoder::GetVerticalOffset()
+{
+  return GetRealValueFromKey("verticalOffset", CrateOf(), CardOf());
+}
 
 //Error checking: **********************************************************************
 

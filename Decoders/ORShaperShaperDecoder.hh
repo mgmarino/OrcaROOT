@@ -13,6 +13,7 @@ class ORShaperShaperDecoder : public ORVBasicADCDecoder
 
     virtual inline std::string GetLabel() { return "Shaper"; }
     virtual inline std::string GetDataObjectPath() { return "ORShaperModel:Shaper"; }
+    virtual inline std::string GetDictionaryObjectPath() { return "ORShaperModel"; }
 };
 
 #endif

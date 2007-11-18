@@ -200,6 +200,104 @@ size_t ORDGF4cEventDecoder::CopyWaveformDataDouble(double* waveform, size_t len,
   return len;
 }
 
+/* Card/Channel settings, parameters. */
+
+UInt_t ORDGF4cEventDecoder::GetBinFactor(size_t channel)
+{
+  return GetIntValueFromKeyArray("binFactor", CrateOf(), CardOf(), channel);
+}
+
+UInt_t ORDGF4cEventDecoder::GetCutoffEMin(size_t channel)
+{
+  return GetIntValueFromKeyArray("cutoffEMin", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetEnergyFlatTop(size_t channel)
+{
+  return GetRealValueFromKeyArray("energyFlatTop", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetEnergyRiseTime(size_t channel)
+{
+  return GetRealValueFromKeyArray("energyRiseTime", CrateOf(), CardOf(), channel);
+}
+
+Bool_t ORDGF4cEventDecoder::IsInSync()
+{
+  return GetBoolValueFromKey("inSync", CrateOf(), CardOf());
+}
+
+double ORDGF4cEventDecoder::GetPSAEnd(size_t channel)
+{
+  return GetRealValueFromKeyArray("psaEnd", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetPSAStart(size_t channel)
+{
+  return GetRealValueFromKeyArray("psaStart", CrateOf(), CardOf(), channel);
+}
+
+UInt_t ORDGF4cEventDecoder::GetRunBehavior()
+{
+  return GetIntValueFromKey("runBehavior", CrateOf(), CardOf());
+}
+
+Bool_t ORDGF4cEventDecoder::IsSyncWait()
+{
+  return GetBoolValueFromKey("syncWait", CrateOf(), CardOf());
+}
+
+double ORDGF4cEventDecoder::GetTau(size_t channel)
+{
+  return GetRealValueFromKeyArray("tau", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTauSigma(size_t channel)
+{
+  return GetRealValueFromKeyArray("tauSigma", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTraceDelay(size_t channel)
+{
+  return GetRealValueFromKeyArray("traceDelay", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTraceLength(size_t channel)
+{
+  return GetRealValueFromKeyArray("traceLength", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTriggerFlatTop(size_t channel)
+{
+  return GetRealValueFromKeyArray("triggerFlatTop", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTriggerRiseTime(size_t channel)
+{
+  return GetRealValueFromKeyArray("triggerRiseTime", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetTriggerThreshold(size_t channel)
+{
+  return GetRealValueFromKeyArray("triggerThreshold", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetVGain(size_t channel)
+{
+  return GetRealValueFromKeyArray("vGain", CrateOf(), CardOf(), channel);
+}
+
+double ORDGF4cEventDecoder::GetVOffset(size_t channel)
+{
+  return GetRealValueFromKeyArray("vOffset", CrateOf(), CardOf(), channel);
+}
+
+UInt_t ORDGF4cEventDecoder::GetXWait(size_t channel)
+{
+  return GetRealValueFromKeyArray("xWait", CrateOf(), CardOf(), channel);
+}
+
+
 
 //Error checking: **********************************************************************
 

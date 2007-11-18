@@ -9,6 +9,7 @@ ORHardwareDictionary::ORHardwareDictionary(std::string name) : ORDictionary(name
      dictionaries that might contain */
   fVectorOfBaseDicts.push_back("GPIB");
   fVectorOfBaseDicts.push_back("USB");
+  fAppendString = " ";
 } 
 
 bool ORHardwareDictionary::LoadHardwareDictFromDict(const ORDictionary* dict)
@@ -19,56 +20,69 @@ bool ORHardwareDictionary::LoadHardwareDictFromDict(const ORDictionary* dict)
   }
   /* first let us find Crates and crate numbers*/ 
   if (!LoadCratesAndCards(dict)) return false;
-  std::map<int, std::vector<int> >::iterator crateIter; 
+  std::map<std::pair<std::string,int>,std::pair<int,std::vector<int> > >::iterator crateIter; 
   for (crateIter=fCrateMap.begin();crateIter!=fCrateMap.end();crateIter++) {
-    for (size_t j=0;j<crateIter->second.size();j++) {
-      std::ostringstream os;
-      os << "crate " << crateIter->first << ":card " 
-        << crateIter->second[j];
-       const ORDictionary* bDict = dynamic_cast<const ORDictionary*>(dict->LookUp(os.str()));
+    for (size_t j=0;j<crateIter->second.second.size();j++) {
+      std::ostringstream os, osEnd;
+      os << crateIter->first.first << fAppendString 
+         << crateIter->first.second << ":"; 
+      std::string begDictStr = os.str();
+      osEnd << crateIter->second.second[j];
+      std::string endDictStr= osEnd.str();
+      std::string middleDictStr;
+      if (crateIter->second.first > 0 ) {
+        middleDictStr = "station ";
+      } else {
+        middleDictStr = "card ";
+      }
+      std::string dictString = begDictStr + middleDictStr + endDictStr;
       /* Now find the dictionary*/
-       if (!bDict) {
-         ORLog(kError) << "Error finding: " << os.str() << std::endl;
-       } else {
-         /* OK insert it if it doesn't exist. */
-         const ORDictValueS* className = 
-           dynamic_cast<const ORDictValueS*>(bDict->LookUp("Class Name"));
-         if (!className) {
-           ORLog(kError) << "Class name not found!" << std::endl;
-         } else {
-           /* Insert hardware object if it doesn't exist. */
-           if (fDictMap.find(className->GetS())==fDictMap.end()) {
-             ORLog(kError) << "Card object doesn't exist!" << std::endl;
-             return false;
-           }
-           std::ostringstream os1, os2;
-           os1 << "crate " << crateIter->first;
-           ORDictionary* classDict = dynamic_cast<ORDictionary*>(
-             fDictMap[className->GetS()]);
-           if (!classDict) {
-             ORLog(kError) << "Class not a dictionary?" << std::endl;
-             return false;
-           }
-           /* Insert crate if it doesn't exist. */
-           if (!classDict->LookUp(os1.str())) { 
-             classDict->LoadEntry(os1.str(), 
-               new ORDictionary(os1.str()));
-           }
-           /* Finally making new dictionary from a copy and inserting. */
-           ORDictionary* newCardDict = new ORDictionary(*bDict);
-           /* Inserting card dictionary into crate dict.*/
-           os2 << "card " << crateIter->second[j];
-           ORDictionary* crateDict = 
-             dynamic_cast<ORDictionary*>(
-             classDict->LookUp(os1.str()));
-           if (!crateDict) {
-             ORLog(kError) << "crate dictionary not allocated correctly?" 
-               << std::endl;
-             return false;
-           }
-           crateDict->LoadEntry(os2.str(), newCardDict);
-         }
-       } 
+      const ORDictionary* bDict = dynamic_cast<const ORDictionary*>(dict->LookUp(dictString));
+      if (!bDict) {
+        ORLog(kError) << "Error finding: " << dictString << "in slot " 
+          << crateIter->second.second[j] << std::endl;
+      } 
+
+      if (bDict) {
+        const ORDictValueS* className = 
+          dynamic_cast<const ORDictValueS*>(bDict->LookUp("Class Name"));
+        if (!className) {
+          ORLog(kError) << "Class name not found!" << std::endl;
+        } else {
+          /* Insert hardware object if it doesn't exist. */
+          if (fDictMap.find(className->GetS())==fDictMap.end()) {
+            ORLog(kError) << "Card object doesn't exist!" << std::endl;
+            return false;
+          }
+          std::ostringstream os1, os2;
+          os1 << crateIter->first.second;
+          ORDictionary* classDict = dynamic_cast<ORDictionary*>(
+            fDictMap[className->GetS()]);
+          if (!classDict) {
+            ORLog(kError) << "Class not a dictionary?" << std::endl;
+            return false;
+          }
+          /* Insert crate if it doesn't exist. */
+          if (!classDict->LookUp(os1.str())) { 
+            classDict->LoadEntry(os1.str(), 
+              new ORDictionary(os1.str()));
+          }
+          /* Finally making new dictionary from a copy and inserting. */
+          ORDictionary* newCardDict = new ORDictionary(*bDict);
+          /* Inserting card dictionary into crate dict.*/
+          os2 << crateIter->second.second[j];
+          ORDictionary* crateDict = 
+            dynamic_cast<ORDictionary*>(
+            classDict->LookUp(os1.str()));
+          if (!crateDict) {
+            ORLog(kError) << "crate dictionary not allocated correctly?" 
+              << std::endl;
+            return false;
+          }
+          newCardDict->SetName(os2.str());
+          crateDict->LoadEntry(os2.str(), newCardDict);
+        }
+      } 
     }
   }
   return true;
@@ -95,25 +109,30 @@ bool ORHardwareDictionary::LoadCratesAndCards(const ORDictionary* dict)
     } else {
       const ORDictValueI* crateNum = dynamic_cast<const ORDictValueI*>(
         oneCrate->LookUp("CrateNumber"));
-      if (!crateNum) {
-        ORLog(kError) << "Error finding CrateNumber." << std::endl;
+      const ORDictValueS* crateName = dynamic_cast<const ORDictValueS*>(
+        oneCrate->LookUp("ClassName"));
+      const ORDictValueI* crateOffset = dynamic_cast<const ORDictValueI*>(
+        oneCrate->LookUp("FirstSlot"));
+      if (!crateNum || !crateName || !crateOffset) {
+        ORLog(kError) << "Error finding Crate information." << std::endl;
         return false;
       } 
       /* Load up the crate map. */
-      fCrateMap[crateNum->GetI()];
+      fCrateMap[std::pair<std::string, int>(crateName->GetS(), crateNum->GetI())] = 
+        std::pair<int, std::vector<int> >(crateOffset->GetI(), std::vector<int>());
     }
   }
 
   /* Now we have the numbers of crates, we must grap the cards in the crates. */
-  std::map<int, std::vector<int> >::iterator crateMapIter;
+  std::map<std::pair<std::string,int>,std::pair<int,std::vector<int> > >::iterator crateMapIter; 
   for (crateMapIter=fCrateMap.begin();crateMapIter!=fCrateMap.end();crateMapIter++) {
     /* Find the dictionary*/ 
     std::ostringstream os;
-    os << "crate " << crateMapIter->first;
+    os << crateMapIter->first.first << fAppendString 
+       << crateMapIter->first.second;
     const ORDictionary* crateDict = dynamic_cast<const ORDictionary*>(dict->LookUp(os.str()));
     if (!crateDict) {
-      ORLog(kError) << "Error finding dictionary: crate" << crateMapIter->first
-        << std::endl;
+      ORLog(kError) << "Error finding dictionary: " << os.str() << std::endl; 
       return false;
     } 
     const ORDictValueA* crateDictArray = dynamic_cast<const ORDictValueA*>(
@@ -136,7 +155,9 @@ bool ORHardwareDictionary::LoadCratesAndCards(const ORDictionary* dict)
           ORLog(kError) << "Error getting card." << std::endl;
           return false;
         }
-        crateMapIter->second.push_back(slotNumber->GetI());
+        /* Is there an offset? */
+        int crateNum = slotNumber->GetI() + crateMapIter->second.first;
+        crateMapIter->second.second.push_back(crateNum);
         if (fDictMap.find(className->GetS()) == fDictMap.end()) {
           fDictMap[className->GetS()] = new ORDecoderDictionary(className->GetS());
         }
@@ -149,5 +170,9 @@ bool ORHardwareDictionary::LoadCratesAndCards(const ORDictionary* dict)
 const ORDecoderDictionary* ORHardwareDictionary::GetDecoderDictionary(std::string dictName) const
 {
   if (dictName.size() == 0) return NULL;
-  return (dynamic_cast<const ORDecoderDictionary*>(LookUp(dictName)));
+  const ORDecoderDictionary* dict = dynamic_cast<const ORDecoderDictionary*>(LookUp(dictName));
+  if(!dict) {
+    ORLog(kWarning) << "Decoder Dictionary (" << dictName << ") requested but not found" << std::endl; 
+  }
+  return dict; 
 }

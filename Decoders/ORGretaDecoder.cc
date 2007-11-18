@@ -92,6 +92,97 @@ size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
   return len;
 }
 
+/* Card/Channel settings, parameters. */
+
+UInt_t ORGretaDecoder::GetBaseAddress()
+{
+  return GetIntValueFromKey("baseAddress", CrateOf(), CardOf());
+}
+
+UInt_t ORGretaDecoder::GetCFDDelay()
+{
+  return GetIntValueFromKeyArray("CFD Delay", CrateOf(), CardOf(), GetChannelNum());
+}
+
+UInt_t ORGretaDecoder::GetCFDFraction()
+{
+  return GetIntValueFromKeyArray("CFD Fraction", CrateOf(), CardOf(), GetChannelNum());
+}
+
+UInt_t ORGretaDecoder::GetCFDThreshold()
+{
+  return GetIntValueFromKeyArray("CFD Threshold", CrateOf(), CardOf(), GetChannelNum());
+}
+
+UInt_t ORGretaDecoder::GetCollectionTime()
+{
+  return GetIntValueFromKey("Collection Time", CrateOf(), CardOf());
+}
+
+UInt_t ORGretaDecoder::GetDataDelay()
+{
+  return GetIntValueFromKeyArray("Data Delay", CrateOf(), CardOf(), GetChannelNum());
+}
+
+UInt_t ORGretaDecoder::GetDataLength()
+{
+  return GetIntValueFromKeyArray("Data Length", CrateOf(), CardOf(), GetChannelNum());
+}
+
+Bool_t ORGretaDecoder::IsDebugModeOn()
+{
+  return (GetIntValueFromKeyArray("Debug Mode", CrateOf(), CardOf(), GetChannelNum())==1);
+}
+
+Bool_t ORGretaDecoder::IsEnabled()
+{
+  return (GetIntValueFromKeyArray("Enabled", CrateOf(), CardOf(), GetChannelNum())==1);
+}
+
+UInt_t ORGretaDecoder::GetExternalTriggerLength()
+{
+  return GetIntValueFromKey("Ext Trigger Length", CrateOf(), CardOf());
+}
+
+UInt_t ORGretaDecoder::GetExternalWindow()
+{
+  return GetIntValueFromKey("External Window", CrateOf(), CardOf());
+}
+
+UInt_t ORGretaDecoder::GetIntegrationTime()
+{
+  return GetIntValueFromKey("Integration Time", CrateOf(), CardOf());
+}
+
+UInt_t ORGretaDecoder::GetLEDThreshold()
+{
+  return GetIntValueFromKeyArray("LED Threshold", CrateOf(), CardOf(), GetChannelNum());
+}
+
+UInt_t ORGretaDecoder::GetNoiseWindow()
+{
+  return GetIntValueFromKey("Noise Window", CrateOf(), CardOf());
+}
+
+Bool_t ORGretaDecoder::IsPileUpEnabled()
+{
+  return (GetIntValueFromKeyArray("Pile Up", CrateOf(), CardOf(), GetChannelNum())==1);
+}
+
+UInt_t ORGretaDecoder::GetPileUpWindow()
+{
+  return GetIntValueFromKey("Pileup Window", CrateOf(), CardOf());
+}
+
+ORGretaDecoder::EGretaPolarity ORGretaDecoder::GetPolarity()
+{
+  return (EGretaPolarity) GetIntValueFromKeyArray("Polarity", CrateOf(), CardOf(), GetChannelNum());
+}
+
+ORGretaDecoder::EGretaTriggerMode ORGretaDecoder::GetTriggerMode()
+{
+  return (EGretaTriggerMode) GetIntValueFromKeyArray("Trigger Mode", CrateOf(), CardOf(), GetChannelNum());
+}
 
 //Error checking: **********************************************************************
 

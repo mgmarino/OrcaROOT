@@ -37,6 +37,30 @@ class ORVDataDecoder
       /* A decoder should define this and then fDecoderDictionary will be defined. */
 
   protected:
+    virtual const ORVDictValue* GetValueFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+    virtual const ORDictValueA* GetArrayFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+
+    virtual std::string GetStringValueFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+    virtual int GetIntValueFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+    virtual double GetRealValueFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+    virtual bool GetBoolValueFromKey(std::string key, 
+      UInt_t crate, UInt_t card);
+ 
+    virtual std::string GetStringValueFromKeyArray(std::string key, 
+      UInt_t crate, UInt_t card, size_t index);
+    virtual int GetIntValueFromKeyArray(std::string key, 
+      UInt_t crate, UInt_t card, size_t index);
+    virtual double GetRealValueFromKeyArray(std::string key, 
+      UInt_t crate, UInt_t card, size_t index);
+    virtual bool GetBoolValueFromKeyArray(std::string key, 
+      UInt_t crate, UInt_t card, size_t index);
+    
+
     const ORDecoderDictionary* fDecoderDictionary;
 };
 

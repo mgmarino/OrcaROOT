@@ -46,6 +46,11 @@ void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
     ORLog(kError) << runCtrlPath << " not found!" << endl;
     return;
   }
+  if (ORLogger::GetSeverity() <= ORLogger::kDebug) {
+    ORXmlPlistString xmlString;
+    xmlString.LoadDictionary(fHardwareDict);
+    ORLog(kDebug) << std::endl << xmlString << std::endl;
+  }
   fClassName = ((ORDictValueS*) runCtrlDict->LookUp("Class Name"))->GetS();
   fRunNumber = ((ORDictValueI*) runCtrlDict->LookUp("RunNumber"))->GetI();
   fIsQuickStartRun = ((ORDictValueB*) runCtrlDict->LookUp("quickStart"))->GetB();

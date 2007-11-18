@@ -13,9 +13,18 @@ class ORGretaDecoder: public ORVDataDecoder
   public:
     ORGretaDecoder();
     virtual ~ORGretaDecoder() {}
-    enum EGretaConsts {kBufHeadLen = 6};
+    enum EGretaConsts { kBufHeadLen = 6 };
+    enum EGretaPolarity { kNone = 0,
+                          kPos,
+                          kNeg,
+                          kBoth };
+
+    enum EGretaTriggerMode { kInternal = 0,
+                             kExternal,
+                             kValidation };
     
     virtual std::string GetDataObjectPath() { return "ORGretinaModel:Gretina"; }  
+    virtual std::string GetDictionaryObjectPath() { return "ORGretinaModel"; }  
     //virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
@@ -52,6 +61,29 @@ class ORGretaDecoder: public ORVDataDecoder
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
     virtual inline const UInt_t* GetWaveformDataPointer();
  
+    /* Functions that return information about card/channel settings. */
+    /* These are static throughout a run, so a processor should take  * 
+     * advantage of this and maybe not query during each record.      */
+    virtual UInt_t GetBaseAddress();
+    virtual UInt_t GetCFDDelay();
+    virtual UInt_t GetCFDFraction();
+    virtual UInt_t GetCFDThreshold();
+    virtual UInt_t GetCollectionTime();
+    virtual UInt_t GetDataDelay();
+    virtual UInt_t GetDataLength();
+    virtual Bool_t IsDebugModeOn();
+    virtual Bool_t IsEnabled();
+    virtual UInt_t GetExternalTriggerLength();
+    virtual UInt_t GetExternalWindow();
+    virtual UInt_t GetIntegrationTime();
+    virtual UInt_t GetLEDThreshold();
+    virtual UInt_t GetNoiseWindow();
+    virtual Bool_t IsPileUpEnabled();
+    virtual UInt_t GetPileUpWindow();
+    virtual EGretaPolarity GetPolarity();
+    virtual EGretaTriggerMode GetTriggerMode();
+
+
     //Error checking:
     virtual bool IsValid();
     virtual void DumpBufferHeader();
