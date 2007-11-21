@@ -46,7 +46,7 @@ void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
     ORLog(kError) << runCtrlPath << " not found!" << endl;
     return;
   }
-  if (ORLogger::GetSeverity() <= ORLogger::kDebug) {
+  if (ORLogger::GetSeverity() <= ORLogger::kDebug && fHardwareDict) {
     ORXmlPlistString xmlString;
     xmlString.LoadDictionary(fHardwareDict);
     ORLog(kDebug) << std::endl << xmlString << std::endl;

@@ -19,6 +19,7 @@ class ORUtilityProcessor : public ORDataProcessor
     // ORDataProcessor
     virtual EReturnCode ProcessDataRecord(UInt_t*) { return kSuccess; }
     virtual void SetDataId() {}
+    virtual void SetDecoderDictionary() {}
 
   private:
     // fDataDecoder is NULL by definition here and should not be accessed 
