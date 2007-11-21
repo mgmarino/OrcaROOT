@@ -15,9 +15,9 @@ bool ORAugerFLTWaveformDecoder::SetDataRecord(UInt_t* dataRecord)
   fDataRecord = dataRecord;
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
-  if(!IsValid() || LengthOf(fDataRecord) - 2 != kBufHeadLen + kWaveformLength/2) {
+  if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + kWaveformLength/2) {
     ORLog(kDebug) << "SetDataRecord(): data record is not valid" << endl;
-    ORLog(kDebug) << "LengthOf(data record) - 2 : " << LengthOf(fDataRecord) - 2
+    ORLog(kDebug) << "LengthOf(data record) : " << LengthOf(fDataRecord)
       << " kBufHeadLen + kWaveformLength/2: " << kBufHeadLen + kWaveformLength/2 << endl;
     fDataRecord = NULL;
     return false;

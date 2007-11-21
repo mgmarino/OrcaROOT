@@ -78,6 +78,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   
     ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << endl;
     SetDataId();
+    SetDecoderDictionary();
   
     ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
     while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
