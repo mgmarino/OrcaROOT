@@ -3,12 +3,12 @@
 #ifndef _ORDGF4cEventDecoder_hh_
 #define _ORDGF4cEventDecoder_hh_
 
-#include "ORVDataDecoder.hh"
+#include "ORVDigitizerDecoder.hh"
 #include <vector>
 #include <map>
 using namespace std;
 
-class ORDGF4cEventDecoder: public ORVDataDecoder
+class ORDGF4cEventDecoder: public ORVDigitizerDecoder
 {
   public:
     ORDGF4cEventDecoder();
@@ -50,11 +50,13 @@ class ORDGF4cEventDecoder: public ORVDataDecoder
     virtual inline bool HasWaveformData() { return IsListModeAnyStdC1(); }
 
     //event functions:
-    virtual inline size_t GetEventLen(size_t iEvent);      
-    virtual inline size_t GetNEvents();
-    virtual inline UInt_t GetEventTime(size_t iEvent);
-    virtual inline UShort_t GetEventTimeLo(size_t iEvent);
-    virtual inline UShort_t GetEventTimeHi(size_t iEvent);
+      /* These are DGF events!  That is, an event can have many channels. */
+      /* These are not the same as ORVDigitizerDecoder events. */
+    virtual inline size_t GetDGFEventLen(size_t iEvent);      
+    virtual inline size_t GetDGFNEvents();
+    virtual inline UInt_t GetDGFEventTime(size_t iEvent);
+    virtual inline UShort_t GetDGFEventTimeLo(size_t iEvent);
+    virtual inline UShort_t GetDGFEventTimeHi(size_t iEvent);
 
     //channel functions:
     virtual size_t GetChanHeadLen();   
@@ -93,6 +95,18 @@ class ORDGF4cEventDecoder: public ORVDataDecoder
     virtual double GetVOffset(size_t channel);
     virtual UInt_t GetXWait(size_t channel);
 
+    /* Functions satisfying the ORVDigitizerDecoder interface. */
+    virtual inline double GetSamplingFrequency() {return .04;}
+    virtual inline UShort_t GetBitResolution() {return 14;}
+    virtual inline size_t GetNumberOfEvents() {return fEventVector.size();}
+    virtual inline ULong64_t GetEventTime(size_t event); 
+    virtual inline UInt_t GetEventEnergy(size_t event); 
+    virtual inline UShort_t GetEventChannel(size_t event); 
+    virtual inline size_t GetEventWaveformLength(size_t event); 
+    virtual inline void* GetEventWaveformPointer(size_t event); 
+    
+
+
     //Error checking:
     virtual bool IsValid();
     virtual bool PtrIsInDataRecord(UShort_t* ptr, bool verbose = true); 
@@ -105,10 +119,10 @@ class ORDGF4cEventDecoder: public ORVDataDecoder
     virtual size_t FillChannelPtrs(size_t iEvent);
     virtual inline const UShort_t* GetChannelPointer(size_t iEvent, size_t iChannel); 
 
-    UInt_t* fDataRecord;
     vector<UShort_t*> fEventPtrs;				
     map< UShort_t*, vector<UShort_t*> > fChannelPtrs;
     map< UShort_t*, vector<size_t> > fChannelNumbers;
+    vector< pair<size_t, size_t> > fEventVector;
 };
 
 
@@ -213,29 +227,29 @@ inline bool ORDGF4cEventDecoder::IsListModeAnyC3()
 
 //event functions: ***********************************************************************
 
-inline size_t ORDGF4cEventDecoder::GetEventLen(size_t iEvent)  
+inline size_t ORDGF4cEventDecoder::GetDGFEventLen(size_t iEvent)  
 //returns length of iEvent event, including header
 {
-  if (iEvent < GetNEvents() - 1) return fEventPtrs[iEvent + 1] - fEventPtrs[iEvent];
+  if (iEvent < GetDGFNEvents() - 1) return fEventPtrs[iEvent + 1] - fEventPtrs[iEvent];
   return fEventPtrs[0] + GetBufNData() - kBufHeadLen - fEventPtrs[iEvent];
 }
 
-inline UInt_t ORDGF4cEventDecoder::GetEventTime(size_t iEvent)
+inline UInt_t ORDGF4cEventDecoder::GetDGFEventTime(size_t iEvent)
 //returns event start time
 {
-  return (UInt_t) (BitConcat(GetEventTimeLo(iEvent),
-    GetEventTimeHi(iEvent)));  
+  return (UInt_t) (BitConcat(GetDGFEventTimeLo(iEvent),
+    GetDGFEventTimeHi(iEvent)));  
 } 
 
-inline size_t ORDGF4cEventDecoder::GetNEvents() { return fEventPtrs.size(); }
+inline size_t ORDGF4cEventDecoder::GetDGFNEvents() { return fEventPtrs.size(); }
 
-inline UShort_t ORDGF4cEventDecoder::GetEventTimeLo(size_t iEvent)
+inline UShort_t ORDGF4cEventDecoder::GetDGFEventTimeLo(size_t iEvent)
 //returns low word of event time
 { 
   return fEventPtrs[iEvent][2]; 
 }
 
-inline UShort_t ORDGF4cEventDecoder::GetEventTimeHi(size_t iEvent)
+inline UShort_t ORDGF4cEventDecoder::GetDGFEventTimeHi(size_t iEvent)
 //returns high word of event time
 { 
   return fEventPtrs[iEvent][1]; 
@@ -272,6 +286,33 @@ inline const UShort_t* ORDGF4cEventDecoder::GetWaveformDataPointer(size_t iEvent
 {
   return GetChannelPointer(iEvent, iChannel) + GetChanHeadLen();;
 }
+
+inline ULong64_t ORDGF4cEventDecoder::GetEventTime(size_t event) 
+{
+  return (ULong64_t) GetDGFEventTime(fEventVector[event].first);
+}
+
+inline UInt_t ORDGF4cEventDecoder::GetEventEnergy(size_t event) 
+{
+  return GetChanEnergy(fEventVector[event].first, fEventVector[event].second);
+}
+
+inline UShort_t ORDGF4cEventDecoder::GetEventChannel(size_t event) 
+{
+  return GetChannelNumber(fEventVector[event].first, fEventVector[event].second);
+}
+
+inline size_t ORDGF4cEventDecoder::GetEventWaveformLength(size_t event) 
+{
+  return GetWaveformLen(fEventVector[event].first, fEventVector[event].second);
+}
+
+inline void* ORDGF4cEventDecoder::GetEventWaveformPointer(size_t event) 
+{
+  return (void*) GetWaveformDataPointer(fEventVector[event].first,
+    fEventVector[event].second);
+
+} 
 
 #endif
 

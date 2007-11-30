@@ -82,6 +82,7 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
 
     /* Adhering to ORVDigitizerDecoder interface. */
     virtual double GetSamplingFrequency();
+    virtual UShort_t GetBitResolution() {return 12;}
     virtual size_t GetNumberOfEvents() {return 1;}
     virtual ULong64_t GetEventTime(size_t /*event*/) { return GetTimeStamp(); }
     virtual UInt_t GetEventEnergy(size_t /*event*/) { return 0; }
@@ -92,8 +93,6 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     virtual void* GetEventWaveformPointer(size_t /*event*/) 
       { return (void*) GetWaveformDataPointer();}
 
-  protected:
-    UInt_t* fDataRecord;
 };
 
 //inline functions: ************************************************************************

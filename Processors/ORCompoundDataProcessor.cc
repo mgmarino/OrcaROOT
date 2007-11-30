@@ -18,13 +18,6 @@ void ORCompoundDataProcessor::SetDataId()
   }
 }
 
-void ORCompoundDataProcessor::SetDecoderDictionary()
-{
-  for (size_t i=0; i<fDataProcessors.size(); i++) {
-    fDataProcessors[i]->SetDecoderDictionary();
-  }
-}
-
 ORDataProcessor::EReturnCode ORCompoundDataProcessor::StartProcessing()
 {
   for (size_t i=0; i<fDataProcessors.size(); i++) {

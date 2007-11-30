@@ -39,7 +39,6 @@ void ORDataProcessor::SetDecoderDictionary()
   ORHardwareDictionary* hardwareDict = fgRunContext.GetHardwareDict();
   if (!hardwareDict) {
     ORLog(kError) << "Hardware dictionary not found!  Some info may not be available" << std::endl; 
-    fDataDecoder->SetDecoderDictionary(NULL);
     return;
   }
   fDataDecoder->SetDecoderDictionary(

@@ -34,6 +34,7 @@ bool ORDGF4cEventDecoder::SetDataRecord(UInt_t* dataRecord)
   fEventPtrs.clear();
   fChannelPtrs.clear();
   fChannelNumbers.clear();
+  fEventVector.clear();
   
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
@@ -44,9 +45,15 @@ bool ORDGF4cEventDecoder::SetDataRecord(UInt_t* dataRecord)
   size_t i = 0;
   fEventPtrs.push_back(((UShort_t*) (fDataRecord + 2)) + kBufHeadLen);
   size_t length = FillChannelPtrs(i);
+  for (size_t j=0;j<GetNChannels(i);j++) {
+    fEventVector.push_back(pair<size_t, size_t>(i, j));
+  }
   for(i = 1; PtrIsInDataRecord(fEventPtrs[i-1]+length, false); i++) { 
     fEventPtrs.push_back(fEventPtrs[i-1]+length);
     length = FillChannelPtrs(i);
+    for (size_t j=0;j<GetNChannels(i);j++) {
+      fEventVector.push_back(pair<size_t, size_t>(i, j));
+    }
   }
   if(!IsValid()) {
     ORLog(kDebug) << "SetDataRecord(): data record is not valid" << endl;
@@ -350,7 +357,7 @@ bool ORDGF4cEventDecoder::IsValid()
   ORLog(kDebug) << "  Buffer length matches file length" << endl;
   //check sum of event lengths matches buffer size:
   size_t length = kBufHeadLen;
-  for (size_t i = 0; i < GetNEvents(); i++) length += GetEventLen(i);
+  for (size_t i = 0; i < GetDGFNEvents(); i++) length += GetDGFEventLen(i);
   if(length != GetBufNData()) {
     ORLog(kError) << "The buffer is of length " << GetBufNData() 
                   << " but the sum of event lengths are of length " << length << endl; 
@@ -359,11 +366,11 @@ bool ORDGF4cEventDecoder::IsValid()
   }
   ORLog(kDebug) << "  Sum of event lengths matches buffer size" << endl;
   //check channel lengths + event header length equals event length for each event:
-  for (size_t i = 0; i < GetNEvents(); i++) { 
+  for (size_t i = 0; i < GetDGFNEvents(); i++) { 
     length = kEventHeadLen;
     for (size_t k = 0; k < GetNChannels(i); k++) length += GetChanNData(i,k);
-    if (length  != GetEventLen(i)) { 
-      ORLog(kError) << "Event " << i << " has length " << GetEventLen(i) 
+    if (length  != GetDGFEventLen(i)) { 
+      ORLog(kError) << "Event " << i << " has length " << GetDGFEventLen(i) 
                     << " but its header + channels are of length " << length << endl;
       DumpBufferHeader();
       return false;
@@ -382,7 +389,7 @@ void ORDGF4cEventDecoder::DumpBufferHeader()
     << "BufModNum: " << GetBufModNum() << endl
     << "RunTask: " << GetRunTask() << endl
     << "BufTime: " << GetBufTime() << endl
-    << "Total Events: " << GetNEvents() << endl;
+    << "Total Events: " << GetDGFNEvents() << endl;
   
   if(fDataRecord)
   {
@@ -424,11 +431,11 @@ void ORDGF4cEventDecoder::Dump(UInt_t* dataRecord) //debugging
 	  
 	  cout << "  Event functions: " << endl	  
           << "    Event " << iEvent << " has " << GetNChannels(iEvent) << " channels and " 
-            << GetEventLen(iEvent) << " words" << endl
+            << GetDGFEventLen(iEvent) << " words" << endl
 	  << "    The ith active channel, where i = " << iChannel << " is channel number " 
 	    << GetChannelNumber(iEvent, iChannel) << endl
-	  << "    Event time: " << GetEventTime(iEvent) << endl 
-	  << "    There are " << GetNEvents() << " events" << endl  
+	  << "    Event time: " << GetDGFEventTime(iEvent) << endl 
+	  << "    There are " << GetDGFNEvents() << " events" << endl  
 	  
 	  << "  Channel functions: " << endl  
           << "    Channel " << iChannel << " in event "   

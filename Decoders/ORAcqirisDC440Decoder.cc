@@ -40,8 +40,7 @@ bool ORAcqirisDC440Decoder::SetDataRecord(UInt_t* dataRecord)
 
 double ORAcqirisDC440Decoder::GetSamplingFrequency()
 {
-  //FixME this needs to be changed
-  return 1.;
+  return 1./GetSampleInterval();
 }
 
 size_t ORAcqirisDC440Decoder::CopyWaveformData(Short_t* waveform, size_t len)
@@ -101,7 +100,8 @@ UInt_t ORAcqirisDC440Decoder::GetNumberOfSamples()
 
 double ORAcqirisDC440Decoder::GetSampleInterval()
 {
-  return GetRealValueFromKey("sampleInterval", CrateOf(), CardOf());
+  /* sampleInterval is in microseconds, but we want it in nano seconds. */
+  return 1e3*GetRealValueFromKey("sampleInterval", CrateOf(), CardOf());
 }
 
 ORAcqirisDC440Decoder::EAcqirisDC440TriggerCoupling ORAcqirisDC440Decoder::GetTriggerCoupling()

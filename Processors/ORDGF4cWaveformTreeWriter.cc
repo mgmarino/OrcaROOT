@@ -41,8 +41,8 @@ ORDataProcessor::EReturnCode ORDGF4cWaveformTreeWriter::ProcessMyDataRecord(UInt
   // the event decoder could run into a problem, but this might not
   // ruin the rest of the run.
   if(!fEventDecoder->SetDataRecord(record)) return kFailure;
-  ORLog(kDebug) << "Found events: " << fEventDecoder->GetNEvents() << endl;
-  for (size_t i = 0; i < fEventDecoder->GetNEvents(); i++) 
+  ORLog(kDebug) << "Found events: " << fEventDecoder->GetDGFNEvents() << endl;
+  for (size_t i = 0; i < fEventDecoder->GetDGFNEvents(); i++) 
   {
     for (size_t k = 0; k < fEventDecoder->GetNChannels(i); k++) 
     {
@@ -60,7 +60,7 @@ ORDataProcessor::EReturnCode ORDGF4cWaveformTreeWriter::ProcessMyDataRecord(UInt
           << k << "-"
           << fEventDecoder->GetChanEnergy(i,k) << endl;
       }
-    fEventTime = fEventDecoder->GetEventTime(i);
+    fEventTime = fEventDecoder->GetDGFEventTime(i);
     fCrate = fEventDecoder->CrateOf();
     fCard = fEventDecoder->CardOf();
     fChannel = k;

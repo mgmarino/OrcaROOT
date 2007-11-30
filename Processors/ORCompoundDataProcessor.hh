@@ -15,7 +15,6 @@ class ORCompoundDataProcessor : public ORUtilityProcessor
     virtual ~ORCompoundDataProcessor() {}
 
     virtual void SetDataId();
-    virtual void SetDecoderDictionary();
 
     virtual EReturnCode StartProcessing(); 
     virtual EReturnCode StartRun();

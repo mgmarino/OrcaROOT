@@ -3,12 +3,12 @@
 #ifndef _ORAugerFLTWaveformDecoder_hh_
 #define _ORAugerFLTWaveformDecoder_hh_
 
-#include "ORVDataDecoder.hh"
+#include "ORVDigitizerDecoder.hh"
 #include <vector>
 #include <map>
 using namespace std;
 
-class ORAugerFLTWaveformDecoder: public ORVDataDecoder
+class ORAugerFLTWaveformDecoder: public ORVDigitizerDecoder
 {
   public:
     ORAugerFLTWaveformDecoder();
@@ -19,8 +19,8 @@ class ORAugerFLTWaveformDecoder: public ORVDataDecoder
     
     virtual std::string GetDataObjectPath() { return "ORAugerFLTModel:AugerFLTWaveForm"; }  
     virtual bool SetDataRecord(UInt_t* record);
-    virtual inline UShort_t CrateOf();
-    virtual inline UShort_t CardOf();
+    virtual inline UInt_t CrateOf();
+    virtual inline UInt_t CardOf();
        
     //Functions that return data from buffer header:
     virtual inline UInt_t GetSec();
@@ -34,6 +34,19 @@ class ORAugerFLTWaveformDecoder: public ORVDataDecoder
     virtual inline size_t GetWaveformLen() {return kWaveformLength;} 
     virtual inline const UShort_t* GetWaveformDataPointer();
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
+
+    /* Satisfying ORVDigitizerDecoder interface. */
+    virtual double GetSamplingFrequency() {return .01;}
+    virtual UShort_t GetBitResolution() {return 14;} 
+    virtual size_t GetNumberOfEvents() {return 1;}
+    virtual ULong64_t GetEventTime(size_t /*event*/) {return 0;}
+      /*This card doesn't store event time information. */
+    virtual UInt_t GetEventEnergy(size_t /*event*/) {return GetEnergy();}
+    virtual UShort_t GetEventChannel(size_t /*event*/) {return GetChannel();}
+    virtual size_t GetEventWaveformLength(size_t /*event*/) 
+      {return GetWaveformLen();}
+    virtual void* GetEventWaveformPointer(size_t /*event*/) 
+      {return (void*)GetWaveformDataPointer();} 
  
     //Error checking:
     virtual bool IsValid();
@@ -42,20 +55,18 @@ class ORAugerFLTWaveformDecoder: public ORVDataDecoder
     //debugging:
     void Dump(UInt_t* dataRecord);
     
-  protected:
-    UInt_t* fDataRecord;
 };
 
 //inline functions: ************************************************************************
 
-inline UShort_t ORAugerFLTWaveformDecoder::CrateOf() //returns crate # of card
+inline UInt_t ORAugerFLTWaveformDecoder::CrateOf() //returns crate # of card
 { 
-  return (UShort_t)((fDataRecord[1] & 0x01e00000) >> 21); 
+  return (UInt_t)((fDataRecord[1] & 0x01e00000) >> 21); 
 }
 
-inline UShort_t ORAugerFLTWaveformDecoder::CardOf()
+inline UInt_t ORAugerFLTWaveformDecoder::CardOf()
 { 
-  return (UShort_t)((fDataRecord[1] & 0x001f0000) >> 16); 
+  return (UInt_t)((fDataRecord[1] & 0x001f0000) >> 16); 
 }
 
 

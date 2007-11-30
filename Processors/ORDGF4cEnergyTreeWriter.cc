@@ -35,20 +35,20 @@ ORDataProcessor::EReturnCode ORDGF4cEnergyTreeWriter::InitializeBranches()
 ORDataProcessor::EReturnCode ORDGF4cEnergyTreeWriter::ProcessMyDataRecord(UInt_t* record)
 {
   fEventDecoder->SetDataRecord(record);
-  for (size_t i = 0; i < fEventDecoder->GetNEvents(); i++) {
+  for (size_t i = 0; i < fEventDecoder->GetDGFNEvents(); i++) {
     for (size_t k = 0; k < fEventDecoder->GetNChannels(i); k++) {
       // check severity to improve speed:
       if (ORLogger::GetSeverity() >= ORLogger::kDebug) { 
         ORLog(kDebug) << "ProcessMyDataRecord(): " 
                       << "event-time-crate-card-channel-energy = "
                       << i << "-" 
-                      << fEventDecoder->GetEventTime(i) << "-"
+                      << fEventDecoder->GetDGFEventTime(i) << "-"
                       << fEventDecoder->CrateOf() << "-"
                       << fEventDecoder->CardOf() << "-" 
                       << k << "-"
                       << fEventDecoder->GetChanEnergy(i,k) << endl;
       }
-      fEventTime = fEventDecoder->GetEventTime(i);
+      fEventTime = fEventDecoder->GetDGFEventTime(i);
       fCrate = fEventDecoder->CrateOf();
       fCard = fEventDecoder->CardOf();
       fChannel = k;
