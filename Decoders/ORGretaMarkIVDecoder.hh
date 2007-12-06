@@ -44,7 +44,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
                              kSlaveHeaderLen = 4, 
                              kMarkIVBufHeadLen     = 7};
     
-    virtual std::string GetDataObjectPath() { return "ORGretinaMarkIVModel:Gretina"; }  
+    virtual std::string GetDataObjectPath() { return "ORGretina4Model:Gretina4"; }  
     
     virtual bool SetDataRecord(UInt_t* record);
        
