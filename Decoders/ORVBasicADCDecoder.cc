@@ -9,15 +9,18 @@ using namespace std;
 
 void ORVBasicADCDecoder::Swap(UInt_t* record)
 {
-  ORUtils::Swap(record[1]); 
+  if (IsShort(record)) return;
+  
   /* Swap so we can tell if this is a single or double word timestamp.*/
+  /*
+  ORUtils::Swap(record[1]); 
   size_t startSwapFrom = 4;
   ORUtils::Swap(record[2]);
   ORUtils::Swap(record[3]);
   UInt_t dummy = record[2];
   record[2] = record[3];
-  record[3] = dummy;
-  for (size_t i=startSwapFrom;i<LengthOf(record);i++) {
+  record[3] = dummy;*/
+  for (size_t i=1;i<LengthOf(record);i++) {
     ORUtils::Swap(record[i]);
   }
 }

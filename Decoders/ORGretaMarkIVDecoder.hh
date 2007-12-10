@@ -45,6 +45,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
                              kMarkIVBufHeadLen     = 7};
     
     virtual std::string GetDataObjectPath() { return "ORGretina4Model:Gretina4"; }  
+    virtual std::string GetDictionaryObjectPath() { return "ORGretina4Model"; }  
     
     virtual bool SetDataRecord(UInt_t* record);
        
@@ -60,6 +61,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
     virtual inline UShort_t GetMasterLowResEnergy();
 
     // Functions that return data from Slave Header
+    virtual inline Bool_t HasSlaverHeader() {return fHasSlaverHeader;}
     virtual inline UShort_t GetSlaveBoardID();
     virtual inline UShort_t GetSlaveHeaderLength();
     virtual inline UShort_t GetSlaveFB_LEDLow();
@@ -84,6 +86,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
     /* GetRecordOffset() returns how many words the record is offset from the 
        beginning.  This is useful when additional headers are added. */
     bool fHasMasterHeader;
+    bool fHasSlaverHeader;
     size_t fOffset;
 };
 
