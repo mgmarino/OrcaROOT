@@ -41,7 +41,12 @@ void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
     delete fHardwareDict;
     fHardwareDict = NULL;
   }
-  ORDictionary* runCtrlDict = (ORDictionary*) header->LookUp(runCtrlPath);
+  ORDictValueA* dataChain = (ORDictValueA*) header->LookUp(runCtrlPath);
+  ORDictionary* runCtrlDict = 0;
+  for (size_t i=0; i< dataChain->GetNValues();i++) {
+    runCtrlDict = (ORDictionary*)((ORDictionary*)dataChain->At(i))->LookUp("Run Control");
+    if (runCtrlDict) break;
+  }
   if(!runCtrlDict) {
     ORLog(kError) << runCtrlPath << " not found!" << endl;
     return;

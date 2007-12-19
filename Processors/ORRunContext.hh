@@ -20,7 +20,7 @@ class ORRunContext
     virtual bool IsQuickStartRun() const { return fIsQuickStartRun; }
     virtual int GetRunType() const { return fRunType; }
     virtual int GetStartTime() const { return fStartTime; }
-    virtual void LoadHeader(ORHeader* header, const char* runCtrlPath = "Run Control");
+    virtual void LoadHeader(ORHeader* header, const char* runCtrlPath = "ObjectInfo:DataChain");
     virtual void LoadRunStartRecord(UInt_t* record);
     virtual ORHeader* GetHeader() { return fHeader; }
     virtual ORHardwareDictionary* GetHardwareDict() { return fHardwareDict; }

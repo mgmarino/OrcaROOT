@@ -25,8 +25,6 @@ class ORHardwareDictionary : public ORDictionary
 
   protected:
    std::vector<std::string> fVectorOfBaseDicts; 
-   std::map<std::pair<std::string,int>,std::pair<int,std::vector<int> > > fCrateMap;
-   std::string fAppendString;
 };
 
 #endif
