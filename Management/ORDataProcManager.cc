@@ -74,43 +74,47 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   
   if(continueProcessing) {
     ORLog(kDebug) << "ProcessRun(): loading dictionary..." << endl;
-    fgRunContext.LoadHeader(fHeaderProcessor.GetHeader());
-  
-    ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << endl;
-    SetDataId();
-    SetDecoderDictionary();
-  
-    ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
-    while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
-      fgRunContext.ResetRecordFlags();
-      fRunDataProcessor->ProcessDataRecord(buffer);
-  
-      if (fgRunContext.GetState() <= ORRunContext::kStarting) {
-        retCode = StartRun();
-        if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
-        if (retCode >= kAlarm) return kAlarm;
-        fRunDataProcessor->OnStartRunComplete(); 
+    if (!fgRunContext.LoadHeader(fHeaderProcessor.GetHeader())) {
+      /* We have encountered a problem loading the header file. */
+      /* Kill Run, try going to the next run. */
+      ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << endl;
+    } else {
+      ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << endl;
+      SetDataId();
+      SetDecoderDictionary();
+      
+      ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
+      while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
+        fgRunContext.ResetRecordFlags();
+        fRunDataProcessor->ProcessDataRecord(buffer);
+      
+        if (fgRunContext.GetState() <= ORRunContext::kStarting) {
+          retCode = StartRun();
+          if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
+          if (retCode >= kAlarm) return kAlarm;
+          fRunDataProcessor->OnStartRunComplete(); 
+        }
+      
+        // let all processors process the data record
+        if (fDoProcessRun) {
+          if (ProcessDataRecord(buffer) >= kAlarm) return kAlarm;
+        }
+      
+        if (fgRunContext.GetState() == ORRunContext::kStopping) {
+          break;
+        }
+      
+        if (ORProcessStopper::StopNow()) {
+          ORLog(kTrace) << "ORProcessStopper stopped data processing..." << endl;
+          break;
+        }
       }
-  
-      // let all processors process the data record
-      if (fDoProcessRun) {
-        if (ProcessDataRecord(buffer) >= kAlarm) return kAlarm;
-      }
-  
-      if (fgRunContext.GetState() == ORRunContext::kStopping) {
-        break;
-      }
-  
-      if (ORProcessStopper::StopNow()) {
-        ORLog(kTrace) << "ORProcessStopper stopped data processing..." << endl;
-        break;
-      }
+      ORLog(kDebug) << "ProcessRun(): finished reading records..." << endl;
+      
+      retCode = EndRun();
+      if (retCode >= kAlarm) return kAlarm;
+      fRunDataProcessor->OnEndRunComplete();
     }
-    ORLog(kDebug) << "ProcessRun(): finished reading records..." << endl;
-  
-    retCode = EndRun();
-    if (retCode >= kAlarm) return kAlarm;
-    fRunDataProcessor->OnEndRunComplete();
   }
 
   ORLog(kDebug) << "ProcessRun(): calling fReader->Close()..." << endl;

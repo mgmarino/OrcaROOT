@@ -27,11 +27,11 @@ ORRunContext::~ORRunContext()
   if (fHardwareDict) delete fHardwareDict;
 }
 
-void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
+bool ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
 {
   if (!header) {
     ORLog(kError) << "Header is NULL!" << std::endl;
-    return;
+    return false;
   }
   fHeader = header;
   if (fHardwareDict) delete fHardwareDict;
@@ -43,15 +43,20 @@ void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
   }
   ORDictValueA* dataChain = (ORDictValueA*) header->LookUp(runCtrlPath);
   ORDictionary* runCtrlDict = 0;
-  for (size_t i=0; i< dataChain->GetNValues();i++) {
-    runCtrlDict = (ORDictionary*)((ORDictionary*)dataChain->At(i))->LookUp("Run Control");
-    if (runCtrlDict) break;
+  if (dataChain) { 
+    for (size_t i=0; i< dataChain->GetNValues();i++) {
+      runCtrlDict = (ORDictionary*)((ORDictionary*)dataChain->At(i))->LookUp("Run Control");
+      if (runCtrlDict) break;
+    }
+  } else {
+    ORLog(kWarning) << "You are using older version Orca file.  Please update Orca as future support will not be guaranteed." << endl; 
+    runCtrlDict = (ORDictionary*) header->LookUp("Run Control");
   }
   if(!runCtrlDict) {
     ORLog(kError) << runCtrlPath << " not found!" << endl;
-    return;
+    return false;
   }
-  if (ORLogger::GetSeverity() <= ORLogger::kDebug) {
+  if (ORLogger::GetSeverity() <= ORLogger::kDebug && fHardwareDict) {
     ORXmlPlistString xmlString;
     xmlString.LoadDictionary(fHardwareDict);
     ORLog(kDebug) << std::endl << xmlString << std::endl;
@@ -61,6 +66,7 @@ void ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
   fIsQuickStartRun = ((ORDictValueB*) runCtrlDict->LookUp("quickStart"))->GetB();
   fRunType = ((ORDictValueI*) runCtrlDict->LookUp("runType"))->GetI();
   fStartTime = ((ORDictValueI*) runCtrlDict->LookUp("startTime"))->GetI();
+  return true;
 }
 
 void ORRunContext::LoadRunStartRecord(UInt_t* record)
