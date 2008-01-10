@@ -55,11 +55,11 @@ bool ORXmlPlist::LoadXmlPlist(const char* fullHeaderAsString, size_t lengthOfBuf
   TDOMParser domParser;
   domParser.ParseBuffer(fullHeaderAsString, lengthOfBuffer);
   TXMLDocument* doc = domParser.GetXMLDocument();
-  if(fRawXML.Data() != fullHeaderAsString && ((size_t)fRawXML.Length()) != lengthOfBuffer) { 
+  if(((size_t)fRawXML.Length()) != lengthOfBuffer) { 
     //we have to copy to fRawXML.  Making sure we're not copying again.
     fRawXML.Resize(lengthOfBuffer);
-    fRawXML.Replace(0, lengthOfBuffer, fullHeaderAsString, lengthOfBuffer);
   }
+  fRawXML.Replace(0, lengthOfBuffer, fullHeaderAsString, lengthOfBuffer);
   if (doc == NULL) {
     ORLog(kError) << "LoadXmlPlist(): couldn't parse buffer " 
       << endl;
