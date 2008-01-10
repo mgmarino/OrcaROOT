@@ -137,10 +137,10 @@ int main(int argc, char** argv)
   ORShaperShaperDecoder shaperShaperDecoder;
   ORTrig4ChanDecoder trig4ChanDecoder; 
 
-   ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "shaperTree");
+   ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
    dataProcManager.AddProcessor(&shaperShaperTreeWriter);
 
-  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "triggerTree");
+  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
   dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
 
    ORHistWriter shaperHistWriter(&shaperShaperDecoder);

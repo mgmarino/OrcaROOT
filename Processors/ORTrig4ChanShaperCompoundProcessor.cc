@@ -6,10 +6,10 @@ ORTrig4ChanShaperCompoundProcessor::ORTrig4ChanShaperCompoundProcessor()
 {
   SetComponentBreakReturnsFailure();
   
-  fShaperTreeWriter = new ORBasicTreeWriter(&fShaperDecoder, "comShaperTree");
+  fShaperTreeWriter = new ORBasicTreeWriter(&fShaperDecoder, "shaperTree");
   AddProcessor(fShaperTreeWriter);
   
-  fTriggerTreeWriter = new ORBasicTreeWriter(&fTriggerDecoder, "comTriggerTree");
+  fTriggerTreeWriter = new ORBasicTreeWriter(&fTriggerDecoder, "triggerTree");
   AddProcessor(fTriggerTreeWriter);
   
   fLastTriggerRecordPtr = NULL;
