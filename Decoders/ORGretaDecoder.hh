@@ -28,8 +28,6 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     //virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
-    virtual inline UInt_t CrateOf();
-    virtual inline UInt_t CardOf();
     virtual inline ULong64_t BitConcat(UShort_t lo, UShort_t mid, UShort_t hi = 0x0);
        
     //Functions that return data from buffer header:
@@ -111,16 +109,6 @@ class ORGretaDecoder: public ORVDigitizerDecoder
 };
 
 //inline functions: ************************************************************************
-
-inline UInt_t ORGretaDecoder::CrateOf() //returns crate # of Greta card
-{ 
-  return (fDataRecord[1] & 0x01e00000) >> 21; 
-}
-
-inline UInt_t ORGretaDecoder::CardOf()
-{ 
-  return (fDataRecord[1] & 0x001f0000) >> 16; 
-}
 
 inline ULong64_t ORGretaDecoder::BitConcat(UShort_t lo, UShort_t mid, UShort_t hi)
 //Concatenates 16 bit high, middle, and low words to form a ULong64_t

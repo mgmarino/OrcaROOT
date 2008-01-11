@@ -18,8 +18,8 @@ class ORVDigitizerDecoder: public ORVDataDecoder
          Default to 16-bit.*/
     virtual inline UShort_t GetBitResolution() = 0;
     virtual bool SetDataRecord(UInt_t* dataRecord) = 0;
-    virtual UInt_t CrateOf() = 0;
-    virtual UInt_t CardOf() = 0;
+    virtual inline UInt_t CrateOf();
+    virtual inline UInt_t CardOf();
 
     /* Event Functions */
     virtual size_t GetNumberOfEvents() = 0;
@@ -41,4 +41,15 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     
 
 };
+inline UInt_t ORVDigitizerDecoder::CrateOf() //returns crate # of Greta card
+{ 
+  return (fDataRecord[1] & 0x01e00000) >> 21; 
+}
+
+inline UInt_t ORVDigitizerDecoder::CardOf()
+{ 
+  return (fDataRecord[1] & 0x001f0000) >> 16; 
+}
+
+
 #endif

@@ -19,8 +19,6 @@ class ORAugerFLTWaveformDecoder: public ORVDigitizerDecoder
     
     virtual std::string GetDataObjectPath() { return "ORAugerFLTModel:AugerFLTWaveForm"; }  
     virtual bool SetDataRecord(UInt_t* record);
-    virtual inline UInt_t CrateOf();
-    virtual inline UInt_t CardOf();
        
     //Functions that return data from buffer header:
     virtual inline UInt_t GetSec();
@@ -58,17 +56,6 @@ class ORAugerFLTWaveformDecoder: public ORVDigitizerDecoder
 };
 
 //inline functions: ************************************************************************
-
-inline UInt_t ORAugerFLTWaveformDecoder::CrateOf() //returns crate # of card
-{ 
-  return (UInt_t)((fDataRecord[1] & 0x01e00000) >> 21); 
-}
-
-inline UInt_t ORAugerFLTWaveformDecoder::CardOf()
-{ 
-  return (UInt_t)((fDataRecord[1] & 0x001f0000) >> 16); 
-}
-
 
 inline UInt_t ORAugerFLTWaveformDecoder::GetSec()
 {
