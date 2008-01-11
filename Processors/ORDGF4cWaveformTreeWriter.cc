@@ -63,7 +63,7 @@ ORDataProcessor::EReturnCode ORDGF4cWaveformTreeWriter::ProcessMyDataRecord(UInt
     fEventTime = fEventDecoder->GetDGFEventTime(i);
     fCrate = fEventDecoder->CrateOf();
     fCard = fEventDecoder->CardOf();
-    fChannel = k;
+    fChannel = fEventDecoder->GetChannelNumber(i,k);
     fEnergy = fEventDecoder->GetChanEnergy(i,k);
     fWaveformLength = (Int_t) fEventDecoder->CopyWaveformData(fWaveform, kMaxWFLength, i, k);
     fTree->Fill();
