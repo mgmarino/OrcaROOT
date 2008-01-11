@@ -15,10 +15,6 @@ class ORVBasicADCDecoder : public ORVHistDecoder, public ORVBasicRDTreeDecoder, 
 
     virtual void Swap(UInt_t* dataRecord);
     /* Handling the correct swapping for this record. */
-    virtual inline UInt_t CrateOf(UInt_t* record)
-      { return IsShort(record) ? (record[0] & 0x01e00000) >> 21 : (record[1] & 0x01e00000) >> 21; }
-    virtual inline UInt_t CardOf(UInt_t* record)
-      { return IsShort(record) ? (record[0] & 0x001f0000) >> 16 : (record[1] & 0x001f0000) >> 16; }
     virtual inline UInt_t ChannelOf(UInt_t* record)
       { return IsShort(record) ? (record[0] & 0x0000f000) >> 12 : (record[1] & 0x0000f000) >> 12; }
     virtual inline UInt_t ADCValueOf(UInt_t* record)

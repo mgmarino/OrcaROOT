@@ -16,10 +16,6 @@ class ORAD3511ADCDecoder : public ORVHistDecoder, public ORVBasicRDTreeDecoder
     /* Handling the correct swapping for this record. */
     virtual inline bool HasReferenceDate(UInt_t* record)
       { return bool(record[1] & 0x02000000); }
-    virtual inline UInt_t CrateOf(UInt_t* record)
-      { return (record[1] & 0x01e00000) >> 21; }
-    virtual inline UInt_t CardOf(UInt_t* record)
-      { return (record[1] & 0x001f0000) >> 16; }
     virtual inline size_t GetNADCValues(UInt_t* record)
       { return HasReferenceDate(record) ? LengthOf(record) - 4 : LengthOf(record) - 2; }
     virtual inline UInt_t IthADCValueOf(UInt_t* record, size_t i)

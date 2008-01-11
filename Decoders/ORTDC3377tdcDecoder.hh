@@ -15,10 +15,6 @@ class ORTDC3377tdcDecoder : public ORVBasicRDTreeDecoder
     /* Handling the correct swapping for this record. */
     virtual inline bool IsDoubleWordTimestamp(UInt_t* record)
       { return (record[1] & 0x02000000) >> 25; }
-    virtual inline UInt_t CrateOf(UInt_t* record)
-      { return (record[1] & 0x01e00000) >> 21; }
-    virtual inline UInt_t CardOf(UInt_t* record)
-      { return (record[1] & 0x001f0000) >> 16; }
     virtual inline size_t NDataWordsOf(UInt_t* record)
       { return (record[1] & 0x0000ffff); }
     virtual double ReferenceDateOf(UInt_t* record);

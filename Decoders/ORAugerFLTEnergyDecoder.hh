@@ -12,10 +12,6 @@ class ORAugerFLTEnergyDecoder : public ORVBasicTreeDecoder
     virtual ~ORAugerFLTEnergyDecoder() {}
 
     enum EAugerFLTEnergyConsts {kNumFLTChannels = 22};
-    virtual inline UShort_t CrateOf(UInt_t* record)
-      { return (UShort_t)((record[1] & 0x01e00000) >> 21); }
-    virtual inline UShort_t CardOf(UInt_t* record)
-      { return (UShort_t)((record[1] & 0x001f0000) >> 16); }
     virtual inline UShort_t ChannelOf(UInt_t* record);
     virtual inline UInt_t SecondsOf(UInt_t* record) { return record[2]; }
     virtual inline UInt_t SubSecondsOf(UInt_t* record) { return record[3]; }

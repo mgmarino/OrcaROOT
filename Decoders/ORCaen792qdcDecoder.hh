@@ -12,10 +12,6 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
     ORCaen792qdcDecoder();
     virtual ~ORCaen792qdcDecoder() {}
 
-    virtual inline UInt_t CrateOf(UInt_t* record)
-      { return (record[1] & 0x01e00000) >> 21; }
-    virtual inline UInt_t CardOf(UInt_t* record)
-      { return (record[1] & 0x001f0000) >> 16; }
     virtual size_t NValuesOf(UInt_t* record);
     virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
       { return (GetLocPtr(record, iRow)[0] & 0x001f0000) >> 16; }

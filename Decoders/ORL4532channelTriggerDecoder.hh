@@ -11,10 +11,6 @@ class ORL4532channelTriggerDecoder : public ORVBasicTreeDecoder
     ORL4532channelTriggerDecoder() {}
     virtual ~ORL4532channelTriggerDecoder() {}
 
-    virtual inline UInt_t CrateOf(UInt_t* record)
-      { return (record[1] & 0x01e00000) >> 21; }
-    virtual inline UInt_t CardOf(UInt_t* record)
-      { return (record[1] & 0x001f0000) >> 16; }
     virtual inline UInt_t TriggerMaskOf(UInt_t* record) { return record[2]; }
 
     virtual std::string GetDataObjectPath() { return "ORL4532Model:channelTrigger"; }

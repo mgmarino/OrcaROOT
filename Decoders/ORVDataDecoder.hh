@@ -19,6 +19,10 @@ class ORVDataDecoder
       { return IsShort(dataRecord) ? dataRecord[0] & 0xfc000000 : dataRecord[0] & 0xfffc0000; }
     virtual inline UInt_t LengthOf(UInt_t* dataRecord) 
       { return IsShort(dataRecord) ? 1 : dataRecord[0] & 0x3ffff; }
+    virtual inline UInt_t CrateOf(UInt_t* record)
+      { return IsShort(record) ? (record[0] & 0x01e00000) >> 21 : (record[1] & 0x01e00000) >> 21; }
+    virtual inline UInt_t CardOf(UInt_t* record)
+      { return IsShort(record) ? (record[0] & 0x001f0000) >> 16 : (record[1] & 0x001f0000) >> 16; }
     virtual void Swap(UInt_t* dataRecord);
     /* ORVDataDecoder::Swap() is called when data not matching the endianness of the host machine
      * comes in.  By default, Swap() swaps all of the long words.  If this is not needed, or
