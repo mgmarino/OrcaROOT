@@ -46,31 +46,31 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::StartProcessing()
 ORDataProcessor::EReturnCode OR64PDHistDrawer::StartRun()
 {
 	//read in hist settings
+	int lineNum=0;
+	char line[196];
+
 	ifstream histFile;
 	histFile.open("Hist_Settings.txt");	//open a file
 	
 	if(!histFile.is_open()) {
 		ORLog(kWarning) << "Hist_Settings.txt file couldn't open, using defaults" << endl;
-	}
-	maxE = 100;
-	threshold = 10;
-	nbinsE = 200;
-	maxT = 1800;
-	fRefreshTime = 10;
-	reset = 0;
-
-	int lineNum=0;
-	char line[196];
-
-	histFile.exceptions(ifstream::badbit);
-	try {
-		//first line is definition, then settings:
-		histFile.getline(line, 196);
-		lineNum++;
-		histFile >> maxE >> threshold >> nbinsE >> maxT >> fRefreshTime;
-		lineNum++;
-	} catch ( ifstream::failure fail) {
-		ORLog(kWarning) << "StartRun(): Problem reading Hist_Settings.txt at line " << lineNum << endl;
+		maxE = 100;
+		threshold = 10;
+		nbinsE = 200;
+		maxT = 1800;
+		fRefreshTime = 10;
+	} else {
+		histFile.exceptions(ifstream::badbit);
+		try {
+			//first line is definition, then settings:
+			histFile.getline(line, 196);
+			lineNum++;
+			histFile >> maxE >> threshold >> nbinsE >> maxT >> fRefreshTime;
+			lineNum++;
+		} catch ( ifstream::failure fail) {
+			ORLog(kWarning) << "StartRun(): Problem reading Hist_Settings.txt at line " << lineNum << endl;
+		}
+		
 	}
 	histFile.close();
 	
@@ -80,43 +80,39 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::StartRun()
 	
 	if(!ecalFile.is_open()) {
 		ORLog(kWarning) << "StartRun(): Energy Cal file ecal_test.txt didn't open" << endl;
-//		KillProcessor();
-//		return kFailure;
 		fUseEcal = false;
-	}
-
-	UInt_t ecal_ca,ecal_ch, waste;
-	Double_t ecal_s,ecal_s_e,ecal_c,ecal_c_e;
-	ecalFile.exceptions(ifstream::badbit);
-	lineNum=0;
-	try {
-		//first line is definition, then parameters:
-		ecalFile.getline(line, 196);
-		fUseEcal = true;
-		while ( !ecalFile.eof() ) {
-			lineNum++;
-			ecalFile >> waste >> ecal_ca >> ecal_ch >> ecal_s >> ecal_s_e >> ecal_c >> ecal_c_e;
-			if ( ecal_ca >8 || ecal_ca < 1 || ecal_ch >7) {
-				ORLog(kWarning) << "StartRun(): Energy Cal has wrong number of cards or channels" << endl;
-				//KillProcessor();
-				//return kFailure;
-				fUseEcal = false;
-				break;
+	} else {
+		UInt_t ecal_ca,ecal_ch, waste;
+		Double_t ecal_s,ecal_s_e,ecal_c,ecal_c_e;
+		ecalFile.exceptions(ifstream::badbit);
+		lineNum=0;
+		try {
+			//first line is definition, then parameters:
+			ecalFile.getline(line, 196);
+			fUseEcal = true;
+			while ( !ecalFile.eof() ) {
+				lineNum++;
+				ecalFile >> waste >> ecal_ca >> ecal_ch >> ecal_s >> ecal_s_e >> ecal_c >> ecal_c_e;
+				if ( ecal_ca >8 || ecal_ca < 1 || ecal_ch >7) {
+					ORLog(kWarning) << "StartRun(): Energy Cal has wrong number of cards or channels" << endl;
+					fUseEcal = false;
+					break;
+				}
+				ecal_slope[ecal_ca][ecal_ch]=ecal_s;
+				ecal_slope_error[ecal_ca][ecal_ch]=ecal_s_e;
+				ecal_constant[ecal_ca][ecal_ch]=ecal_c;
+				ecal_constant_error[ecal_ca][ecal_ch]=ecal_c_e;
 			}
-			ecal_slope[ecal_ca][ecal_ch]=ecal_s;
-			ecal_slope_error[ecal_ca][ecal_ch]=ecal_s_e;
-			ecal_constant[ecal_ca][ecal_ch]=ecal_c;
-			ecal_constant_error[ecal_ca][ecal_ch]=ecal_c_e;
-			}
-		
+			
 		} catch ( ifstream::failure fail) {
 			ORLog(kWarning) << "StartRun(): Problem reading ecal_test.txt at line " << lineNum << endl;
-//			KillProcessor();
-//			return kFailure;
 			fUseEcal = false;
+			
+		}
 		
 	}
 	ecalFile.close();			//close it
+
 	
 			
 //reset histograms, deleted when file closed	
@@ -126,6 +122,7 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::StartRun()
 	if ( fRateHist != NULL) {
 		fRateHist = NULL;
 	}
+	reset = 1;
 	fLastDrawTime = 0;
   return kSuccess;
 }
@@ -157,7 +154,7 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::ProcessMyDataRecord(UInt_t* recor
 	card = fShaperDecoder->CardOf(record);
 	channel = fShaperDecoder->ChannelOf(record);
 
-	//Draw histograms every 10 seconds
+	//Draw histograms every fRefreshTime seconds
 	if ( ( time - fLastDrawTime ) > fRefreshTime ) {
 		fLastDrawTime = time;
 		Ecanvas->cd();
@@ -183,11 +180,11 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::ProcessMyDataRecord(UInt_t* recor
 		if ( EHigh < maxE && ELow > threshold ) {
 			//reset rate histogram when run time exceeds hist limit
 			if ( time > maxT ) {
-				if (reset < floor(time/maxT) ) {
+				if (reset < time/maxT ) {
 					reset++;
 					fRateHist->Reset();
 				}
-				time = time - (reset)*maxT;
+				time -= (reset-1)*maxT;
 			}
 			
 			upBin = fEnergyHist->FindBin(EHigh, 0, 0);
@@ -213,6 +210,15 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::ProcessMyDataRecord(UInt_t* recor
 		}
 		
 	} else {
+		//reset rate histogram when run time exceeds hist limit
+		if ( time > maxT ) {
+			if (reset < time/maxT ) {
+				reset++;
+				fRateHist->Reset();
+			}
+			time -= (reset-1)*maxT;
+		}
+		
 		fEnergyHist->Fill(adc);
 		fRateHist->Fill(time);
 	}
