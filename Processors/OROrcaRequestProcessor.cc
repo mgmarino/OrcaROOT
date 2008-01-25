@@ -202,7 +202,7 @@ bool OROrcaRequestProcessor::LoadOutputs()
   xmlOutput.LoadDictionary(&rootOutputDict);
  
   /* Now send along the xml list back to orca */ 
-  TSocket* lastSock = ORMonitor::GetLastSocketRead();
+  TSocket* lastSock = ORMonitor::GetSocketToWrite();
   if(!lastSock) {
     ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
     ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
@@ -243,7 +243,7 @@ void OROrcaRequestProcessor::SendErrorToOrca()
   rootErrorDict.LoadEntry("Request Error", new ORDictValueS("Error"));
   ORXmlPlistString xmlOutput; 
   xmlOutput.LoadDictionary(&rootErrorDict);
-  TSocket* lastSock = ORMonitor::GetLastSocketRead();
+  TSocket* lastSock = ORMonitor::GetSocketToWrite();
   if(!lastSock) {
     ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
     ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;

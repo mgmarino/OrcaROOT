@@ -223,7 +223,7 @@ int main(int argc, char** argv)
       if ((childpid = fork()) == 0) {
         /* We are in the child process.  Set up reader and fire away. */
         delete server;
-        reader = new ORSocketReader(sock);
+        reader = new ORSocketReader(sock, true);
         /* Get out of the while loop */
         break;
       } 

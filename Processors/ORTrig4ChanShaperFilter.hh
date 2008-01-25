@@ -22,34 +22,34 @@ class ORTrig4ChanShaperFilter : public ORCompoundDataProcessor
     virtual EReturnCode StartRun();
     virtual EReturnCode ProcessDataRecord(UInt_t* record);
     virtual EReturnCode EndRun();
-	virtual EReturnCode EndProcessing();
+    virtual EReturnCode EndProcessing();
 
   protected:
-	Double_t fTimeCutLength; 
-	
+    Double_t fTimeCutLength; 
+    
     ORTrig4ChanDecoder fTriggerDecoder;
     ORBasicTreeWriter* fTriggerTreeWriter;
     UInt_t fTriggerDataId; 
-   size_t fTriggerRecordLength;
-	Double_t fMapTriggerTime;
-	Double_t fThisTriggerTime;
-	UInt_t* fLastTriggerRecordPtr;
-   multimap<Double_t, UInt_t*> fBothRecords;
+    size_t fTriggerRecordLength;
+    Double_t fMapTriggerTime;
+    Double_t fThisTriggerTime;
+    UInt_t* fLastTriggerRecordPtr;
+    multimap<Double_t, UInt_t*> fBothRecords;
 
-	
+    
     
     ORShaperShaperDecoder fShaperDecoder;
     ORBasicTreeWriter* fShaperTreeWriter;
     UInt_t fShaperDataId; 
-   size_t fShaperRecordLength;
-	UInt_t* fTempShaperRecordPtr;
-	UInt_t fLastChannel;
-	UInt_t fLastCard;
-	UInt_t fThisChannel;
-	UInt_t fThisCard;
+    size_t fShaperRecordLength;
+    UInt_t* fTempShaperRecordPtr;
+    UInt_t fLastChannel;
+    UInt_t fLastCard;
+    UInt_t fThisChannel;
+    UInt_t fThisCard;
  
-	OR64PDHistDrawer* f64PDHistDrawer;
-	
+    OR64PDHistDrawer* f64PDHistDrawer;
+    
     UInt_t fLastRecordDataId;
  
 };
