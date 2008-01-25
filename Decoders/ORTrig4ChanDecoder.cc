@@ -28,6 +28,6 @@ UInt_t ORTrig4ChanDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
                       << ") out of range." << endl;
-      return 0.0;
+      return 0;
   }
 }

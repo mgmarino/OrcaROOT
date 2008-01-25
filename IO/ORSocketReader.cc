@@ -235,7 +235,7 @@ void* SocketReadoutThread(void* input)
   while (socketReader->fIsThreadRunning && socketReader->GetActive() > 0) {
     /* In this thread, we readout the socket into the circular buffer. */
     TSocket* sock = socketReader->Select(timeout);
-    if ((Int_t) sock == -1) continue;
+    if (sock == (TSocket*)-1) continue;
     if (!sock) continue; 
     numRead = sock->RecvRaw(scratchBuffer, 4, kPeek);
     if (numRead <= 0) {

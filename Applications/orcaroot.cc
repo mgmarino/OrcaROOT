@@ -193,15 +193,17 @@ int main(int argc, char** argv)
        * by the server.  The kill signal will automatically propagate to the
        * children so we really don't have to worry about waiting for them to
        * die.  */
+      ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       while (childPIDRecord.size() >= maxConnections) { 
         /* We've reached our maximum number of child processes. */
         /* Wait for a process to end. */
-        childpid = wait3(0, 0, 0);
+        childpid = wait3(0, WUNTRACED, 0);
         if(childPIDRecord.erase(childpid) != 1) {
           /* Something really weird happened. */
           ORLog(kError) << "Ended child process " << childpid 
             << " not recognized!" << endl;
         }
+        ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       }
       while((childpid = wait3(0,WNOHANG,0)) > 0) {
         /* Cleaning up any children that may have ended.                   * 
@@ -213,7 +215,6 @@ int main(int argc, char** argv)
         }
       } 
       ORLog(kRoutine) << "Waiting for connection..." << endl;
-      ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       TSocket* sock = server->Accept(); 
       if(!sock->IsValid()) {
         /* Invalid socket, cycle to wait. */
