@@ -8,14 +8,15 @@
 #include <pthread.h>
 
 typedef struct {
-    pthread_mutex_t  cbMutex;
-    UInt_t*         buffer;
-    size_t          bufferLength;
-    size_t          amountInBuffer;
-    size_t          writeIndex;
-    size_t          readIndex;
-    size_t          lostLongCount;
-    size_t          wrapArounds;
+   pthread_rwlock_t cbMutex;
+   UInt_t*          buffer;
+   size_t           bufferLength;
+   size_t           amountInBuffer;
+   size_t           writeIndex;
+   size_t           readIndex;
+   size_t           lostLongCount;
+   size_t           wrapArounds;
+   bool             isRunning;
 } CircularBufferStruct;
 
 typedef struct {
@@ -38,14 +39,14 @@ class ORSocketReader : public ORMonitor, public ORVReader
 
     virtual size_t Read(char* buffer, size_t nBytes);
     virtual bool OKToRead() 
-      { return (fIsThreadRunning) ? (fThreadStatus == 0) : (GetActive() > 0); }
+      { return (fIsThreadRunning) ? (fIsThreadRunning) : (GetActive() > 0); }
     virtual bool OpenDataStream() { return StartThread(); } 
     virtual void Close() { StopThread(); } 
     virtual void SetCircularBufferLength(Int_t length) 
       {fBufferLength = length;}
-
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};
-    virtual void AddSocket(TSocket* sock);
+
+    //virtual void AddSocket(TSocket* sock);
 
   protected:
     ORSocketReader() {} //disallows calling this
@@ -62,7 +63,6 @@ class ORSocketReader : public ORMonitor, public ORVReader
     /* We collect the thread management and buffers here because derived 
        classes really shouldn't be modifying them. */
     pthread_t fThreadId;
-    Int_t fThreadStatus;
     pthread_attr_t fThreadAttr;
     bool fIsThreadRunning;
     Int_t fBufferLength;

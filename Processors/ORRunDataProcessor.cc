@@ -64,11 +64,11 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
       fRunContext->LoadRunStartRecord(record);
     }
     fRunContext->SetStarting();
-    ORLog(kRoutine) << "Start proceessing run " << fRunContext->GetRunNumber() << endl;
+    ORLog(kRoutine) << "Start processing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStart(record);
   } else if (fRunDecoder->IsRunStop(record)) {
     fRunContext->SetStopping();
-    ORLog(kRoutine) << "Stop proceessing run " << fRunContext->GetRunNumber() << endl;
+    ORLog(kRoutine) << "Stop processing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStop(record);
   } else {
     ORLog(kWarning) << "ProcessMyDataRecord(): "

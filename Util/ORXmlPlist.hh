@@ -18,7 +18,9 @@ class ORXmlPlist
     virtual bool LoadXmlPlistFromFile(const char* fileName);
     virtual ORDictionary* GetDictionary() { return fDictionary; }
     virtual const ORVDictValue* LookUp(std::string key) const;
-    virtual TString GetRawXML() { return fRawXML; }
+    virtual TString& GetRawXML() { return fRawXML; }
+    virtual const TString& GetRawXML() const { return fRawXML; }
+    
 
   protected:
     virtual bool LoadDictionary(TXMLNode* dictNode, ORDictionary* dictionary); //returns true if successful

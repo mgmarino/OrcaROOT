@@ -7,8 +7,18 @@
 #include "ORHeader.hh"
 #include "ORHardwareDictionary.hh"
 
+class TSocket;
+
+class ORRunDataProcessor;
+class ORDataProcManager;
+
 class ORRunContext
 {
+
+  friend class ORRunDataProcessor;
+  friend class ORDataProcManager;
+  /* These classes are managers and so they have access to the protected 
+   * members of ORRunContext.  This is to improve data hiding. */
   public:
     enum EState { kIdle, kStarting, kRunning, kStopping };
 
@@ -20,29 +30,35 @@ class ORRunContext
     virtual bool IsQuickStartRun() const { return fIsQuickStartRun; }
     virtual int GetRunType() const { return fRunType; }
     virtual int GetStartTime() const { return fStartTime; }
-    virtual bool LoadHeader(ORHeader* header, const char* runCtrlPath = "ObjectInfo:DataChain");
-      /* Returns true if success, false if not. */
-    virtual void LoadRunStartRecord(UInt_t* record);
-    virtual ORHeader* GetHeader() { return fHeader; }
-    virtual ORHardwareDictionary* GetHardwareDict() { return fHardwareDict; }
-
-    virtual int* GetPointerToRunNumber() { return &fRunNumber; }
-
-    // for use by a managing process
-    // FIXME: allow only ORRunDataProcessor to call these?
+    virtual const ORHeader* GetHeader() const { return fHeader; }
+    virtual const ORHardwareDictionary* GetHardwareDict() const { return fHardwareDict; }
     virtual inline bool MustSwap() const { return fMustSwap; }
     virtual inline bool IsRecordSwapped() const { return fIsRecordSwapped; }
-    virtual void SetRecordSwapped(bool swap = true) { fIsRecordSwapped = swap; }
-    virtual void ResetRecordFlags() { SetRecordSwapped(false); }
-    /* To be called at the beginning of each record by a managing processor. */
+
+    virtual int* GetPointerToRunNumber() { return &fRunNumber; }
     virtual inline EState GetState() { return fState; }
+    virtual TSocket* GetWritableSocket() { return fWritableSocket; }
+
+    // for use by a managing process
+    // FIXME: allow only ORRunDataProcessor to call this?
+    virtual void SetRecordSwapped() { fIsRecordSwapped = true; }
+    
+
+  protected:
+    virtual void ResetRecordFlags() { fIsRecordSwapped = false; }
+    virtual bool LoadHeader(ORHeader* header, 
+      const char* runCtrlPath = "ObjectInfo:DataChain");
+      /* Returns true if success, false if not. */
+    virtual void LoadRunStartRecord(UInt_t* record);
+    virtual void SetWritableSocket(TSocket* aSocket) { fWritableSocket = aSocket; }
+
+    /* To be called at the beginning of each record by a managing processor. */
     virtual void SetIdle();
     virtual void SetStarting();
     virtual void SetRunning();
     virtual void SetStopping();
     virtual void SetMustSwap(bool mustSwap) { fMustSwap = mustSwap; } 
 
-  protected:
     ORHeader* fHeader;
     ORHardwareDictionary* fHardwareDict;
     std::string fClassName;
@@ -52,6 +68,8 @@ class ORRunContext
     bool fMustSwap;
     int fRunType;
     int fStartTime;
+
+    TSocket* fWritableSocket;
 
     EState fState;
 };

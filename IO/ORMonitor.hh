@@ -20,14 +20,12 @@ class ORMonitor : protected TMonitor
     virtual ~ORMonitor() {}
 
 
-    static TSocket* GetSocketToWrite() {return fSocketToWrite;} 
-    /* Returns the socket which was read last.  This is useful if there are a
-     * number of sockets being read and one wants to write to the last one
-     * which read in. */
+    TSocket* GetSocketToWrite() { return fSocketToWrite; } 
+    /* Returns the socket to write, NULL if not allowed.*/ 
+    
     virtual void SetSleepTime(unsigned long numSecs) {fSleepTime = numSecs;}
     virtual void SetKeepAlive(bool keepAlive) {fKeepAlive = keepAlive;}
     virtual void SetReconnectAttempts(bool attempts) {fReconnectAttempts = attempts;}
-    virtual void AddSocket(TSocket* sock, Int_t interest);
 
     /* since we inherited from TMonitor as protected, and root overloaded(!) 
        new and delete, we need to put them back in. */
@@ -40,14 +38,16 @@ class ORMonitor : protected TMonitor
     void operator delete (void* ptr, void* vp) {TMonitor::operator delete[] (ptr,vp);}
     void operator delete[] (void* ptr, void* vp) {TMonitor::operator delete[] (ptr,vp);}
 
+    //virtual void AddSocket(TSocket* sock, Int_t interest);
   protected:
 
     ORMonitor() {} // this should never be called.
+    ORMonitor(const ORMonitor&) : TMonitor()  {} // this should never be called.
     virtual bool ResetSocket(TSocket* sock);
     /* Resets a socket by first closing and re-opening.  Also removes from
      * list of active sockets.  */
     /* Make sure this socket was in the active list, i.e. received from Select()*/
-    static TSocket* fSocketToWrite;
+    TSocket* fSocketToWrite;
     unsigned long fSleepTime;
     unsigned int fReconnectAttempts;
     bool fKeepAlive;

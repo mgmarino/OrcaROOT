@@ -20,6 +20,7 @@ ORRunContext::ORRunContext(ORHeader* header, const char* runCtrlPath)
   fState = kIdle;
   if (header != NULL) LoadHeader(header, runCtrlPath);
   fHardwareDict = NULL;
+  fWritableSocket = NULL;
 }
 
 ORRunContext::~ORRunContext()

@@ -4,6 +4,7 @@
 
 #include "ORLogger.hh"
 #include "ORProcessStopper.hh"
+#include "ORSocketReader.hh"
 
 using namespace std;
 
@@ -75,6 +76,13 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       continueProcessing = false;
     }
     fRunContext->SetMustSwap(fReader->MustSwap());
+    /* Also check to see if we can write to the socket. */
+    
+    if (ORSocketReader* theMonitor = dynamic_cast<ORSocketReader*>(fReader)) {
+      fRunContext->SetWritableSocket(theMonitor->GetSocketToWrite());
+    } else {
+      fRunContext->SetWritableSocket(NULL);
+    }
   }
   
   if(continueProcessing) {

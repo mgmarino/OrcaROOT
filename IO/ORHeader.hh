@@ -15,9 +15,9 @@ class ORHeader: public ORXmlPlist
 
     virtual bool LoadHeaderString(const char* fullHeaderAsString, size_t lengthOfString); 
     virtual bool LoadHeaderFile(const char* fileName);
-    virtual int GetDataId(std::string dataObjPath);
+    virtual int GetDataId(std::string dataObjPath) const;
 
-    virtual int GetRunNumber();
+    virtual int GetRunNumber() const;
 
   protected:
 

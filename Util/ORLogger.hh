@@ -35,7 +35,8 @@ class ORLogger
     // kDebug:   Information in addition to the above
 
     static ESeverity GetSeverity() { return fgSeverity; }
-    static std::ostream& msg(ESeverity severity, const char* location);
+    static std::ostream& msg(ESeverity severity, 
+      const char* location);
 
     static inline void SetSeverity(ESeverity severity){ fgSeverity = severity; }
 
@@ -52,6 +53,8 @@ class ORLogger
     static std::ostream* fgMyNullstream;
 
     static ESeverity fgSeverity;
+    //static std::map<pthread_t, std::ostream*> fgLoggerMap;
+    //static pthread_mutex_t fgMutexLock;
 };
 
 #endif

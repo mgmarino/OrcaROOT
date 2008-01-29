@@ -21,7 +21,7 @@ void ORDataProcessor::SetDataId()
     ORLog(kError) << "fRunContext is NULL!" << endl;
     return;
   }
-  ORHeader* header = fRunContext->GetHeader();
+  const ORHeader* header = fRunContext->GetHeader();
   if (header == NULL) {
     ORLog(kError) << "SetDataId(): SetDataId for path " 
                   << fDataDecoder->GetDataObjectPath() 
@@ -42,7 +42,7 @@ void ORDataProcessor::SetDecoderDictionary()
     ORLog(kError) << "fRunContext is NULL!" << endl;
     return;
   }
-  ORHardwareDictionary* hardwareDict = fRunContext->GetHardwareDict();
+  const ORHardwareDictionary* hardwareDict = fRunContext->GetHardwareDict();
   if (!hardwareDict) {
     ORLog(kError) << "Hardware dictionary not found!  Some info may not be available" << std::endl; 
     return;

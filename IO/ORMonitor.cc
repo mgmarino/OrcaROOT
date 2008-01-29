@@ -4,8 +4,6 @@
 #include "ORLogger.hh"
 
 
-TSocket* ORMonitor::fSocketToWrite = 0;
-
 ORMonitor::ORMonitor(const char* host, int port, bool writable) 
 {
   TSocket* aSocket = new TSocket(host, port);
@@ -16,6 +14,7 @@ ORMonitor::ORMonitor(const char* host, int port, bool writable)
   fIsWritable = writable;
   /* If the socket is writable, then we can't add anymore sockets to the monitor.*/
   if (fIsWritable) fSocketToWrite = aSocket;
+  else fSocketToWrite = NULL;
 }
 
 ORMonitor::ORMonitor(TSocket* aSocket, bool writable)
@@ -27,6 +26,7 @@ ORMonitor::ORMonitor(TSocket* aSocket, bool writable)
   fIsWritable = writable;
   /* If the socket is writable, then we can't add anymore sockets to the monitor.*/
   if (fIsWritable) fSocketToWrite = aSocket;
+  else fSocketToWrite = NULL;
 }
 
 bool ORMonitor::ResetSocket(TSocket* sock)
@@ -60,13 +60,16 @@ bool ORMonitor::ResetSocket(TSocket* sock)
   }
   return false;
 }
+/*
+void ORMonitor::AddSocket(TSocket* sock, Int_t 
+//interest
+)
 
-void ORMonitor::AddSocket(TSocket* sock, Int_t /*interest*/)
 {
-  /* We only allow one socket if there is a writable socket. */
+  *//* We only allow one socket if there is a writable socket. */
   /* Also, we only allow read sockets to be read. */
-  if (!fIsWritable) return TMonitor::Add(sock, kRead);
+  /*if (!fIsWritable) return TMonitor::Add(sock, kRead);
   ORLog(kWarning) << "Only one socket is allowed when there is a writable socket" << std::endl;
 }
- 
+*/
 

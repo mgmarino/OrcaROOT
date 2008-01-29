@@ -9,8 +9,8 @@
 #include "ORLogger.hh"
 #include "ORDictionary.hh"
 #include "ORXmlPlistString.hh"
-#include "ORMonitor.hh"
 #include "ORUtils.hh"
+#include "TSocket.h"
 
 using namespace std;
 
@@ -202,7 +202,8 @@ bool OROrcaRequestProcessor::LoadOutputs()
   xmlOutput.LoadDictionary(&rootOutputDict);
  
   /* Now send along the xml list back to orca */ 
-  TSocket* lastSock = ORMonitor::GetSocketToWrite();
+  if (!fRunContext) return false;
+  TSocket* lastSock = fRunContext->GetWritableSocket(); 
   if(!lastSock) {
     ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
     ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
@@ -216,7 +217,6 @@ bool OROrcaRequestProcessor::LoadOutputs()
   UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
   dataIdToResend |= xmlOutput.length()/4 + 1;
  
-  if (!fRunContext) return false;
   if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
   /* We have to swap the binary, but not the char data*/
   
@@ -244,7 +244,8 @@ void OROrcaRequestProcessor::SendErrorToOrca()
   rootErrorDict.LoadEntry("Request Error", new ORDictValueS("Error"));
   ORXmlPlistString xmlOutput; 
   xmlOutput.LoadDictionary(&rootErrorDict);
-  TSocket* lastSock = ORMonitor::GetSocketToWrite();
+  if (!fRunContext) return;
+  TSocket* lastSock = fRunContext->GetWritableSocket(); 
   if(!lastSock) {
     ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
     ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
@@ -256,7 +257,6 @@ void OROrcaRequestProcessor::SendErrorToOrca()
   while(xmlOutput.length() % 4 != 0) xmlOutput.append(" ");
   UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
   dataIdToResend |= xmlOutput.length()/4 + 1;
-  if (!fRunContext) return;
   if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
   /* We have to swap the binary, but not the char data*/
 

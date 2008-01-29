@@ -29,7 +29,7 @@ bool ORHeader::LoadHeaderFile(const char* fileName)
 }
 
 
-int ORHeader::GetDataId(string dataObjPath) 
+int ORHeader::GetDataId(string dataObjPath) const
 {
   string fullDataObjPath = string("dataDescription:") + dataObjPath + ":dataId";
   ORDictValueI* dataIdDVI = (ORDictValueI*) LookUp(fullDataObjPath);
@@ -43,7 +43,7 @@ int ORHeader::GetDataId(string dataObjPath)
 }
 
 
-int ORHeader::GetRunNumber()
+int ORHeader::GetRunNumber() const
 { 
   ORDictValueI* runNumDictVal = (ORDictValueI*) LookUp("Run Control.RunNumber");
   if (runNumDictVal == NULL || !runNumDictVal->IsA(ORVDictValue::kInt)) {
