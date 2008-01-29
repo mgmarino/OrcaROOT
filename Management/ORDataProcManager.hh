@@ -25,6 +25,7 @@ class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
     virtual void Handle(int signal);
 
   protected:
+    virtual void SetRunContext(ORRunContext* aContext);
     ORVReader* fReader;
     ORHeaderProcessor fHeaderProcessor;
     ORRunDataProcessor* fRunDataProcessor;

@@ -142,6 +142,12 @@ void ORDataProcManager::Handle(int)
   EndProcessing();
 }
 
+void ORDataProcManager::SetRunContext(ORRunContext* aContext)
+{
+  fRunDataProcessor->SetRunContext(aContext);
+  ORCompoundDataProcessor::SetRunContext(aContext); 
+}
+
 void ORDataProcManager::SetDataId()
 {
   // Not necessary to SetDataId of fHeaderProcessor -- it is always 0x0!

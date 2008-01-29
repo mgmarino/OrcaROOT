@@ -81,10 +81,10 @@ void ORVReader::DetermineFileTypeAndSetupSwap(char* buffer)
     fMustSwap = ORUtils::SysIsLittleEndian();
   }
   else if (fStreamVersion == ORHeaderDecoder::kNewUnswapped) {
-    fMustSwap = true; 
+    fMustSwap = false; 
   }
   else if (fStreamVersion == ORHeaderDecoder::kNewSwapped) {
-    fMustSwap = false;
+    fMustSwap = true;
   }
   else if (fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     ORLog(kError) << "The file type could not be determined from the header!" 

@@ -252,10 +252,10 @@ void* SocketReadoutThread(void* input)
         mustSwap = ORUtils::SysIsLittleEndian();
       }
       else if (version == ORHeaderDecoder::kNewUnswapped) {
-        mustSwap = true; 
+        mustSwap = false; 
       }
       else if (version == ORHeaderDecoder::kNewSwapped) {
-        mustSwap = false;
+        mustSwap = true;
       }
       else if (version == ORHeaderDecoder::kUnknownVersion) {
         /* Get out, something is wrong. */

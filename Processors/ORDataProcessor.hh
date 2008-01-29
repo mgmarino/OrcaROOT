@@ -7,6 +7,7 @@
 #include "ORVDataDecoder.hh"
 
 class ORCompoundDataProcessor;
+class ORDataProcManager;
 
 class ORDataProcessor
 {
@@ -53,6 +54,7 @@ class ORDataProcessor
     virtual void SetDebugRecord(bool debug = true) { fDebugRecord = debug; }
 
     friend class ORCompoundDataProcessor;
+    friend class ORDataProcManager;;
     /* This is to allow a ORCompoundDataProcessor to access the protected members
        of other ORDataProcessors, for example, SetRunContext, which we want to 
        remain protected. */
