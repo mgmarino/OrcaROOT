@@ -216,7 +216,8 @@ bool OROrcaRequestProcessor::LoadOutputs()
   UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
   dataIdToResend |= xmlOutput.length()/4 + 1;
  
-  if(ORUtils::MustSwap()) ORUtils::Swap(dataIdToResend);
+  if (!fRunContext) return false;
+  if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
   /* We have to swap the binary, but not the char data*/
   
   ORLog(kDebug) << "Submitting outputs back to Orca..." << endl;
@@ -255,7 +256,8 @@ void OROrcaRequestProcessor::SendErrorToOrca()
   while(xmlOutput.length() % 4 != 0) xmlOutput.append(" ");
   UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
   dataIdToResend |= xmlOutput.length()/4 + 1;
-  if(ORUtils::MustSwap()) ORUtils::Swap(dataIdToResend);
+  if (!fRunContext) return;
+  if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
   /* We have to swap the binary, but not the char data*/
 
   lastSock->SendRaw((char*)&dataIdToResend, 4);

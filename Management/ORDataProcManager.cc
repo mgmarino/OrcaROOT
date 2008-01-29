@@ -74,6 +74,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       ORLog(kWarning) << "ProcessRun(): First record was not a header! Can't continue reading run." << endl;
       continueProcessing = false;
     }
+    fRunContext->SetMustSwap(fReader->MustSwap());
   }
   
   if(continueProcessing) {

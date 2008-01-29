@@ -21,6 +21,8 @@ class ORVReader
     virtual bool Open() { fStreamVersion = ORHeaderDecoder::kUnknownVersion; return OpenDataStream(); }
     virtual bool OpenDataStream() = 0;
     virtual void Close() = 0;
+ 
+    inline bool MustSwap() { return fMustSwap; }
 
   protected:
     virtual size_t DeleteAndResizeBuffer(UInt_t*& buffer, size_t newNLongsMax); 
@@ -33,6 +35,7 @@ class ORVReader
     ORHeaderDecoder::EOrcaStreamVersion fStreamVersion;
     ORBasicDataDecoder fBasicDecoder;
     ORHeaderDecoder fHeaderDecoder;
+    bool fMustSwap;
 };
 
 #endif

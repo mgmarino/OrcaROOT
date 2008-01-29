@@ -222,16 +222,17 @@ void* SocketReadoutThread(void* input)
      other part of the class is writing it, only reading it.  Race conditions 
      won't exist with this variable. */
 
-  Int_t numRead = 0, numLongsToRead = 0;
+  bool firstWordRead = false;
+  bool mustSwap = false;
+  Int_t numRead = 0, numLongsToRead = 0, amountAbleToRead = 0, firstRead = 0,
+    secondRead = 0;
   const Long_t timeout = 1000;  // allows the socket to be stopped. 
-  Int_t amountAbleToRead = 0;
-  Int_t firstRead = 0;
-  Int_t secondRead = 0;
   const size_t sizeOfScratchBuffer = 0xFFFF;
   UInt_t scratchBuffer[sizeOfScratchBuffer];
   ORSocketReader* socketReader = reinterpret_cast<ORSocketReader*>(input);
 
   if (socketReader == NULL) pthread_exit((void *) -1);
+
   while (socketReader->fIsThreadRunning && socketReader->GetActive() > 0) {
     /* In this thread, we readout the socket into the circular buffer. */
     TSocket* sock = socketReader->Select(timeout);
@@ -242,7 +243,28 @@ void* SocketReadoutThread(void* input)
       socketReader->ResetSocket(sock); 
       continue;
     }
-    if (ORUtils::MustSwap()) ORUtils::Swap(scratchBuffer[0]);
+    if (!firstWordRead) {
+      /* Check the first word to determine if we must swap. */
+      ORHeaderDecoder headerDec;
+      ORHeaderDecoder::EOrcaStreamVersion version = 
+        headerDec.GetStreamVersion(scratchBuffer[0]);
+      if (version == ORHeaderDecoder::kOld) {
+        mustSwap = ORUtils::SysIsLittleEndian();
+      }
+      else if (version == ORHeaderDecoder::kNewUnswapped) {
+        mustSwap = true; 
+      }
+      else if (version == ORHeaderDecoder::kNewSwapped) {
+        mustSwap = false;
+      }
+      else if (version == ORHeaderDecoder::kUnknownVersion) {
+        /* Get out, something is wrong. */
+        socketReader->ResetSocket(sock);
+        continue;
+      }
+      firstWordRead = true;
+    }
+    if (mustSwap) ORUtils::Swap(scratchBuffer[0]);
     numLongsToRead = socketReader->fBasicDecoder.LengthOf(scratchBuffer);
     
     /* We're beginning to work on the circular buffer. */

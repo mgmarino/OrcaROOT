@@ -14,6 +14,7 @@ using namespace std;
 ORVReader::ORVReader()
 {
   fStreamVersion = ORHeaderDecoder::kUnknownVersion;
+  fMustSwap = false;
 }
 
 size_t ORVReader::ReadPartialLineWithCR(char* buffer, size_t nBytesMax)
@@ -77,13 +78,13 @@ void ORVReader::DetermineFileTypeAndSetupSwap(char* buffer)
 {
   fStreamVersion = fHeaderDecoder.GetStreamVersion(((UInt_t*) buffer)[0]);
   if (fStreamVersion == ORHeaderDecoder::kOld) {
-    ORUtils::SetFileIsLittleEndian(false);
+    fMustSwap = ORUtils::SysIsLittleEndian();
   }
   else if (fStreamVersion == ORHeaderDecoder::kNewUnswapped) {
-    ORUtils::SetFileIsLittleEndian(ORUtils::SysIsLittleEndian());
+    fMustSwap = true; 
   }
   else if (fStreamVersion == ORHeaderDecoder::kNewSwapped) {
-    ORUtils::SetFileIsLittleEndian(!ORUtils::SysIsLittleEndian());
+    fMustSwap = false;
   }
   else if (fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     ORLog(kError) << "The file type could not be determined from the header!" 
@@ -104,7 +105,7 @@ bool ORVReader::ReadFirstWord(UInt_t*& buffer, size_t& nLongsMax)
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     DetermineFileTypeAndSetupSwap((char*) buffer);
   }
-  if (ORUtils::MustSwap()) {
+  if (MustSwap()) {
     /* We always swap the first word for records except those of old headers,
      * which are no longer being created by Orca anyways.  All other swapping
      * is the responsibility of the decoder.  See ORVDataDecoder::Swap()*/
@@ -150,7 +151,7 @@ bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
     // char strings don't end up swapped. 
     // we have to swap the second word since Header records have
     // 2 *header* words.  Most records have only one header word. 
-    if (ORUtils::MustSwap()) ORUtils::Swap(buffer[1]);
+    if (MustSwap()) ORUtils::Swap(buffer[1]);
   }
   return true;
 }

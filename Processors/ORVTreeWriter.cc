@@ -4,7 +4,6 @@
 
 #include "TROOT.h"
 #include "ORLogger.hh"
-#include "ORUtils.hh"
 
 using namespace std;
 
@@ -42,7 +41,7 @@ ORDataProcessor::EReturnCode ORVTreeWriter::ProcessDataRecord(UInt_t* record)
 {
   if (!fDoProcess || !fDoProcessRun || !fRunContext) return kFailure;
   if (fDataDecoder->DataIdOf(record) != fDataId) return kSuccess;
-  if(ORUtils::MustSwap() && !fRunContext->IsRecordSwapped()) {
+  if(fRunContext->MustSwap() && !fRunContext->IsRecordSwapped()) {
     /* Swapping the record.  This only must be done once! */
     fDataDecoder->Swap(record);
     fRunContext->SetRecordSwapped();

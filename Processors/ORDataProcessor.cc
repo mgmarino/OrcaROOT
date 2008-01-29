@@ -2,7 +2,6 @@
 
 #include "ORDataProcessor.hh"
 #include "ORLogger.hh"
-#include "ORUtils.hh"
 
 using namespace std;
 
@@ -59,7 +58,7 @@ ORDataProcessor::EReturnCode ORDataProcessor::ProcessDataRecord(UInt_t* record)
   else if (fDataDecoder->DataIdOf(record) == fDataId) {
     ORLog(kDebug) << fDataDecoder->GetDataObjectPath() 
                   << " (data id = " << fDataId << "): " << endl;
-    if(ORUtils::MustSwap() && !fRunContext->IsRecordSwapped()) {
+    if(fRunContext->MustSwap() && !fRunContext->IsRecordSwapped()) {
       /* Swapping the record.  This only must be done once! */
       fDataDecoder->Swap(record);
       fRunContext->SetRecordSwapped();

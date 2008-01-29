@@ -30,6 +30,7 @@ class ORRunContext
 
     // for use by a managing process
     // FIXME: allow only ORRunDataProcessor to call these?
+    virtual inline bool MustSwap() const { return fMustSwap; }
     virtual inline bool IsRecordSwapped() const { return fIsRecordSwapped; }
     virtual void SetRecordSwapped(bool swap = true) { fIsRecordSwapped = swap; }
     virtual void ResetRecordFlags() { SetRecordSwapped(false); }
@@ -39,6 +40,7 @@ class ORRunContext
     virtual void SetStarting();
     virtual void SetRunning();
     virtual void SetStopping();
+    virtual void SetMustSwap(bool mustSwap) { fMustSwap = mustSwap; } 
 
   protected:
     ORHeader* fHeader;
@@ -47,6 +49,7 @@ class ORRunContext
     int fRunNumber;
     bool fIsQuickStartRun;
     bool fIsRecordSwapped;
+    bool fMustSwap;
     int fRunType;
     int fStartTime;
 

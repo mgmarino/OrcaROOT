@@ -26,7 +26,6 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     buffer[0] = recordLength;
     buffer[1] = nBytes;
     memcpy(buffer+2, header.c_str(), nBytes);
-    ORUtils::SetFileIsLittleEndian(true);
     if(ORUtils::SysIsLittleEndian()) fStreamVersion = ORHeaderDecoder::kNewUnswapped;
     else fStreamVersion = ORHeaderDecoder::kNewSwapped;
     return true;
@@ -35,7 +34,7 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
   ORBasicDataDecoder decoder;
   UInt_t theBuffSizeLong = 0;
   Read(((char*) &theBuffSizeLong), 4); // XIA specific, we grab the first 32-bits
-  if(ORUtils::MustSwap()) ORUtils::Swap(theBuffSizeLong);
+  if(MustSwap()) ORUtils::Swap(theBuffSizeLong);
   UShort_t theBuffSize = (UShort_t) theBuffSizeLong;
   
   // the first 32-bits on an Orca file gives the length of the buffer dump
@@ -47,7 +46,7 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
   buffer[1] = 0x00000000; // set second 32 bits to 0
   // the 3rd 32-bits takes the 1st 32 bits read out and the rest of the
   // stream is just shifted by 64 bits.
-  if(ORUtils::MustSwap()) ORUtils::Swap(theBuffSizeLong);
+  if(MustSwap()) ORUtils::Swap(theBuffSizeLong);
   // We need to swap back since the swapping of the record is not handled
   // here
   buffer[2] = theBuffSizeLong;
