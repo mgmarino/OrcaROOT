@@ -40,12 +40,12 @@ ORDataProcessor::EReturnCode ORVTreeWriter::StartRun()
 
 ORDataProcessor::EReturnCode ORVTreeWriter::ProcessDataRecord(UInt_t* record)
 {
-  if (!fDoProcess || !fDoProcessRun) return kFailure;
+  if (!fDoProcess || !fDoProcessRun || !fRunContext) return kFailure;
   if (fDataDecoder->DataIdOf(record) != fDataId) return kSuccess;
-  if(ORUtils::MustSwap() && !fgRunContext.IsRecordSwapped()) {
+  if(ORUtils::MustSwap() && !fRunContext->IsRecordSwapped()) {
     /* Swapping the record.  This only must be done once! */
     fDataDecoder->Swap(record);
-    fgRunContext.SetRecordSwapped();
+    fRunContext->SetRecordSwapped();
   }
 
   if (fThisProcessorAutoFillsTree && 
@@ -130,7 +130,11 @@ ORDataProcessor::EReturnCode ORVTreeWriter::InitializeTree()
     fTree = new TTree(fTreeName.c_str(), fTreeName.c_str()); 
 
     // always save the run number
-    fTree->Branch("runNumber", fgRunContext.GetPointerToRunNumber(), "runNumber/I");
+    if (!fRunContext) {
+      ORLog(kError) << "fRunContext is NULL!" << endl;
+      return kFailure;
+    }
+    fTree->Branch("runNumber", fRunContext->GetPointerToRunNumber(), "runNumber/I");
   }
 
   return InitializeBranches();

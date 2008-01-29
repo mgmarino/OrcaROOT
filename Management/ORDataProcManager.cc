@@ -21,11 +21,15 @@ ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runD
   }
  
   SetReader(reader);
+  SetRunContext(new ORRunContext);
+  /* Sets fRunContext.  This class owns this object. */
 }
 
 ORDataProcManager::~ORDataProcManager()
 {
   if(fIOwnRunDataProcessor) delete fRunDataProcessor;
+  /* This class owns fRunContext. */
+  delete fRunContext;
 }
 
 ORDataProcManager::EReturnCode ORDataProcManager::ProcessDataStream()
@@ -74,7 +78,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   
   if(continueProcessing) {
     ORLog(kDebug) << "ProcessRun(): loading dictionary..." << endl;
-    if (!fgRunContext.LoadHeader(fHeaderProcessor.GetHeader())) {
+    if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader())) {
       /* We have encountered a problem loading the header file. */
       /* Kill Run, try going to the next run. */
       ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << endl;
@@ -85,10 +89,10 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
       while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
-        fgRunContext.ResetRecordFlags();
+        fRunContext->ResetRecordFlags();
         fRunDataProcessor->ProcessDataRecord(buffer);
       
-        if (fgRunContext.GetState() <= ORRunContext::kStarting) {
+        if (fRunContext->GetState() <= ORRunContext::kStarting) {
           retCode = StartRun();
           if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
           if (retCode >= kAlarm) return kAlarm;
@@ -100,7 +104,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
           if (ProcessDataRecord(buffer) >= kAlarm) return kAlarm;
         }
       
-        if (fgRunContext.GetState() == ORRunContext::kStopping) {
+        if (fRunContext->GetState() == ORRunContext::kStopping) {
           break;
         }
       

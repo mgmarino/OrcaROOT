@@ -23,8 +23,8 @@ class ORRunDataProcessor : public ORDataProcessor
     virtual inline EReturnCode ProcessRunStop(UInt_t* /*record*/) { return kSuccess; }
 
     // ORDataProcManager calls these; controls state of runcontext
-    virtual inline void OnStartRunComplete() { fgRunContext.SetRunning(); }
-    virtual inline void OnEndRunComplete() { fgRunContext.SetIdle(); }
+    virtual inline void OnStartRunComplete() { if (fRunContext) fRunContext->SetRunning(); }
+    virtual inline void OnEndRunComplete() { if (fRunContext) fRunContext->SetIdle(); }
 
   protected:
     ORRunDecoder* fRunDecoder;

@@ -60,7 +60,10 @@ ORDataProcessor::EReturnCode ORAcqirisDC440TreeWriter::ProcessMyDataRecord(UInt_
   }
   ostringstream os;
   os << "crate " << fCrate-1 << ":station " << fCard+1;
-  const ORDictionary* dict = dynamic_cast<const ORDictionary*>(fgRunContext.GetHeader()->LookUp(os.str()));
+  const ORDictionary* dict = NULL;
+  if (fRunContext) {
+    dict = dynamic_cast<const ORDictionary*>(fRunContext->GetHeader()->LookUp(os.str()));
+  }
   if(!dict) {
     ORLog(kError) << "Header corrupt!" << endl;
     return kFailure;

@@ -6,6 +6,7 @@
 #include "ORRunContext.hh"
 #include "ORVDataDecoder.hh"
 
+class ORCompoundDataProcessor;
 
 class ORDataProcessor
 {
@@ -40,7 +41,7 @@ class ORDataProcessor
 
     virtual UInt_t GetDataId() { return fDataId; } 
     virtual ORVDataDecoder* GetDecoder() { return fDataDecoder; } 
-    virtual const ORRunContext& GetRunContext() { return fgRunContext; }
+    virtual const ORRunContext* GetRunContext() { return fRunContext; }
     virtual void KillProcessor() { fDoProcess = false; }
     virtual void KillRun() { fDoProcessRun = false; }
     virtual EReturnCode ProcessDataRecord(UInt_t* record);
@@ -51,8 +52,14 @@ class ORDataProcessor
 
     virtual void SetDebugRecord(bool debug = true) { fDebugRecord = debug; }
 
+    friend class ORCompoundDataProcessor;
+    /* This is to allow a ORCompoundDataProcessor to access the protected members
+       of other ORDataProcessors, for example, SetRunContext, which we want to 
+       remain protected. */
+
   protected:
-    static ORRunContext fgRunContext; // all processors should share the same run context
+    virtual void SetRunContext(ORRunContext* aContext) { fRunContext = aContext; }
+    ORRunContext* fRunContext; //  
     UInt_t fDataId;
     bool fDoProcess;
     bool fDoProcessRun;

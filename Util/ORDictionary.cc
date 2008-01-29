@@ -53,7 +53,7 @@ ORDictionary::~ORDictionary()
 
 ORVDictValue* ORDictionary::LookUp(string key, char delimiter) 
 {
-  static std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
+  std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
   if (delimPos == string::npos) {
     dictIter = fDictMap.find(key); 
@@ -80,7 +80,7 @@ ORVDictValue* ORDictionary::LookUp(string key, char delimiter)
 
 const ORVDictValue* ORDictionary::LookUp(string key, char delimiter) const 
 {
-  static std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
+  std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
   if (delimPos == string::npos) {
     dictIter = fDictMap.find(key); 

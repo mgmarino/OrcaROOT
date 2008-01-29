@@ -30,9 +30,9 @@ class ORRunContext
 
     // for use by a managing process
     // FIXME: allow only ORRunDataProcessor to call these?
-    virtual inline bool IsRecordSwapped() {return fIsRecordSwapped;}
-    virtual void SetRecordSwapped(bool swap = true) {fIsRecordSwapped = swap;}
-    virtual void ResetRecordFlags() {SetRecordSwapped(false);}
+    virtual inline bool IsRecordSwapped() const { return fIsRecordSwapped; }
+    virtual void SetRecordSwapped(bool swap = true) { fIsRecordSwapped = swap; }
+    virtual void ResetRecordFlags() { SetRecordSwapped(false); }
     /* To be called at the beginning of each record by a managing processor. */
     virtual inline EState GetState() { return fState; }
     virtual void SetIdle();

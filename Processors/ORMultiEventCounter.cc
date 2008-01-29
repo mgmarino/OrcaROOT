@@ -29,7 +29,9 @@ void ORMultiEventCounter::AddProcessor(ORDataProcessor* processor)
 ORDataProcessor::EReturnCode ORMultiEventCounter::EndRun()
 {
   ORCompoundDataProcessor::EndRun();
-  ORLog(kRoutine) << "Event counts for run " << fgRunContext.GetRunNumber() << endl;
+  if (fRunContext) {
+    ORLog(kRoutine) << "Event counts for run " << fRunContext->GetRunNumber() << endl;
+  }
   for(size_t i=0; i < fDataProcessors.size(); i++) {
     ORLog(kRoutine) << fDataProcessors[i]->GetDecoder()->GetDataObjectPath()
                     << " had " << ((OREventCounter*) fDataProcessors[i])->GetEventCount() 

@@ -6,8 +6,6 @@
 
 using namespace std;
 
-ORRunContext ORDataProcessor::fgRunContext;
-
 ORDataProcessor::ORDataProcessor(ORVDataDecoder* decoder)
 { 
   fDataId = ORVDataDecoder::GetIllegalDataId(); 
@@ -15,11 +13,16 @@ ORDataProcessor::ORDataProcessor(ORVDataDecoder* decoder)
   fDoProcessRun = true;
   fDataDecoder = decoder;
   fDebugRecord = false;
+  fRunContext = NULL;
 }
 
 void ORDataProcessor::SetDataId() 
 { 
-  ORHeader* header = fgRunContext.GetHeader();
+  if (fRunContext == NULL) {
+    ORLog(kError) << "fRunContext is NULL!" << endl;
+    return;
+  }
+  ORHeader* header = fRunContext->GetHeader();
   if (header == NULL) {
     ORLog(kError) << "SetDataId(): SetDataId for path " 
                   << fDataDecoder->GetDataObjectPath() 
@@ -36,7 +39,11 @@ void ORDataProcessor::SetDataId()
 
 void ORDataProcessor::SetDecoderDictionary()
 {
-  ORHardwareDictionary* hardwareDict = fgRunContext.GetHardwareDict();
+  if (fRunContext == NULL) {
+    ORLog(kError) << "fRunContext is NULL!" << endl;
+    return;
+  }
+  ORHardwareDictionary* hardwareDict = fRunContext->GetHardwareDict();
   if (!hardwareDict) {
     ORLog(kError) << "Hardware dictionary not found!  Some info may not be available" << std::endl; 
     return;
@@ -48,14 +55,14 @@ void ORDataProcessor::SetDecoderDictionary()
 
 ORDataProcessor::EReturnCode ORDataProcessor::ProcessDataRecord(UInt_t* record)
 {
-  if (!fDoProcess || !fDoProcessRun) return kFailure;
+  if (!fDoProcess || !fDoProcessRun || !fRunContext) return kFailure;
   else if (fDataDecoder->DataIdOf(record) == fDataId) {
     ORLog(kDebug) << fDataDecoder->GetDataObjectPath() 
                   << " (data id = " << fDataId << "): " << endl;
-    if(ORUtils::MustSwap() && !fgRunContext.IsRecordSwapped()) {
+    if(ORUtils::MustSwap() && !fRunContext->IsRecordSwapped()) {
       /* Swapping the record.  This only must be done once! */
       fDataDecoder->Swap(record);
-      fgRunContext.SetRecordSwapped();
+      fRunContext->SetRecordSwapped();
     }
     if(fDebugRecord) {
       if(ORLogger::GetSeverity() > ORLogger::kDebug) {

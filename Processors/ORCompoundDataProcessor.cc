@@ -92,11 +92,20 @@ void ORCompoundDataProcessor::SetDoProcessRun()
   }
 }
 
+void ORCompoundDataProcessor::SetRunContext(ORRunContext* aContext)
+{
+  fRunContext = aContext;
+  for (size_t i=0; i<fDataProcessors.size(); i++) {
+    fDataProcessors[i]->SetRunContext(fRunContext);
+  }
+}
+
 void ORCompoundDataProcessor::AddProcessor(ORDataProcessor* processor) 
 { 
   if (processor == NULL) {
     ORLog(kWarning) << "AddProcessor(processor): processor can't be NULL!" << endl;
     return;
   }
+  processor->SetRunContext(fRunContext);
   fDataProcessors.push_back(processor); 
 }

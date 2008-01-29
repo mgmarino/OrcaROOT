@@ -37,8 +37,8 @@ bool ORMonitor::ResetSocket(TSocket* sock)
   Remove(sock);
   sock->Close();
   if(fKeepAlive) {
-    static unsigned int i = 0;
-    static bool keepCycling = (fReconnectAttempts==0) ? true : (i < fReconnectAttempts); 
+    unsigned int i = 0;
+    bool keepCycling = (fReconnectAttempts==0) ? true : (i < fReconnectAttempts); 
     while(keepCycling) {
       ORLog(kRoutine) << "Waiting " << fSleepTime << " seconds to reset connection" 
         << std::endl;

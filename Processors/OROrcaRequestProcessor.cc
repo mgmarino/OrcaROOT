@@ -33,7 +33,7 @@ OROrcaRequestProcessor::~OROrcaRequestProcessor()
 bool OROrcaRequestProcessor::LoadRequestHandler(const std::string& processor)
 {
   // First check to see if the Processor is already in the map.
-  static std::map<std::string, ORVOrcaRequestProcessor*>::iterator iter;
+  std::map<std::string, ORVOrcaRequestProcessor*>::iterator iter;
   iter = fReqProcessorMap.find(processor); 
   ORLog(kRoutine) << "Loading processor: " << processor << endl;
   if(iter != fReqProcessorMap.end()) {
@@ -65,9 +65,9 @@ bool OROrcaRequestProcessor::LoadRequestHandler(const std::string& processor)
 
 bool OROrcaRequestProcessor::LoadInputs()
 {
-  static const ORDictionary* inputDict; 
-  static const std::map< std::string, ORVOrcaReqInputOutput>* mapOfInput; 
-  static std::map< std::string, ORVOrcaReqInputOutput>::const_iterator inputIter; 
+  const ORDictionary* inputDict; 
+  const std::map< std::string, ORVOrcaReqInputOutput>* mapOfInput; 
+  std::map< std::string, ORVOrcaReqInputOutput>::const_iterator inputIter; 
   inputDict = fOrcaRequestDecoder->GetRequestInputs();
   mapOfInput = fCurrentReqProcessor->GetInputMap();
   inputIter = mapOfInput->begin();
@@ -129,8 +129,8 @@ bool OROrcaRequestProcessor::LoadOutputs()
    * It could be done more quickly, but we're not as concerned about speed for the
    * Orca Socket. We have to assemble the output into a dictionary. */
   ORLog(kDebug) << "Getting outputs to submit to Orca..." << endl;
-  static const std::map< std::string, ORVOrcaReqInputOutput>* mapOfOutput; 
-  static std::map< std::string, ORVOrcaReqInputOutput>::const_iterator mapOfOutputIter; 
+  const std::map< std::string, ORVOrcaReqInputOutput>* mapOfOutput; 
+  std::map< std::string, ORVOrcaReqInputOutput>::const_iterator mapOfOutputIter; 
   mapOfOutput = fCurrentReqProcessor->GetOutputMap();
   
   /* We need to now set up the output into ORDictionaries. */

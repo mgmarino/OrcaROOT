@@ -20,10 +20,14 @@ ORDataProcessor::EReturnCode ORFileWriter::StartRun()
     fFile->Close();
     delete fFile;
   }
-  string filename = fLabel + ::Form("_run%d.root", fgRunContext.GetRunNumber());
+  if (!fRunContext) {
+    ORLog(kError) << "fRunContext is NULL!" << endl;
+    return kFailure;
+  }
+  string filename = fLabel + ::Form("_run%d.root", fRunContext->GetRunNumber());
   fFile = new TFile(filename.c_str(), "RECREATE");
 
-  TObjString headerXML(fgRunContext.GetHeader()->GetRawXML().Data());
+  TObjString headerXML(fRunContext->GetHeader()->GetRawXML().Data());
   headerXML.Write("headerXML");
 
   return kSuccess;

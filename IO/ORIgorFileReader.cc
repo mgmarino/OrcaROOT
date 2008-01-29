@@ -32,7 +32,7 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     return true;
   }
 
-  static ORBasicDataDecoder decoder;
+  ORBasicDataDecoder decoder;
   UInt_t theBuffSizeLong = 0;
   Read(((char*) &theBuffSizeLong), 4); // XIA specific, we grab the first 32-bits
   if(ORUtils::MustSwap()) ORUtils::Swap(theBuffSizeLong);

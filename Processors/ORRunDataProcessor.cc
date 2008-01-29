@@ -15,9 +15,11 @@ ORRunDataProcessor::ORRunDataProcessor() : ORDataProcessor(new ORRunDecoder)
 
 ORRunDataProcessor::~ORRunDataProcessor()
 {
-  if(fgRunContext.GetState() != ORRunContext::kIdle) {
-    ORLog(kError) << "Deconstructing ORRunDataProcessor in non-idle state "
-                  << fgRunContext.GetState() << ": something has gone wrong" << endl;
+  if (fRunContext) {
+    if(fRunContext->GetState() != ORRunContext::kIdle) {
+      ORLog(kError) << "Deconstructing ORRunDataProcessor in non-idle state "
+                    << fRunContext->GetState() << ": something has gone wrong" << endl;
+    }
   }
   delete fRunDecoder;
 }
@@ -30,19 +32,23 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessDataRecord(UInt_t* recor
 
 ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* record)
 {
+  if (!fRunContext) {
+    ORLog(kError) << "fRunContext is NULL!" << endl;
+    return kFailure;
+  }
   if (fRunDecoder->IsHeartBeat(record)) {
     if(fByteCount < 1024) {
-      ORLog(kRoutine) << "Heartbeat for run " << fgRunContext.GetRunNumber() 
+      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
                       << ": " << fByteCount << " B have been processed since "
 		      << "last heartbeat." << endl;
     }
     else if(fByteCount < 1024*1024) {
-      ORLog(kRoutine) << "Heartbeat for run " << fgRunContext.GetRunNumber() 
+      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
                       << ": " << ::Form("%.1f", float(fByteCount)/1024.0) 
 		      << " kB have been processed since last heartbeat." << endl;
     }
     else {
-      ORLog(kRoutine) << "Heartbeat for run " << fgRunContext.GetRunNumber() 
+      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
                       << ": " << ::Form("%.1f", float(fByteCount)/1024.0/1024.0) 
 		      << " MB have been processed since last heartbeat." << endl;
     }
@@ -50,19 +56,19 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
     return ProcessRunHeartBeat(record);
   }
   else if (fRunDecoder->IsRunStart(record)) {
-    if (fgRunContext.GetRunNumber() != fRunDecoder->RunNumberOf(record)) {
+    if (fRunContext->GetRunNumber() != fRunDecoder->RunNumberOf(record)) {
       ORLog(kWarning) << "ProcessMyDataRecord(): "
                       << "run number in run-start record doesn't match "
 		      << "that loaded from the header. Switching to new "
 		      << "run number" << endl;
-      fgRunContext.LoadRunStartRecord(record);
+      fRunContext->LoadRunStartRecord(record);
     }
-    fgRunContext.SetStarting();
-    ORLog(kRoutine) << "Start proceessing run " << fgRunContext.GetRunNumber() << endl;
+    fRunContext->SetStarting();
+    ORLog(kRoutine) << "Start proceessing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStart(record);
   } else if (fRunDecoder->IsRunStop(record)) {
-    fgRunContext.SetStopping();
-    ORLog(kRoutine) << "Stop proceessing run " << fgRunContext.GetRunNumber() << endl;
+    fRunContext->SetStopping();
+    ORLog(kRoutine) << "Stop proceessing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStop(record);
   } else {
     ORLog(kWarning) << "ProcessMyDataRecord(): "

@@ -77,8 +77,11 @@ ORDataProcessor::EReturnCode ORDGF4cLiveTimeWriter::ProcessMyDataRecord(UInt_t* 
 
 ORDataProcessor::EReturnCode ORDGF4cLiveTimeWriter::FindRecordLength()
 {
-  const ORDictionary* dict = dynamic_cast<const ORDictionary*>
-    (fgRunContext.GetHeader()->LookUp("dataDescription:ORDGF4cModel:LiveTime"));
+  const ORDictionary* dict = NULL;
+  if (fRunContext) {
+    dict = dynamic_cast<const ORDictionary*>
+      (fRunContext->GetHeader()->LookUp("dataDescription:ORDGF4cModel:LiveTime"));
+  }
   if(!dict) 
   {
     ORLog(kError) << "Header corrupt!" << endl;

@@ -41,6 +41,7 @@ class ORCompoundDataProcessor : public ORUtilityProcessor
     virtual void AddProcessor(ORDataProcessor* processor);
 
   protected:
+    virtual void SetRunContext(ORRunContext* aContext);
     std::vector<ORDataProcessor*> fDataProcessors;
     EReturnCode fBreakRetCode;
 };
