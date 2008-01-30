@@ -126,10 +126,6 @@ void ORSocketReader::StopThread()
     // block until the thread actual stops.
     pthread_join(fThreadId, 0);
   }
-  if (fCircularBuffer.lostLongCount != 0) {
-    ORLog(kWarning) << "There were lost records from the socket: " 
-      << fCircularBuffer.lostLongCount << " long word" << std::endl;
-  }
   fCircularBuffer.isRunning = false;
 }
 
@@ -320,11 +316,11 @@ void* SocketReadoutThread(void* input)
     amountAbleToRead = socketReader->fCircularBuffer.bufferLength 
       - socketReader->fCircularBuffer.amountInBuffer; 
 
-    pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
     /* Dealing with a record if we don't have room for it. */
     if (amountAbleToRead < numLongsToRead) {
       /* Do we wait, or throw away data? */
       /* Throw away data now. */
+      pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
       pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
       socketReader->fCircularBuffer.lostLongCount += numLongsToRead;
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);

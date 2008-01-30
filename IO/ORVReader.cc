@@ -168,6 +168,10 @@ bool ORVReader::ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax)
     nLongsMax = DeleteAndResizeBuffer(buffer, longRecordLength*2); // factor of 2 for margin 
     buffer[0] = tmp;
   }
+  if (longRecordLength < 1) { 
+    ORLog(kError) << "Record length is less than one!" << endl;
+    return false; // We will have a problem here.
+  }
   size_t nBytesToRead = (longRecordLength-1)*4;
   size_t nBytesRead = Read(((char*) buffer)+4, nBytesToRead);
   if (nBytesRead != nBytesToRead) {
