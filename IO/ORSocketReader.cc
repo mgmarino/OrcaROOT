@@ -25,7 +25,7 @@ ORSocketReader::ORSocketReader(TSocket* aSocket, bool writable) :
 
 ORSocketReader::~ORSocketReader()
 {
-  if (fIsThreadRunning) StopThread();
+  StopThread();
   if (fCircularBuffer.buffer) delete [] fCircularBuffer.buffer;
   pthread_attr_destroy(&fThreadAttr);
   pthread_rwlock_destroy(&fCircularBuffer.cbMutex);
@@ -33,7 +33,6 @@ ORSocketReader::~ORSocketReader()
 
 void ORSocketReader::Initialize()
 {
-  fIsThreadRunning = false;
   pthread_rwlock_init(&fCircularBuffer.cbMutex, NULL);
   fCircularBuffer.buffer = NULL;
   SetCircularBufferLength(kDefaultBufferLength);
@@ -52,9 +51,19 @@ void ORSocketReader::AddSocket(TSocket* sock)
   }
 } */
 
+bool ORSocketReader::ThreadIsStillRunning()
+{
+  bool threadIsStillRunning;
+  pthread_rwlock_rdlock(&fCircularBuffer.cbMutex);
+  threadIsStillRunning = fCircularBuffer.isRunning;
+  pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
+  return threadIsStillRunning;
+}
+
 bool ORSocketReader::StartThread()
 {
-  if (fIsThreadRunning || GetActive() == 0) {
+  if (ThreadIsStillRunning()) return true;
+  if (GetActive() == 0) {
     return false;
   }
 
@@ -72,14 +81,12 @@ bool ORSocketReader::StartThread()
   delete listOfSockets;
 
   ResetCircularBuffer();
-  fIsThreadRunning = true;
   fCircularBuffer.isRunning = true;
 
   Int_t retValue = pthread_create(&fThreadId, 
     &fThreadAttr, SocketReadoutThread, this);
   if (retValue == 0) return true;
 
-  fIsThreadRunning = false;
   fCircularBuffer.isRunning = false;
   return false; 
 }
@@ -87,28 +94,28 @@ bool ORSocketReader::StartThread()
 void ORSocketReader::StopThread()
 {
   /* This function blocks until the thread stops. */
-  if (!fIsThreadRunning) return;  
+  if (!ThreadIsStillRunning()) return;  
   Int_t retValue = 0;
   if ((retValue = pthread_cancel(fThreadId)) != 0) {
     /* Some pthread implementations will return an error if the thread has already quit. */
     /*if (retValue != ESRCH) {
       ORLog(kError) << "Thread not cancelled, error: " << strerror(retValue) << std::endl;
     } else {*/
-    fIsThreadRunning = false;
     //}
   } else {
     // block until the thread actual stops.
     pthread_join(fThreadId, 0);
-    fIsThreadRunning = false;
   }
   if (fCircularBuffer.lostLongCount != 0) {
     ORLog(kWarning) << "There were lost records from the socket: " 
       << fCircularBuffer.lostLongCount << " long word" << std::endl;
   }
+  fCircularBuffer.isRunning = false;
 }
 
 void ORSocketReader::ResetCircularBuffer()
 {
+  /* Not thread safe, be careful! */
   if (fCircularBuffer.buffer) delete [] fCircularBuffer.buffer;
   fCircularBuffer.buffer = new UInt_t[fBufferLength];
   fCircularBuffer.bufferLength = fBufferLength;
@@ -128,7 +135,7 @@ void ORSocketReader::ResetCircularBuffer()
 size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords, size_t minimumWords)
 {
   size_t firstRead = 0, secondRead = 0;
-  size_t tempReadIndex = 0, tempNumBytes = 0;
+  size_t tempReadIndex = 0, tempNumWords = 0;
   pthread_rwlock_rdlock(&fCircularBuffer.cbMutex);
 
   if (numLongWords > fCircularBuffer.amountInBuffer) {
@@ -156,7 +163,7 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
     return 0;
     pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
   }
-  tempNumBytes = fCircularBuffer.amountInBuffer;
+  tempNumWords = 0;
   tempReadIndex = fCircularBuffer.readIndex;
   firstRead = (fCircularBuffer.readIndex > fCircularBuffer.writeIndex) ?
     fCircularBuffer.bufferLength - fCircularBuffer.readIndex :
@@ -166,18 +173,18 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
   secondRead = (firstRead < numLongWords) ? numLongWords - firstRead : 0;
 
   /* Now copy out. */
-  memcpy(buffer, fCircularBuffer.buffer + fCircularBuffer.readIndex, firstRead*4);
+  memcpy(buffer, fCircularBuffer.buffer + tempReadIndex, firstRead*4);
   tempReadIndex += firstRead;
-  tempNumBytes -= firstRead;
+  tempNumWords += firstRead;
 
   if (tempReadIndex == fCircularBuffer.bufferLength) {
     tempReadIndex = 0;
   }
   if (secondRead != 0) {
-    memcpy(buffer+firstRead*4, 
+    memcpy(buffer + firstRead, 
       fCircularBuffer.buffer + tempReadIndex, secondRead*4);
     tempReadIndex += secondRead;
-    tempNumBytes -= secondRead;
+    tempNumWords += secondRead;
   }
   if (fCircularBuffer.lostLongCount != 0) {
     /* Give a quick notification. */
@@ -189,7 +196,7 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
   /* Now we write. */
   pthread_rwlock_wrlock(&fCircularBuffer.cbMutex);
   fCircularBuffer.readIndex = tempReadIndex;
-  fCircularBuffer.amountInBuffer = tempNumBytes;
+  fCircularBuffer.amountInBuffer -= tempNumWords;
   pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
 
   return numLongWords;
@@ -210,6 +217,7 @@ size_t ORSocketReader::Read(char* buffer, size_t nBytes)
 
   size_t numLongsToRead = nBytes/4;
   size_t numToRead = 0; 
+  size_t bufferPosition = 0;
   while (numLongsToRead !=0) {
     numToRead = fLocalBuffer.currentAmountOfData - fLocalBuffer.readIndex;
     if (numToRead == 0) {
@@ -222,9 +230,10 @@ size_t ORSocketReader::Read(char* buffer, size_t nBytes)
     numToRead = 
       (numLongsToRead > fLocalBuffer.currentAmountOfData - fLocalBuffer.readIndex) ? 
       fLocalBuffer.currentAmountOfData - fLocalBuffer.readIndex : numLongsToRead;
-    memcpy(buffer, fLocalBuffer.buffer + fLocalBuffer.readIndex, 4*numToRead); 
+    memcpy(buffer + bufferPosition, fLocalBuffer.buffer + fLocalBuffer.readIndex, 4*numToRead); 
     numLongsToRead -= numToRead;
     fLocalBuffer.readIndex += numToRead;
+    bufferPosition += 4*numToRead;
   }
   return (nBytes - 4*numLongsToRead);
 }
@@ -342,8 +351,8 @@ void* SocketReadoutThread(void* input)
       numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer + socketReader->fCircularBuffer.writeIndex,
         secondRead*4); 
       if (numRead <= 0 || numRead != secondRead*4) {
-        socketReader->ResetSocket(sock); 
         pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
+        socketReader->ResetSocket(sock); 
         continue;
       } 
       socketReader->fCircularBuffer.writeIndex += secondRead;
