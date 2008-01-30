@@ -85,7 +85,9 @@ bool ORSocketReader::StartThread()
 
   Int_t retValue = pthread_create(&fThreadId, 
     &fThreadAttr, SocketReadoutThread, this);
-  if (retValue == 0) return true;
+  if (retValue == 0) {
+    return true;
+  }
 
   fCircularBuffer.isRunning = false;
   return false; 
@@ -204,7 +206,6 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
 
 size_t ORSocketReader::Read(char* buffer, size_t nBytes)
 {
-  if(!OKToRead()) return 0;  
   if(nBytes==0) return nBytes;
   if(nBytes % 4 != 0) {
     ORLog(kWarning) << "Request for bytes: " << nBytes << " not a factor of 4" 
