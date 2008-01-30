@@ -249,9 +249,10 @@ int main(int argc, char** argv)
     } else {
       reader = new ORSocketReader(readerArg.substr(0, iColon).c_str(), 
                                   atoi(readerArg.substr(iColon+1).c_str()));
-      ((ORSocketReader*)reader)->SetKeepAlive(keepAliveSocket);
-      ((ORSocketReader*)reader)->SetSleepTime(timeToSleep);
-      ((ORSocketReader*)reader)->SetReconnectAttempts(reconnectAttempts);
+      //((ORSocketReader*)reader)->SetKeepAlive(keepAliveSocket);
+      //((ORSocketReader*)reader)->SetSleepTime(timeToSleep);
+      //((ORSocketReader*)reader)->SetReconnectAttempts(reconnectAttempts);
+      /*
       if(keepAliveSocket) {
         ostringstream tempString;
         tempString << reconnectAttempts;
@@ -260,7 +261,7 @@ int main(int argc, char** argv)
           << "Reconnect attempts: " 
           << ((reconnectAttempts == 0) ? "infinite" : tempString.str())
           << endl;
-      }
+      }*/
       stopper = new ORProcessStopper;
     }
   }

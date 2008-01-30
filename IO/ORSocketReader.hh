@@ -3,9 +3,10 @@
 #ifndef _ORSocketReader_hh_
 #define _ORSocketReader_hh_
 
-#include "ORMonitor.hh"
 #include "ORVReader.hh"
 #include <pthread.h>
+
+class TMonitor;
 
 typedef struct {
    pthread_rwlock_t cbMutex;
@@ -28,7 +29,7 @@ typedef struct {
 
 extern "C" void* SocketReadoutThread(void*);
 
-class ORSocketReader : public ORMonitor, public ORVReader
+class ORSocketReader : public ORVReader
 {
   friend void* SocketReadoutThread(void*);  
  
@@ -44,6 +45,7 @@ class ORSocketReader : public ORMonitor, public ORVReader
     virtual void SetCircularBufferLength(Int_t length) 
       {fBufferLength = length;}
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};
+    TSocket* GetSocketToWrite() { return fSocketToWrite; } 
 
     //virtual void AddSocket(TSocket* sock);
 
@@ -57,6 +59,10 @@ class ORSocketReader : public ORMonitor, public ORVReader
       /* This function blocks until numLongWords are available. */
       /* Returns the number of bytes read, 0 if there's nothing left. */
     bool ThreadIsStillRunning();
+    TMonitor* fMonitor;
+    TSocket* fSocket;
+    TSocket* fSocketToWrite;
+    bool fIOwnSocket;
 
 
   private:
