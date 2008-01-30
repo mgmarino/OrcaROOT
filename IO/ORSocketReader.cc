@@ -217,6 +217,7 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
   pthread_rwlock_wrlock(&fCircularBuffer.cbMutex);
   fCircularBuffer.readIndex = tempReadIndex;
   fCircularBuffer.amountInBuffer -= tempNumWords;
+  fCircularBuffer.lostLongCount = 0;
   pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
 
   return numLongWords;
@@ -319,10 +320,12 @@ void* SocketReadoutThread(void* input)
     amountAbleToRead = socketReader->fCircularBuffer.bufferLength 
       - socketReader->fCircularBuffer.amountInBuffer; 
 
+    pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
     /* Dealing with a record if we don't have room for it. */
     if (amountAbleToRead < numLongsToRead) {
       /* Do we wait, or throw away data? */
       /* Throw away data now. */
+      pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
       socketReader->fCircularBuffer.lostLongCount += numLongsToRead;
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
       while (numLongsToRead > 0) {
