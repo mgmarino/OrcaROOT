@@ -43,11 +43,13 @@ ORSocketReader::~ORSocketReader()
 
 void ORSocketReader::Initialize()
 {
-  pthread_rwlock_init(&fCircularBuffer.cbMutex, NULL);
   memset(&fCircularBuffer, 0, sizeof(fCircularBuffer));
   fCircularBuffer.buffer = NULL;
   fCircularBuffer.isRunning = false;
+  pthread_rwlock_init(&fCircularBuffer.cbMutex, NULL);
+
   SetCircularBufferLength(kDefaultBufferLength);
+
   pthread_attr_init(&fThreadAttr);
   pthread_attr_setdetachstate(&fThreadAttr, PTHREAD_CREATE_JOINABLE);
   memset(&fLocalBuffer, 0, sizeof(fLocalBuffer));
