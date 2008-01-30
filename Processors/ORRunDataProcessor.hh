@@ -7,6 +7,7 @@
 #include "ORRunDecoder.hh"
 
 
+class ORDataProcManager;
 class ORRunDataProcessor : public ORDataProcessor
 {
   public:
@@ -22,11 +23,12 @@ class ORRunDataProcessor : public ORDataProcessor
     virtual inline EReturnCode ProcessRunStart(UInt_t* /*record*/) { return kSuccess; } 
     virtual inline EReturnCode ProcessRunStop(UInt_t* /*record*/) { return kSuccess; }
 
+
+    friend class ORDataProcManager;
+  protected:
     // ORDataProcManager calls these; controls state of runcontext
     virtual inline void OnStartRunComplete() { if (fRunContext) fRunContext->SetRunning(); }
     virtual inline void OnEndRunComplete() { if (fRunContext) fRunContext->SetIdle(); }
-
-  protected:
     ORRunDecoder* fRunDecoder;
     UInt_t fByteCount;
 };

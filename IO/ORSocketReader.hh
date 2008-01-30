@@ -54,7 +54,7 @@ class ORSocketReader : public ORMonitor, public ORVReader
     bool StartThread();
     void StopThread();
     void ResetCircularBuffer();
-    size_t ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords);
+    size_t ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords, size_t minWords);
       /* This function blocks until numLongWords are available. */
       /* Returns the number of bytes read, 0 if there's nothing left. */
 

@@ -100,7 +100,7 @@ bool ORVReader::ReadFirstWord(UInt_t*& buffer, size_t& nLongsMax)
   if(nLongsMax < 4) {
     nLongsMax = DeleteAndResizeBuffer(buffer, 4);
   }
-  Read((char*) buffer, 4);
+  if (Read((char*) buffer, 4) != 4) return false;
   if (!OKToRead()) return false;
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     DetermineFileTypeAndSetupSwap((char*) buffer);

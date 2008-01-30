@@ -65,6 +65,7 @@ bool ORSocketReader::StartThread()
     if (!sock->IsValid()) {
       /* One of the sockets isn't valid, don't continue. */
       delete listOfSockets;
+      ORLog(kError) << "Socket invalid!" << endl;
       return false;
     }
   }
@@ -87,8 +88,14 @@ void ORSocketReader::StopThread()
 {
   /* This function blocks until the thread stops. */
   if (!fIsThreadRunning) return;  
-  if (pthread_cancel(fThreadId) != 0) {
-    ORLog(kError) << "Thread not cancelled, error: " << std::endl;
+  Int_t retValue = 0;
+  if ((retValue = pthread_cancel(fThreadId)) != 0) {
+    /* Some pthread implementations will return an error if the thread has already quit. */
+    /*if (retValue != ESRCH) {
+      ORLog(kError) << "Thread not cancelled, error: " << strerror(retValue) << std::endl;
+    } else {*/
+    fIsThreadRunning = false;
+    //}
   } else {
     // block until the thread actual stops.
     pthread_join(fThreadId, 0);
@@ -118,7 +125,7 @@ void ORSocketReader::ResetCircularBuffer()
   fLocalBuffer.readIndex = 0;
 }
 
-size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords)
+size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords, size_t minimumWords)
 {
   size_t firstRead = 0, secondRead = 0;
   size_t tempReadIndex = 0, tempNumBytes = 0;
@@ -138,7 +145,7 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
       /* There is a sufficient amount in the buffer, read it out. */
       if (numLongWords <= fCircularBuffer.amountInBuffer) break;
       /* If we have exceeded the number of wait cycles, just grab what we can. */
-      if (!fCircularBuffer.isRunning || fCircularBuffer.amountInBuffer != 0) {
+      if (!fCircularBuffer.isRunning || fCircularBuffer.amountInBuffer >= minimumWords) {
         numLongWords = fCircularBuffer.amountInBuffer; 
         break;
       }
@@ -207,7 +214,7 @@ size_t ORSocketReader::Read(char* buffer, size_t nBytes)
     numToRead = fLocalBuffer.currentAmountOfData - fLocalBuffer.readIndex;
     if (numToRead == 0) {
       fLocalBuffer.currentAmountOfData = 
-        ReadFromCircularBuffer(fLocalBuffer.buffer, fLocalBuffer.bufferLength);
+        ReadFromCircularBuffer(fLocalBuffer.buffer, fLocalBuffer.bufferLength, numLongsToRead);
       fLocalBuffer.readIndex = 0;
       /* The following indicates the circular buffer is empty and won't fill up.*/
       if (fLocalBuffer.currentAmountOfData == 0) break; 
