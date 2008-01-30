@@ -12,7 +12,7 @@ ORSocketReader::ORSocketReader(const char* host, int port, bool writable) :
 {
   Initialize();
   /* If the socket is writable, we don't want to sleep. */
-  fSleepTime = (writable) ? 0 : 1;
+  fSleepTime = 1;//(writable) ? 0 : 1;
 }
 
 ORSocketReader::ORSocketReader(TSocket* aSocket, bool writable) :
@@ -20,7 +20,7 @@ ORSocketReader::ORSocketReader(TSocket* aSocket, bool writable) :
 {
   Initialize();
   /* If the socket is writable, we don't want to sleep. */
-  fSleepTime = (writable) ? 0 : 1;
+  fSleepTime = 1;//(writable) ? 0 : 1;
 }
 
 ORSocketReader::~ORSocketReader()
