@@ -42,8 +42,8 @@ ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const cha
     pthread_rwlock_unlock(&fgRWLock);
   } else {
     pthread_rwlock_unlock(&fgRWLock);
-    theThreadSeverity = GetORLoggerSeverity(thread);
-    theThreadStream = fgMyOstream; 
+    theThreadSeverity = ORLogger::kRoutine;
+    theThreadStream = GetORLoggerOStream(thread); 
   }
   /* end critical part. */
   if (severity >= theThreadSeverity) {
@@ -61,6 +61,37 @@ ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const cha
   return *theThreadStream;
 }
 
+std::ostream* ORLogger::GetORLoggerOStream(pthread_t thread) 
+{
+  if (!fgIsInitialized) Initialize();
+  ostream* theThreadStream;
+  pthread_rwlock_rdlock(&fgRWLock);
+  std::map<pthread_t, std::pair<ORLogger::ESeverity, std::ostream* > >::iterator anIter = fgLoggerMap.find(thread);
+
+  if ( anIter != fgLoggerMap.end() ) {
+    theThreadStream = anIter->second.second; 
+    pthread_rwlock_unlock(&fgRWLock);
+  } else {
+    /* Insert with default severity, ostream. */ 
+    pthread_rwlock_unlock(&fgRWLock);
+    pthread_rwlock_wrlock(&fgRWLock);
+    if (fgLoggerMap.size() > 0) {
+      /* If the map already has one, then the others get /dev/null */
+      fgLoggerMap.insert(
+        std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 
+        std::pair<ORLogger::ESeverity, std::ostream*>(ORLogger::kRoutine, fgMyNullstream)));
+      theThreadStream = fgMyNullstream;
+    } else {
+      fgLoggerMap.insert(
+        std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 
+        std::pair<ORLogger::ESeverity, std::ostream*>(ORLogger::kRoutine, fgMyOstream)));
+      theThreadStream = fgMyOstream;
+    }
+    pthread_rwlock_unlock(&fgRWLock);
+  } 
+  return theThreadStream;
+}
+
 ORLogger::ESeverity ORLogger::GetORLoggerSeverity(pthread_t thread) 
 {
   if (!fgIsInitialized) Initialize();
@@ -74,7 +105,7 @@ ORLogger::ESeverity ORLogger::GetORLoggerSeverity(pthread_t thread)
     /* Insert with default severity, ostream. */ 
     pthread_rwlock_unlock(&fgRWLock);
     pthread_rwlock_wrlock(&fgRWLock);
-    if (fgLoggerMap.size() > 1) {
+    if (fgLoggerMap.size() > 0) {
       /* If the map already has one, then the others get /dev/null */
       fgLoggerMap.insert(
         std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 
@@ -116,7 +147,7 @@ void ORLogger::SetORLoggerSeverity(pthread_t thread, ORLogger::ESeverity severit
     anIter->second.first = severity; 
   } else {
     /* Insert with default ostream. */ 
-    if (fgLoggerMap.size() > 1) {
+    if (fgLoggerMap.size() > 0) {
       /* If the map already has one, then the others get /dev/null */
       fgLoggerMap.insert(
         std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 

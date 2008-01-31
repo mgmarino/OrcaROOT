@@ -15,6 +15,7 @@
 #endif
 #define ORLog(sev) ORLogger::msg( pthread_self(), ORLogger::sev, __FILE__ "(" ERRLINE_HACK_2(__LINE__) ")" )
 #define GetSeverity()     GetORLoggerSeverity( pthread_self() )
+#define GetOStream()      GetORLoggerOStream( pthread_self() )
 #define SetSeverity(sev)  SetORLoggerSeverity( pthread_self() , ORLogger::sev )
 #define SetOStream(str)   SetORLoggerOStream( pthread_self(), str)
 
@@ -49,6 +50,7 @@ class ORLogger
     ORLogger() {}
     ORLogger(const ORLogger &) {}
     ~ORLogger() {}
+    static std::ostream* GetORLoggerOStream(pthread_t thread);
 
   private:
     static bool fgIsInitialized;
