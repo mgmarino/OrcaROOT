@@ -16,6 +16,7 @@ class ORVSigHandler
     virtual void Handle(int signal) = 0;
 
   protected:
+
     static std::vector<ORVSigHandler*> fgHandlers;
     static std::map<int, bool> fgHaveHandled;
 };

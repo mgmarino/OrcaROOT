@@ -216,6 +216,11 @@ int main(int argc, char** argv)
       } 
       ORLog(kRoutine) << "Waiting for connection..." << endl;
       TSocket* sock = server->Accept(); 
+      if (sock == (TSocket*) 0 || sock == (TSocket*) -1 ) {
+        // There was an error, or the socket got closed .
+        if (!server->IsValid()) return 0;
+        continue;
+      }
       if(!sock->IsValid()) {
         /* Invalid socket, cycle to wait. */
         delete sock;

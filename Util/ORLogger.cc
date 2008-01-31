@@ -23,8 +23,8 @@ pthread_rwlock_t ORLogger::fgRWLock;
 
 void ORLogger::Initialize()
 {
-  pthread_rwlock_init(&ORLogger::fgRWLock, NULL);
   fgIsInitialized = true;
+  pthread_rwlock_init(&ORLogger::fgRWLock, NULL);
 }
 
 ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const char* location)
@@ -151,7 +151,7 @@ void ORLogger::SetORLoggerSeverity(pthread_t thread, ORLogger::ESeverity severit
       /* If the map already has one, then the others get /dev/null */
       fgLoggerMap.insert(
         std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 
-        std::pair<ORLogger::ESeverity, std::ostream*>(ORLogger::kRoutine, fgMyNullstream)));
+        std::pair<ORLogger::ESeverity, std::ostream*>(severity, fgMyNullstream)));
     } else {
       fgLoggerMap.insert(
         std::pair< pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> >(thread, 
