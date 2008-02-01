@@ -83,8 +83,8 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       continueProcessing = false;
     }
     fRunContext->SetMustSwap(fReader->MustSwap());
+
     /* Also check to see if we can write to the socket. */
-    
     if (ORSocketReader* theMonitor = dynamic_cast<ORSocketReader*>(fReader)) {
       fRunContext->SetWritableSocket(theMonitor->GetSocketToWrite());
     } else {
@@ -105,7 +105,6 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
       while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
-        if (TestCancel()) return kBreak;
         fRunContext->ResetRecordFlags();
         fRunDataProcessor->ProcessDataRecord(buffer);
       
@@ -130,6 +129,8 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
           ORLog(kTrace) << "ORProcessStopper stopped data processing..." << endl;
           break;
         }*/
+
+        if (TestCancel()) break;
       }
       ORLog(kDebug) << "ProcessRun(): finished reading records..." << endl;
       
@@ -149,6 +150,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     return kBreak;
   }
   else*/ 
+  if (TestCancel()) return kBreak;
   return kSuccess;
 }
 
