@@ -14,7 +14,6 @@
 #include "ORFileWriter.hh"
 #include "ORHistWriter.hh"
 #include "ORLogger.hh"
-#include "ORProcessStopper.hh"
 #include "ORShaperShaperTreeWriter.hh"
 #include "ORSocketReader.hh"
 #include "ORTek754DScopeDataTreeWriter.hh"
@@ -44,6 +43,7 @@
 #include "ORAugerFLTWaveformTreeWriter.hh"
 #include "OROrcaRequestProcessor.hh"
 #include "ORServer.hh"
+#include "ORHandlerThread.hh"
 
 using namespace std;
 
@@ -107,7 +107,6 @@ int main(int argc, char** argv)
 
   string label = "OR";
   ORVReader* reader = NULL;
-  ORProcessStopper* stopper = NULL;
 
   bool keepAliveSocket = false;
   bool runAsDaemon = false;
@@ -170,6 +169,8 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  ORHandlerThread handlerThread;
+  handlerThread.StartThread();
   /***************************************************************************/
   /*   Running orcaroot as a daemon server. */
   /***************************************************************************/
@@ -267,7 +268,6 @@ int main(int argc, char** argv)
           << ((reconnectAttempts == 0) ? "infinite" : tempString.str())
           << endl;
       }*/
-      stopper = new ORProcessStopper;
     }
   }
   if (!reader->OKToRead()) {
@@ -363,12 +363,10 @@ int main(int argc, char** argv)
   }
 
   ORLog(kRoutine) << "Start processing..." << endl;
-  if(stopper != NULL) stopper->ExecuteStopperThread();
   dataProcManager.ProcessDataStream();
   ORLog(kRoutine) << "Finished processing..." << endl;
 
   delete reader;
-  if(stopper != NULL) delete stopper;
 
   return 0;
 }

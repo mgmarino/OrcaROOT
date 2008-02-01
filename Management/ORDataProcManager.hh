@@ -22,8 +22,6 @@ class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
     virtual void SetReader(ORVReader* reader) { fReader = reader; }
     virtual void SetDataId();
 
-    virtual void Handle(int signal);
-
   protected:
     virtual void SetRunContext(ORRunContext* aContext);
     ORVReader* fReader;

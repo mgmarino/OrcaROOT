@@ -3,7 +3,6 @@
 #include "ORDataProcManager.hh"
 
 #include "ORLogger.hh"
-#include "ORProcessStopper.hh"
 #include "ORSocketReader.hh"
 
 using namespace std;
@@ -68,6 +67,14 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   UInt_t* buffer = new UInt_t[nLongsMax];
 
   bool continueProcessing = true;
+  while (!fReader->HasData()) {
+    /* Let's wait here, so that later calls do not block. */
+    /* This doesn't completely keep us from not blocking 
+       but it does a suitable job for most cases. */
+    sleep(1);
+    if (TestCancel()) return kBreak;
+
+  }
   ORLog(kDebug) << "ProcessRun(): reading header..." << endl;
   continueProcessing = fReader->ReadRecord(buffer, nLongsMax);
   if(continueProcessing) {
@@ -98,6 +105,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
       while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
+        if (TestCancel()) return kBreak;
         fRunContext->ResetRecordFlags();
         fRunDataProcessor->ProcessDataRecord(buffer);
       
@@ -117,10 +125,11 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
           break;
         }
       
+        /*
         if (ORProcessStopper::StopNow()) {
           ORLog(kTrace) << "ORProcessStopper stopped data processing..." << endl;
           break;
-        }
+        }*/
       }
       ORLog(kDebug) << "ProcessRun(): finished reading records..." << endl;
       
@@ -134,21 +143,23 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   fReader->Close();
 
   delete [] buffer;
-
+  /*
   if(ORProcessStopper::Stop()) {
     ORLog(kDebug) << "ProcessRun(): ORProcessStopper is stopping the run processing..." << endl;
     return kBreak;
   }
-  else return kSuccess;
+  else*/ 
+  return kSuccess;
 }
 
+/*
 void ORDataProcManager::Handle(int)
 {
   ORLog(kWarning) << "Caught ctrl-c, trying to exit nicely" << endl;
   EndRun();
   fRunDataProcessor->OnEndRunComplete();
   EndProcessing();
-}
+}*/
 
 void ORDataProcManager::SetRunContext(ORRunContext* aContext)
 {

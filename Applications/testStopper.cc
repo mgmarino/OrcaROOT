@@ -1,11 +1,12 @@
 #include "ORLogger.hh"
-#include "ORProcessStopper.hh"
+//#include "ORProcessStopper.hh"
 
 using namespace std;
 
 
 int main()
 {
+  /*
   ORProcessStopper processStopper;
   processStopper.ExecuteStopperThread();
 
@@ -26,7 +27,7 @@ int main()
   ORLog(kRoutine) << i << endl;
 
   processStopper.Join();
-
+  */
   return 0;
 }
 

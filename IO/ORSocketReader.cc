@@ -41,6 +41,16 @@ ORSocketReader::~ORSocketReader()
   if (fIOwnSocket) delete fSocket; 
 }
 
+bool ORSocketReader::HasData()
+{
+  /* Check to see if there is any data in the buffer. */ 
+  bool doIHaveData;
+  pthread_rwlock_rdlock(&fCircularBuffer.cbMutex);
+  doIHaveData = (fCircularBuffer.amountInBuffer != 0);
+  pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
+  return doIHaveData;
+}
+
 void ORSocketReader::Initialize()
 {
   memset(&fCircularBuffer, 0, sizeof(fCircularBuffer));

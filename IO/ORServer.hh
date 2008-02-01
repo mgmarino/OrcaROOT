@@ -10,10 +10,10 @@ class ORServer : public TServerSocket, ORVSigHandler
 {
   public:
     ORServer(int aPort);
-    virtual ~ORServer(); 
-
-    virtual void Handle(int); 
-    /* Handle clean-up when ctrl-c is called. */
+    virtual ~ORServer() { Close(); } 
+    
+    virtual TSocket* Accept(UChar_t opt = 0);
+    /* Returns a socket, and NULL if there's an error. */
 
 };
 

@@ -41,6 +41,7 @@ class ORSocketReader : public ORVReader
     virtual size_t Read(char* buffer, size_t nBytes);
     virtual bool OKToRead() { return true; }
     virtual bool OpenDataStream() { return StartThread(); } 
+    virtual bool HasData();
     virtual void Close() {} 
     virtual void SetCircularBufferLength(Int_t length) 
       {fBufferLength = length;}

@@ -8,16 +8,19 @@
 using namespace std;
 
 vector<ORVSigHandler*> ORVSigHandler::fgHandlers;
-map<int, bool> ORVSigHandler::fgHaveHandled;
+ORReadWriteLock ORVSigHandler::fgBaseRWLock;
 
 ORVSigHandler::ORVSigHandler()
 {
-  (void) signal(SIGINT, &ORVSigHandler::HandleAll);
+  fgBaseRWLock.writeLock();
   fgHandlers.push_back(this);
+  fgBaseRWLock.unlock();
+  fSetToCancel = false;
 }
 
 ORVSigHandler::~ORVSigHandler()
 { 
+  fgBaseRWLock.writeLock();
   vector<ORVSigHandler*>::iterator it = find(fgHandlers.begin(), fgHandlers.end(), this);
   if (it != fgHandlers.end()) {
     fgHandlers.erase(it);
@@ -25,19 +28,31 @@ ORVSigHandler::~ORVSigHandler()
     ORLog(kWarning) << "couldn't find this-ptr in fgHandlers! "
                     << "Something is very wrong..." << endl;
   }
+  fgBaseRWLock.unlock();
 }
 
-void ORVSigHandler::HandleAll(int signal)
-{ 
-  // The check using fgHaveHandled is my poor-man's multithreaded signal
-  // processing hack. See details in ORProcessStopper.
-  for(size_t i=0; i<fgHandlers.size(); i++) {
-    if(!fgHaveHandled[i]) {
-      fgHaveHandled[i] = true; // set true first so process isn't killed twice...
-      fgHandlers[i]->Handle(signal);
-    }
-  }
-  exit(signal);
+void ORVSigHandler::CancelAll() 
+{
+  fgBaseRWLock.readLock();
+  for (size_t i=0;i<fgHandlers.size();i++) {
+    fgHandlers[i]->CancelAnInstance(); 
+  } 
+  fgBaseRWLock.unlock();
 }
 
+void ORVSigHandler::CancelAnInstance()
+{
+  fRWLock.writeLock();
+  fSetToCancel = true;
+  fRWLock.unlock();
+}
+
+bool ORVSigHandler::TestCancel() 
+{
+  bool testCancel;  
+  fRWLock.readLock();
+  testCancel = fSetToCancel;
+  fRWLock.unlock();
+  return testCancel;
+}
 

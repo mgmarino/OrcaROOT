@@ -7,7 +7,6 @@
 #include "ORFileWriter.hh"
 #include "ORHistWriter.hh"
 #include "ORLogger.hh"
-#include "ORProcessStopper.hh"
 #include "ORShaperShaperTreeWriter.hh"
 #include "ORSocketReader.hh"
 #include "ORTek754DScopeDataTreeWriter.hh"
@@ -72,7 +71,6 @@ int main(int argc, char** argv)
 
   string label = "OR";
   ORVReader* reader = NULL;
-  ORProcessStopper* stopper = NULL;
 
   while(1) {
     char optId = getopt_long(argc, argv, "", longOptions, NULL);
@@ -119,7 +117,6 @@ int main(int argc, char** argv)
   } else {
     reader = new ORSocketReader(readerArg.substr(0, iColon).c_str(), 
                                 atoi(readerArg.substr(iColon+1).c_str()));
-    stopper = new ORProcessStopper;
   }
 
   if (!reader->OKToRead()) {
@@ -146,12 +143,10 @@ int main(int argc, char** argv)
 
 
   ORLog(kRoutine) << "Start processing..." << endl;
-  if(stopper != NULL) stopper->ExecuteStopperThread();
   dataProcManager.ProcessDataStream();
   ORLog(kRoutine) << "Finished processing..." << endl;
 
   delete reader;
-  delete stopper;
 
   return 0;
 }

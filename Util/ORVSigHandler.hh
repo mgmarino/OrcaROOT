@@ -4,21 +4,34 @@
 #define _ORVSigHandler_hh_
 
 #include <vector>
-#include <map>
+#include "ORReadWriteLock.hh"
+/* This class is called asynchronously, so we use it to try
+   and take things down in-sync.  That is, we wait for a
+   safe place and then shut down. */
 
 class ORVSigHandler
 {
   public:
+    static void CancelAll();
+    
+  protected:
     ORVSigHandler();
     virtual ~ORVSigHandler();
 
-    static void HandleAll(int signal);
-    virtual void Handle(int signal) = 0;
-
-  protected:
+    bool TestCancel();
+    /* This function indicates to the class whether or not it has been canceled.*/
+    /* In particular one should use this in a loop that should be stopped by
+       an interrupt.  It is the coders responsibility to make sure these are
+       placed appropriately.  See, e.g., ORDataProcManager for how to do this. */
+    void CancelAnInstance();
 
     static std::vector<ORVSigHandler*> fgHandlers;
-    static std::map<int, bool> fgHaveHandled;
+
+  private:
+    ORReadWriteLock fRWLock;
+    bool fSetToCancel;
+    static ORReadWriteLock fgBaseRWLock;
+    
 };
 
 #endif
