@@ -52,9 +52,9 @@ void ORHandlerThread::StartThread()
 void ORHandlerThread::StopThread()
 {
   if (!fThreadIsRunning) return;
-  ORLog(kRoutine) << "Exiting with: " << pthread_cancel(fThread) << std::endl;  
+  pthread_cancel(fThread);  
   /* Wait for it to stop. */
-  pthread_join(fThread, NULL);
+  //pthread_join(fThread, NULL);
 }
 
 void* ORHandlerThread::SigWaitThread(void*)
