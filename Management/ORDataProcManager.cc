@@ -67,14 +67,6 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   UInt_t* buffer = new UInt_t[nLongsMax];
 
   bool continueProcessing = true;
-  while (!fReader->HasData()) {
-    /* Let's wait here, so that later calls do not block. */
-    /* This doesn't completely keep us from not blocking 
-       but it does a suitable job for most cases. */
-    sleep(1);
-    if (TestCancel()) return kBreak;
-
-  }
   ORLog(kDebug) << "ProcessRun(): reading header..." << endl;
   continueProcessing = fReader->ReadRecord(buffer, nLongsMax);
   if(continueProcessing) {

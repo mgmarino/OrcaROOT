@@ -169,8 +169,8 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  ORHandlerThread handlerThread;
-  handlerThread.StartThread();
+  ORHandlerThread* handlerThread = new ORHandlerThread();
+  handlerThread->StartThread();
   /***************************************************************************/
   /*   Running orcaroot as a daemon server. */
   /***************************************************************************/
@@ -230,6 +230,9 @@ int main(int argc, char** argv)
       if ((childpid = fork()) == 0) {
         /* We are in the child process.  Set up reader and fire away. */
         delete server;
+        delete handlerThread;
+        handlerThread = new ORHandlerThread;
+        handlerThread->StartThread();
         reader = new ORSocketReader(sock, true);
         /* Get out of the while loop */
         break;
@@ -367,6 +370,7 @@ int main(int argc, char** argv)
   ORLog(kRoutine) << "Finished processing..." << endl;
 
   delete reader;
+  delete handlerThread;
 
   return 0;
 }

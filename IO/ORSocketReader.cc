@@ -41,16 +41,6 @@ ORSocketReader::~ORSocketReader()
   if (fIOwnSocket) delete fSocket; 
 }
 
-bool ORSocketReader::HasData()
-{
-  /* Check to see if there is any data in the buffer. */ 
-  bool doIHaveData;
-  pthread_rwlock_rdlock(&fCircularBuffer.cbMutex);
-  doIHaveData = (fCircularBuffer.amountInBuffer != 0);
-  pthread_rwlock_unlock(&fCircularBuffer.cbMutex);
-  return doIHaveData;
-}
-
 void ORSocketReader::Initialize()
 {
   memset(&fCircularBuffer, 0, sizeof(fCircularBuffer));
@@ -88,7 +78,7 @@ bool ORSocketReader::ThreadIsStillRunning()
 bool ORSocketReader::StartThread()
 {
   if (ThreadIsStillRunning()) return true;
-  if (fMonitor->GetActive() == 0) {
+  if (fMonitor->GetActive() == 0 || TestCancel()) {
     return false;
   }
 
@@ -182,6 +172,7 @@ size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWord
         numLongWords = fCircularBuffer.amountInBuffer; 
         break;
       }
+      if (TestCancel()) return 0; // We've been canceled, get out
     }
   }
 

@@ -4,6 +4,7 @@
 #define _ORSocketReader_hh_
 
 #include "ORVReader.hh"
+#include "ORVSigHandler.hh"
 #include <pthread.h>
 
 class TMonitor;
@@ -29,7 +30,7 @@ typedef struct {
 
 extern "C" void* SocketReadoutThread(void*);
 
-class ORSocketReader : public ORVReader
+class ORSocketReader : public ORVReader, public ORVSigHandler
 {
   friend void* SocketReadoutThread(void*);  
  
@@ -41,8 +42,7 @@ class ORSocketReader : public ORVReader
     virtual size_t Read(char* buffer, size_t nBytes);
     virtual bool OKToRead() { return true; }
     virtual bool OpenDataStream() { return StartThread(); } 
-    virtual bool HasData();
-    virtual void Close() {} 
+    virtual void Close() { if(TestCancel()) StopThread(); } 
     virtual void SetCircularBufferLength(Int_t length) 
       {fBufferLength = length;}
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};

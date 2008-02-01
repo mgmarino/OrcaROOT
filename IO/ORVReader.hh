@@ -18,7 +18,6 @@ class ORVReader
     virtual size_t ReadPartialLineWithCR(char* buffer, size_t nBytesMax);
     virtual bool ReadRecord(UInt_t*& buffer, size_t& nLongsMax); // allow buffer to be reallocated; requires "*&"
     virtual bool OKToRead() = 0;
-    virtual bool HasData() = 0;  // This is mostly for a socket connection.  Check to not block on read. 
     virtual bool Open() { fStreamVersion = ORHeaderDecoder::kUnknownVersion; return OpenDataStream(); }
     virtual bool OpenDataStream() = 0;
     virtual void Close() = 0;

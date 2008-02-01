@@ -15,7 +15,6 @@ class ORFileReader : public std::ifstream, public ORVReader
 
     virtual size_t Read(char* buffer, size_t nBytesMax);
     virtual bool OKToRead() { return !bad() && !eof() && good(); }
-    virtual bool HasData() { return OKToRead(); }
     virtual bool OpenDataStream();
     virtual void Close() { close(); }
 

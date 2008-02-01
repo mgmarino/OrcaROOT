@@ -33,6 +33,9 @@ ORHandlerThread::ORHandlerThread()
 ORHandlerThread::~ORHandlerThread()
 {
   if (fThreadIsRunning) StopThread();
+  fRWLock.writeLock();
+  fHandlerThread = NULL;
+  fRWLock.unlock();
 }
 
 void ORHandlerThread::StartThread()
