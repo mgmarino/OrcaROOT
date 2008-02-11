@@ -175,7 +175,9 @@ bool ORXmlPlist::LoadArray(TXMLNode* arrayNode, ORDictValueA* dictValueA)
       LoadDictionary(child, (ORDictionary*) dictValue); 
     }
     else if (valtype == "string") {
-      dictValue = new ORDictValueS(child->GetText());
+      const char* str = child->GetText();
+      if(str == NULL) dictValue = new ORDictValueS("");
+      else dictValue = new ORDictValueS(str);
     } else if (valtype == "real") {
       dictValue = new ORDictValueR(atof(child->GetText()));
     } else if (valtype == "integer") {
