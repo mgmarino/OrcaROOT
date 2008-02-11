@@ -7,13 +7,14 @@
 #include "ORFileWriter.hh"
 #include "ORHistWriter.hh"
 #include "ORLogger.hh"
-//#include "ORShaperShaperTreeWriter.hh"
 #include "ORSocketReader.hh"
+#include "ORHandlerThread.hh"
 
   //ADDITION FOR KATRIN - Start
 
 #include "ORTrig4ChanDecoder.hh"
 #include "ORTrig4ChanShaperCompoundProcessor.hh"
+#include "ORTrig4ChanShaperFilter.hh"
 
   //ADDITION FOR KATRIN - Stop
 
@@ -102,7 +103,10 @@ int main(int argc, char** argv)
                   << Usage << endl;
     return 1;
   }
-
+   
+  ORHandlerThread* handlerThread = new ORHandlerThread();
+  handlerThread->StartThread();
+      
   string readerArg = argv[optind];
   size_t iColon = readerArg.find(":");
   if (iColon == string::npos) {
@@ -134,17 +138,18 @@ int main(int argc, char** argv)
   ORShaperShaperDecoder shaperShaperDecoder;
   ORTrig4ChanDecoder trig4ChanDecoder; 
 
-   ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
-   dataProcManager.AddProcessor(&shaperShaperTreeWriter);
+  ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
+  dataProcManager.AddProcessor(&shaperShaperTreeWriter);
 
   ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
   dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
 
-   ORHistWriter shaperHistWriter(&shaperShaperDecoder);
-  dataProcManager.AddProcessor(&shaperHistWriter);
 	
-	ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
-	dataProcManager.AddProcessor(&triggerShaperTreeWriter);
+  ORTrig4ChanShaperFilter triggerShaperHistDrawer;
+  dataProcManager.AddProcessor(&triggerShaperHistDrawer);
+	
+  ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
+  dataProcManager.AddProcessor(&triggerShaperTreeWriter);
   
   //ADDITION FOR KATRIN - Stop
 
@@ -155,6 +160,7 @@ int main(int argc, char** argv)
 
 
   delete reader;
+  delete handlerThread;
 
   return 0;
 }
