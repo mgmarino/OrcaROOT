@@ -4,15 +4,57 @@
 #define _ORVSigHandler_hh_
 
 #include <vector>
+#include <map>
+#include <pthread.h>
 #include "ORReadWriteLock.hh"
-/* This class is called asynchronously, so we use it to try
-   and take things down in-sync.  That is, we wait for a
-   safe place and then shut down. */
+
+/* This class can be called asynchronously (e.g. from a signal handler, or another thread)
+   and we use it to 
+   signal derived classes synchronously.  */ 
+
+/* The idea is simple: a class that derives from this can periodically
+   call TestCancel() to determine if it needs to exit, or do something.  
+   This is particularly useful in the case of a reader, which needs to 
+   close, or a processor which is looping and might be requested to close
+   in the middle of a loop.  Nothing here guarantees that a process will
+   stop.  Instead this sets markers (like pthread_testcancel, except TestCancel
+   does not immediately exit the thread if there is a pending cancel) and a class
+   can test these at appropriate times. */
+
+/* This class is safe across thread boundaries, but with some caveats. If CancelAll()
+   is called, then TestCancel() will be set to true for *all* derived classes in every
+   thread.  If one wants to signal only a particular thread then call CancelAllInThread()
+   which will set TestCancel() to true for all derived classes within the specified
+   thread.  (There is no error if the thread doesn't exist, or if no derived classes 
+   exist in that thread.)  Derived classes take the pthread_t id of the thread in which
+   they were generated, so whereas all calls to CancelAll and CancelAllInThread are thread-safe
+   (from any thread) the programmer needs to know exactly which classes are being told to 
+   cancel.  */ 
+
+/* Also, this class does not provide signal handling, or any heavy-handed kill functionality.
+   It WILL NOT kill, delete, or stop a derived class.  It is the coder's responsibility to set
+   test TestCancel() at appropriate locations like:
+
+   if (TestCancel()) {
+     // I need to exit.  Do something, clean up, and get out.
+   }
+   // otherwise continue as normal
+
+  For signal handling, please see ORHandlerThread.  
+
+  It is important for the coder to be aware of blocking system calls that might not exit.  Some
+  workarounds can be done to keep this from happening.
+*/
 
 class ORVSigHandler
 {
   public:
     static void CancelAll();
+    /* Set to cancel all ORVSigHandlers.*/
+    static void CancelAllInThread(pthread_t aThread);
+    /* Just call cancel all in a particular thread. */
+    void Cancel() { CancelAnInstance(); }
+    void UnCancel();
     
   protected:
     ORVSigHandler();
@@ -25,12 +67,13 @@ class ORVSigHandler
        placed appropriately.  See, e.g., ORDataProcManager for how to do this. */
     void CancelAnInstance();
 
-    static std::vector<ORVSigHandler*> fgHandlers;
 
   private:
     ORReadWriteLock fRWLock;
     bool fSetToCancel;
     static ORReadWriteLock fgBaseRWLock;
+    static std::map<pthread_t, std::vector<ORVSigHandler*> > fgHandlers;
+    pthread_t fMyThread;
     
 };
 

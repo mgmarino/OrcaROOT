@@ -114,6 +114,7 @@ ORLogger::ESeverity ORLogger::GetORLoggerSeverity(pthread_t thread)
 
 void ORLogger::SetORLoggerOStream(pthread_t thread, std::ostream* aStream)
 {
+  if (aStream == NULL) aStream = fgMyNullstream;
   fgRWLock.writeLock();
   std::map<pthread_t, std::pair<ORLogger::ESeverity, std::ostream* > >::iterator anIter = fgLoggerMap.find(thread);
   if ( anIter != fgLoggerMap.end() ) {

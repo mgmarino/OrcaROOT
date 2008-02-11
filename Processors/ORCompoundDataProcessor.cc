@@ -109,3 +109,15 @@ void ORCompoundDataProcessor::AddProcessor(ORDataProcessor* processor)
   processor->SetRunContext(fRunContext);
   fDataProcessors.push_back(processor); 
 }
+
+void ORCompoundDataProcessor::RemoveProcessor(ORDataProcessor* processor)
+{
+  vector<ORDataProcessor*>::iterator it = 
+    find(fDataProcessors.begin(), fDataProcessors.end(), processor);
+  if (it != fDataProcessors.end()) {
+    fDataProcessors.erase(it);
+  } else {
+    ORLog(kWarning) << "Unable to remove processor, not found!" << endl;
+  }
+  
+}

@@ -39,6 +39,8 @@ class ORCompoundDataProcessor : public ORUtilityProcessor
     virtual void SetComponentBreakReturnsBreak() { fBreakRetCode = kBreak; }
 
     virtual void AddProcessor(ORDataProcessor* processor);
+    virtual void ClearProcessors() { fDataProcessors.clear(); }
+    virtual void RemoveProcessor(ORDataProcessor* processor);
 
   protected:
     virtual void SetRunContext(ORRunContext* aContext);

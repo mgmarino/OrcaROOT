@@ -15,8 +15,7 @@ ORSocketReader::ORSocketReader(const char* host, int port, bool writable)
   fIOwnSocket = true;
   if (writable) fSocketToWrite = fSocket;
   else fSocketToWrite = NULL;
-  fMonitor = new TMonitor();
-  fMonitor->Add(fSocket, TMonitor::kRead);
+  fSocketIsOK = true;
 }
 
 ORSocketReader::ORSocketReader(TSocket* aSocket, bool writable)
@@ -26,8 +25,7 @@ ORSocketReader::ORSocketReader(TSocket* aSocket, bool writable)
   fIOwnSocket = false;
   if (writable) fSocketToWrite = fSocket;
   else fSocketToWrite = NULL;
-  fMonitor = new TMonitor();
-  fMonitor->Add(fSocket, TMonitor::kRead);
+  fSocketIsOK = true;
 }
 
 ORSocketReader::~ORSocketReader()
@@ -36,8 +34,6 @@ ORSocketReader::~ORSocketReader()
   if (fCircularBuffer.buffer) delete [] fCircularBuffer.buffer;
   pthread_attr_destroy(&fThreadAttr);
   pthread_rwlock_destroy(&fCircularBuffer.cbMutex);
-  fMonitor->Remove(fSocket);
-  delete fMonitor;
   if (fIOwnSocket) delete fSocket; 
 }
 
@@ -57,15 +53,6 @@ void ORSocketReader::Initialize()
   fSleepTime = 1;
 }
 
-/*
-void ORSocketReader::AddSocket(TSocket* sock)
-{
-  if (!fIsThreadRunning) {
-    *//* poor man's mutex. */
-    /*ORMonitor::AddSocket(sock, kRead);
-  }
-} */
-
 bool ORSocketReader::ThreadIsStillRunning()
 {
   bool threadIsStillRunning;
@@ -78,25 +65,10 @@ bool ORSocketReader::ThreadIsStillRunning()
 bool ORSocketReader::StartThread()
 {
   if (ThreadIsStillRunning()) return true;
-  if (fMonitor->GetActive() == 0 || TestCancel()) {
+  if (!fSocketIsOK || TestCancel()) {
     return false;
   }
-
-  /* We can access fMonitor since the thread is not running. */
-  /* While the thread is running, nothing else can access fMonitor. */
-  TList* listOfSockets = fMonitor->GetListOfActives();
-  TIter next(listOfSockets);
-  TSocket* sock;
-  while ((sock = (TSocket*)next())) {
-    if (!sock->IsValid()) {
-      /* One of the sockets isn't valid, don't continue. */
-      delete listOfSockets;
-      fMonitor->Remove(sock);
-      ORLog(kError) << "Socket invalid!" << endl;
-      return false;
-    }
-  }
-  delete listOfSockets;
+  if (!fSocket->IsValid()) return false;
 
   ResetCircularBuffer();
   fCircularBuffer.isRunning = true;
@@ -118,10 +90,6 @@ void ORSocketReader::StopThread()
   Int_t retValue = 0;
   if ((retValue = pthread_cancel(fThreadId)) != 0) {
     /* Some pthread implementations will return an error if the thread has already quit. */
-    /*if (retValue != ESRCH) {
-      ORLog(kError) << "Thread not cancelled, error: " << strerror(retValue) << std::endl;
-    } else {*/
-    //}
   } else {
     // block until the thread actual stops.
     pthread_join(fThreadId, 0);
@@ -259,33 +227,43 @@ void* SocketReadoutThread(void* input)
 {
   /* Readout Thread which sucks info out of socket as fast as it can. */
   /* Currently, it throws data away that it can't process. */
-  /* The variable fThreadStatus holds the status of the thread and is non-zero
-     when the thread has exited (negative values indicate an error).  There is
-     not a mutex lock on this variable because while the thread is running no 
-     other part of the class is writing it, only reading it.  Race conditions 
-     won't exist with this variable. */
-
+  
   bool firstWordRead = false;
   bool mustSwap = false;
   Int_t numRead = 0, numLongsToRead = 0, amountAbleToRead = 0, firstRead = 0,
     secondRead = 0;
-  const Long_t timeout = 1000;  // allows the socket to be stopped. 
   const size_t sizeOfScratchBuffer = 0xFFFF;
   UInt_t scratchBuffer[sizeOfScratchBuffer];
   ORSocketReader* socketReader = reinterpret_cast<ORSocketReader*>(input);
 
   if (socketReader == NULL) pthread_exit((void *) -1);
 
-  while (socketReader->fMonitor->GetActive() > 0) {
+  /* Here we set up the select function.  We do not use the ROOT version because
+     it emits Events which are not pleasant to deal with in Threads. */
+
+  TSocket* sock = socketReader->fSocket;
+  fd_set fileDescriptors; 
+  Int_t testValue;
+
+  while (socketReader->fSocketIsOK) {
     /* In this thread, we readout the socket into the circular buffer. */
     pthread_testcancel(); // When we are here, it is safe to cancel the thread.
-    TSocket* sock = socketReader->fMonitor->Select(timeout);
-    if (sock == (TSocket*)-1) continue;
-    if (!sock) continue; 
+    FD_ZERO(&fileDescriptors);
+    FD_SET(sock->GetDescriptor(), &fileDescriptors);
+    timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    testValue = select(sock->GetDescriptor()+1,
+                       &fileDescriptors, 0, 0, &timeout);
+    if (testValue == 0) continue;
+    if (testValue < 0) {
+      socketReader->fSocketIsOK = false;
+      break;
+    }
     numRead = sock->RecvRaw(scratchBuffer, 4, kPeek);
     if (numRead <= 0) {
-      socketReader->fMonitor->Remove(sock); 
-      continue;
+      socketReader->fSocketIsOK = false;
+      break;
     }
     if (!firstWordRead) {
       /* Check the first word to determine if we must swap. */
@@ -303,8 +281,8 @@ void* SocketReadoutThread(void* input)
       }
       else if (version == ORHeaderDecoder::kUnknownVersion) {
         /* Get out, something is wrong. */
-        socketReader->fMonitor->Remove(sock); 
-        continue;
+        socketReader->fSocketIsOK = false;
+        break;
       }
       firstWordRead = true;
     }
@@ -333,7 +311,7 @@ void* SocketReadoutThread(void* input)
         numLongsToRead -= numRead/4;
       }
       if (numRead <= 0 || numRead % 4 != 0) {
-        socketReader->fMonitor->Remove(sock); 
+        socketReader->fSocketIsOK = false;
       }
       continue;
     }
@@ -341,38 +319,44 @@ void* SocketReadoutThread(void* input)
     /* We have room for it, so now figure out how to read it out.*/
     firstRead = (socketReader->fCircularBuffer.writeIndex >= 
                  socketReader->fCircularBuffer.readIndex) ?
-      socketReader->fCircularBuffer.bufferLength - socketReader->fCircularBuffer.writeIndex :
-      socketReader->fCircularBuffer.readIndex - socketReader->fCircularBuffer.writeIndex;
+      socketReader->fCircularBuffer.bufferLength 
+        - socketReader->fCircularBuffer.writeIndex :
+      socketReader->fCircularBuffer.readIndex 
+        - socketReader->fCircularBuffer.writeIndex;
 
     
     pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
     if (firstRead > numLongsToRead) firstRead = numLongsToRead;
 
     secondRead = (firstRead < numLongsToRead) ? numLongsToRead - firstRead : 0;
+
     pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
+
     numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer 
       + socketReader->fCircularBuffer.writeIndex, firstRead*4); 
 
     if (numRead <= 0 || numRead != firstRead*4) {
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
-      socketReader->fMonitor->Remove(sock); 
-      continue;
+      socketReader->fSocketIsOK = false;
+      break;
     } 
 
     socketReader->fCircularBuffer.writeIndex += firstRead;
     socketReader->fCircularBuffer.amountInBuffer += firstRead;
 
-    if (socketReader->fCircularBuffer.writeIndex == socketReader->fCircularBuffer.bufferLength) {
+    if (socketReader->fCircularBuffer.writeIndex 
+        == socketReader->fCircularBuffer.bufferLength) {
       socketReader->fCircularBuffer.writeIndex = 0;
     }
 
     if (secondRead != 0) {
-      numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer + socketReader->fCircularBuffer.writeIndex,
-        secondRead*4); 
+      numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer 
+                              + socketReader->fCircularBuffer.writeIndex,
+                              secondRead*4); 
       if (numRead <= 0 || numRead != secondRead*4) {
         pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
-        socketReader->fMonitor->Remove(sock); 
-        continue;
+        socketReader->fSocketIsOK = false;
+        break;
       } 
       socketReader->fCircularBuffer.writeIndex += secondRead;
       socketReader->fCircularBuffer.amountInBuffer += secondRead;
@@ -382,9 +366,11 @@ void* SocketReadoutThread(void* input)
     pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
      
   }
+
   pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
   socketReader->fCircularBuffer.isRunning = false;
   pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
+
   pthread_exit((void *) 0);
 }
 
