@@ -144,10 +144,6 @@ int main(int argc, char** argv)
   ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
   dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
 
-	
-  ORTrig4ChanShaperFilter triggerShaperHistDrawer;
-  dataProcManager.AddProcessor(&triggerShaperHistDrawer);
-	
   ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
   dataProcManager.AddProcessor(&triggerShaperTreeWriter);
   
