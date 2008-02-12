@@ -281,10 +281,15 @@ int main(int argc, char** argv)
   ORLog(kRoutine) << "Setting up data processing manager..." << endl;
   ORDataProcManager dataProcManager(reader);
 
+  /* Declare processors here. */
+  // ORMyProcessor processor;
   OROrcaRequestProcessor orcaReq;
   if (runAsDaemon) {
+    /* Add them here if you wish to run them in daemon mode ( not likely ).*/
     dataProcManager.AddProcessor(&orcaReq);
   } else {
+    /* Add the processors here to run them in normal mode. */
+    // dataProcManager.AddProcessor(&processor);
   }
 
   ORLog(kRoutine) << "Start processing..." << endl;
