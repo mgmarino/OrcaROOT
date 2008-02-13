@@ -13,7 +13,7 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
   public:
     ORKatrinFLTWaveformDecoder();
     virtual ~ORKatrinFLTWaveformDecoder() {}
-    enum EKatrinFLTWaveformConsts {kBufHeadLen = 7, 
+    enum EKatrinFLTWaveformConsts {kBufHeadLen = 9, 
                                   kWaveformLength = 1024,
                                   kNumFLTChannels = 22};
     
@@ -25,8 +25,11 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
     virtual inline UInt_t GetSubSec();
     virtual inline UInt_t GetChannelMap();
     virtual inline UShort_t GetChannel();
-    virtual inline UInt_t GetEventID();
+    virtual inline UShort_t GetEventID();
+    virtual inline UShort_t GetPageNumber();
     virtual inline UInt_t GetEnergy();
+    virtual inline UInt_t GetResetSec();
+    virtual inline UInt_t GetResetSubSec();
 
     // Waveform Functions
     virtual inline size_t GetWaveformLen() {return kWaveformLength;} 
@@ -37,8 +40,7 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
     virtual double GetSamplingFrequency() {return .01;}
     virtual UShort_t GetBitResolution() {return 14;} 
     virtual size_t GetNumberOfEvents() {return 1;}
-    virtual ULong64_t GetEventTime(size_t /*event*/) {return 0;}
-      /*This card doesn't store event time information. */
+    virtual ULong64_t GetEventTime(size_t /*event*/); 
     virtual UInt_t GetEventEnergy(size_t /*event*/) {return GetEnergy();}
     virtual UShort_t GetEventChannel(size_t /*event*/) {return GetChannel();}
     virtual size_t GetEventWaveformLength(size_t /*event*/) 
@@ -69,12 +71,17 @@ inline UInt_t ORKatrinFLTWaveformDecoder::GetSubSec()
 
 inline UInt_t ORKatrinFLTWaveformDecoder::GetChannelMap()
 {
-  return (fDataRecord[4]);
+  return (fDataRecord[4] & 0x3FFFFF);
 }
 
-inline UInt_t ORKatrinFLTWaveformDecoder::GetEventID()
+inline UShort_t ORKatrinFLTWaveformDecoder::GetEventID()
 {
-  return (fDataRecord[5]);
+  return ( fDataRecord[5] & 0x3FF );
+}
+
+inline UShort_t ORKatrinFLTWaveformDecoder::GetPageNumber()
+{
+  return ( fDataRecord[5] & 0x1FF0000 ) >> 16;
 }
 
 inline UInt_t ORKatrinFLTWaveformDecoder::GetEnergy()
@@ -82,18 +89,30 @@ inline UInt_t ORKatrinFLTWaveformDecoder::GetEnergy()
   return (fDataRecord[6]);
 }
 
+inline UInt_t ORKatrinFLTWaveformDecoder::GetResetSec()
+{
+  return (fDataRecord[7]);
+}
+
+inline UInt_t ORKatrinFLTWaveformDecoder::GetResetSubSec()
+{
+  return (fDataRecord[8]);
+}
+
 inline UShort_t ORKatrinFLTWaveformDecoder::GetChannel()
 {
-  for(size_t i=0; i<kNumFLTChannels; i++) {
-    if((0x00000001<<i) & GetChannelMap()) return i; 
-  }
-  return (UShort_t)(-1);
-  /* If we get here, there's an error*/
+  return ( fDataRecord[4] & 0xFF000000 ) >> 24;
 }
 
 inline const UShort_t* ORKatrinFLTWaveformDecoder::GetWaveformDataPointer()
 {
   return (UShort_t*)(fDataRecord + kBufHeadLen);
 }
+
+inline ULong64_t ORKatrinFLTWaveformDecoder::GetEventTime( size_t )
+{
+  return ((ULong64_t)GetSec() << 32 ) + (ULong64_t)GetSubSec();
+}
+
 #endif
 

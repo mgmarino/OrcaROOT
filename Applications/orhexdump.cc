@@ -12,7 +12,7 @@
 #include "ORAD413ADCDecoder.hh"
 #include "ORAD811ADCDecoder.hh"
 #include "ORADC2249ADCDecoder.hh"
-#include "ORAugerFLTEnergyDecoder.hh"
+#include "ORKatrinFLTEnergyDecoder.hh"
 #include "ORCaen775tdcDecoder.hh"
 #include "ORCaen785adcDecoder.hh"
 #include "ORCaen792qdcDecoder.hh"
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
   ad811ADCProc.SetDebugRecord();
   dataProcManager.AddProcessor(&ad811ADCProc);
 
-  ORAugerFLTEnergyDecoder augerFLTEnergyDecoder;
+  ORKatrinFLTEnergyDecoder augerFLTEnergyDecoder;
   ORDataProcessor augerFLTProc(&augerFLTEnergyDecoder);
   augerFLTProc.SetDebugRecord();
   dataProcManager.AddProcessor(&augerFLTProc);

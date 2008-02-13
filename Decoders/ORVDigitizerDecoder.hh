@@ -13,7 +13,7 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     /* Basic functions. */
     virtual double GetSamplingFrequency() = 0;
       /* Should return in units of 1 GHz. */
-    virtual inline UShort_t GetSizeOfWaveformDatum() {return sizeof(UShort_t);}
+    virtual inline UShort_t GetSizeOfWaveformDatum() { return sizeof(UShort_t); }
       /* This is the size of one word (in bytes) of waveform data.  
          Default to 16-bit.*/
     virtual inline UShort_t GetBitResolution() = 0;

@@ -12,12 +12,19 @@ class ORKatrinFLTEnergyDecoder : public ORVBasicTreeDecoder
     virtual ~ORKatrinFLTEnergyDecoder() {}
 
     enum EKatrinFLTEnergyConsts {kNumFLTChannels = 22};
-    virtual inline UShort_t ChannelOf(UInt_t* record);
+    virtual inline UShort_t ChannelOf(UInt_t* record)
+      { return ( record[4] & 0xFF000000 ) >> 24; }
     virtual inline UInt_t SecondsOf(UInt_t* record) { return record[2]; }
     virtual inline UInt_t SubSecondsOf(UInt_t* record) { return record[3]; }
-    virtual inline UInt_t ChannelMapOf(UInt_t* record) { return record[4]; }
-    virtual inline UInt_t EventIDOf(UInt_t* record) { return record[5]; }
+    virtual inline UInt_t ChannelMapOf(UInt_t* record) 
+      { return (record[4] & 0x3FFFFF); }
+    virtual inline UInt_t EventIDOf(UInt_t* record) 
+      { return ( record[5] & 0x3FF ); }
+    virtual inline UInt_t PageNumberOf(UInt_t* record) 
+      { return ( record[5] & 0x1FF0000 ) >> 16; }
     virtual inline UInt_t EnergyOf(UInt_t* record) { return record[6]; }
+    virtual inline UInt_t ResetSecondsOf(UInt_t* record) { return record[7]; }
+    virtual inline UInt_t ResetSubSecondsOf(UInt_t* record) { return record[8]; }
 
     // for basic trees
     virtual size_t GetNPars() { return 6; }
@@ -29,12 +36,5 @@ class ORKatrinFLTEnergyDecoder : public ORVBasicTreeDecoder
 
 };
 
-inline UShort_t ORKatrinFLTEnergyDecoder::ChannelOf(UInt_t* record)
-{
-  for(size_t i=0; i<kNumFLTChannels; i++) {
-    if((0x00000001<<i) & ChannelMapOf(record)) return i; 
-  }
-  return (UShort_t)(-1);
-  /* If we get here, there's an error*/
-}
+
 #endif
