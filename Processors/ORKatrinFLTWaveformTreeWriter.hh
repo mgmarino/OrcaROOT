@@ -22,9 +22,9 @@ class ORKatrinFLTWaveformTreeWriter : public ORVTreeWriter
 
   protected:
     ORKatrinFLTWaveformDecoder* fEventDecoder;
-    UInt_t fSec, fSubSec;
-    UInt_t fEventID;
-    UShort_t fCrate, fCard, fChannel;
+    UInt_t fSec, fSubSec, fResetSec, fResetSubSec;
+    UInt_t fEventID, fChannelMap;
+    UShort_t fCrate, fCard, fChannel, fPageNumber;
     UShort_t fWaveform[kMaxWFLength];
     Int_t fWaveformLength;
     UInt_t fEnergy;

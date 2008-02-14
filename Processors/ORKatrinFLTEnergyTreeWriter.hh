@@ -19,9 +19,9 @@ class ORKatrinFLTEnergyTreeWriter : public ORVTreeWriter
 
   protected:
     ORKatrinFLTEnergyDecoder* fEventDecoder;
-    UInt_t fSec, fSubSec, fEventID;
+    UInt_t fSec, fSubSec, fEventID, fChannelMap, fPageNumber;
     UShort_t fCrate, fCard, fChannel;
-    UInt_t fEnergy;
+    UInt_t fEnergy, fResetSec, fResetSubSec;
 };
 
 #endif

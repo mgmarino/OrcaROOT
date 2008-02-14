@@ -23,11 +23,15 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::InitializeBranches()
   fTree->Branch("wfLength", &fWaveformLength, "wfLength/I");
   fTree->Branch("eventSec", &fSec, "eventSec/i");
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
-  fTree->Branch("eventID", &fEventID, "eventSubSec/i");
+  fTree->Branch("eventID", &fEventID, "eventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
+  fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
+  fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
   fTree->Branch("energy", &fEnergy, "energy/i");
+  fTree->Branch("resetSec", &fResetSec, "resetSec/i");
+  fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");
   fTree->Branch("waveform", fWaveform, "waveform[wfLength]/s");
   return kSuccess;
 }
@@ -45,7 +49,12 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
   fCrate = fEventDecoder->CrateOf();
   fCard = fEventDecoder->CardOf();
   fChannel = fEventDecoder->GetChannel();
+  fChannelMap = fEventDecoder->GetChannelMap();
+  fPageNumber = fEventDecoder->GetPageNumber();
   fWaveformLength = fEventDecoder->GetWaveformLen();
+  fResetSec = fEventDecoder->GetResetSec();
+  fResetSubSec = fEventDecoder->GetResetSubSec();
+   
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
