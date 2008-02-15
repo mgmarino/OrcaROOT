@@ -8,6 +8,18 @@
 #include <map>
 using namespace std;
 
+/** Decodes the binary Orca data format and writes it into a ROOT TFile.
+  * The binary data format description is in \file ORKatrinFLTDecoder.m .
+  * In  \file ORKatrinFLTModel.m in in - (NSDictionary*) dataRecordDescription
+  * the entries in the data dictionary define the data key and its according
+  * selector of the decoder. In this case it is "KatrinFLTWaveForm". The decoder of
+  * this dictionary is defined as ORKatrinFLTDecoderForEnergy.
+  * The source code (in \file ORKatrinFLTDecoder.m) of this method (ORKatrinFLTDecoderForEnergy)
+  * holds the description of this format.
+  *
+  * This format is recognized by the return value of GetDataObjectPath() which is
+  * "ORKatrinFLTModel:KatrinFLTWaveForm".
+  */ //-tb- 2008-02-6
 class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
 {
   public:
@@ -18,6 +30,8 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
                                   kNumFLTChannels = 22};
     
     virtual std::string GetDataObjectPath() { return "ORKatrinFLTModel:KatrinFLTWaveForm"; }  
+    //!< KatrinFLTWaveForm is the key in ORKatrinFLTModel.m in - (NSDictionary*) dataRecordDescription -tb- 2008-02-12
+
     virtual bool SetDataRecord(UInt_t* record);
        
     //Functions that return data from buffer header:
