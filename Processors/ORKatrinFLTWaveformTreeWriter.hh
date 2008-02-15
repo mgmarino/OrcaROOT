@@ -14,7 +14,9 @@ class ORKatrinFLTWaveformTreeWriter : public ORVTreeWriter
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
       { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; 
-        fChannel = 0; fEnergy = 0; fWaveformLength = 0;}
+        fChannel = 0; fEnergy = 0; fWaveformLength = 0;
+        fResetSec=0; fResetSubSec=0;   //-tb- 2008-02-12
+        fChannelMap=0; fPageNumber=0; }//-tb- 2008-02-12
     enum EKatrinFLTWFTreeWriter{
       kMaxWFLength = ORKatrinFLTWaveformDecoder::kWaveformLength};
   protected:
