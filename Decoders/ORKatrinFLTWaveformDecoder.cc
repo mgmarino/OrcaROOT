@@ -84,6 +84,8 @@ void ORKatrinFLTWaveformDecoder::Dump(UInt_t* dataRecord) //debugging
     << "    The channel is " << GetChannel() << endl
     << "    The channel map is " << GetChannelMap() << endl
     << "    Energy: " << GetEnergy() << endl  
+    << "    The ResetSec is " << GetResetSec() << endl        // -tb- 2008-02-12
+    << "    The ResetSubSec is " << GetResetSubSec() << endl  // -tb- 2008-02-12
     << "    The waveform data has " << GetWaveformLen() 
       << " (32-bit) words" << endl;
 }
