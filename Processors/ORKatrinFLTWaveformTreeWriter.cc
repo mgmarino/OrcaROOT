@@ -18,6 +18,9 @@ ORKatrinFLTWaveformTreeWriter::~ORKatrinFLTWaveformTreeWriter()
   delete fEventDecoder;
 }
 
+/** Create the ROOT branches.
+  * 
+  */ //-tb- 2008-02-12
 ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::InitializeBranches()
 {
   fTree->Branch("wfLength", &fWaveformLength, "wfLength/I");
@@ -36,6 +39,11 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::InitializeBranches()
   return kSuccess;
 }
 
+/**  This sets the data/variables for the ROOT branches.
+  *  TTree::Fill() is called in ORBasicTreeWriter::ProcessMyDataRecord(UInt_t* record) (?)
+  *  This class is a ORDataProcessor and ORVTreeWriter, NOT a ORBasicTreeWriter!
+  *  (See comments in ORDataProcessor.hh and ORVTreeWriter.hh)
+  */ //-tb- 2008-02-12
 ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(UInt_t* record)
 {
   // the event decoder could run into a problem, but this might not
@@ -58,9 +66,12 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
-      << "event-sec-subsec-crate-card-channel-energy = "
+      << "event-sec-subsec-crate-card-channel-energy-resetsec-resetsubsec-chmap-pagenum = "
       << fEventID << "-" << fSec << "-" << fSubSec << "-" << fCrate << "-"
-      << fCard << "-" << fChannel << "-" << fEnergy << endl;
+      << fCard << "-" << fChannel << "-" << fEnergy 
+      << "-" << fResetSec << "-" << fResetSubSec   //-tb- 2008-02-12
+      << "-" << fChannelMap << "-" << fPageNumber  //-tb- 2008-02-12
+      << endl;
   }
   if(fWaveformLength > kMaxWFLength) {
     ORLog(kError) << "Waveform length (" << fWaveformLength 
