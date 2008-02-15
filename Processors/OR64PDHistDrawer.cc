@@ -51,14 +51,15 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::StartRun()
 
   ifstream histFile;
   histFile.open("Hist_Settings.txt");  //open a file
-  
+  //set defaults
+  maxE = 100;
+  threshold = 10;
+  nbinsE = 200;
+  maxT = 1800;
+  fRefreshTime = 10;
+   
   if(!histFile.is_open()) {
     ORLog(kWarning) << "Hist_Settings.txt file couldn't open, using defaults" << endl;
-    maxE = 100;
-    threshold = 10;
-    nbinsE = 200;
-    maxT = 1800;
-    fRefreshTime = 10;
   } else {
     histFile.exceptions(ifstream::badbit);
     try {
@@ -67,10 +68,18 @@ ORDataProcessor::EReturnCode OR64PDHistDrawer::StartRun()
       lineNum++;
       histFile >> maxE >> threshold >> nbinsE >> maxT >> fRefreshTime;
       lineNum++;
+      //check that values are in bounds
+      if ( maxE < 0 || fRefreshTime<0 || maxT < 0 || threshold > maxE ) {
+        ORLog(kWarning) << "StartRun(): Hist_Settings.txt file format incorrect, using defaults" << endl;
+        maxE = 100;
+        threshold = 10;
+        nbinsE = 200;
+        maxT = 1800;
+        fRefreshTime = 10;
+      }          
     } catch ( ifstream::failure fail) {
       ORLog(kWarning) << "StartRun(): Problem reading Hist_Settings.txt at line " << lineNum << endl;
     }
-    
   }
   histFile.close();
   
