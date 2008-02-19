@@ -24,6 +24,13 @@
   * ORKatrinFLTWaveformDecoder and ORKatrinFLTWaveformTreeWriter
   * ORKatrinFLTEnergyDecoder and ORKatrinFLTEnergyTreeWriter
   * ORKatrinFLTHitrateDecoder and ORKatrinFLTHitrateTreeWriter
+  *
+  *
+  * History:
+  *   - 2008-02-19 If input is EXACTLY ONE file and if it is a IPE Crate file shaper tree is omitted.
+  *   - 2008-02-19 The IPE Katrin Crate files omit empty trees.
+  *   - 2008-02-12 Version from Michelle.
+  *   - 2008-02-06 First test version (-tb-).
   */ //-tb- 2008-02-12
 
 
@@ -137,10 +144,30 @@ int main(int argc, char** argv)
 
   ORHandlerThread* handlerThread = new ORHandlerThread(); // new -tb-
   handlerThread->StartThread();                           // new -tb-
+  bool useShaperDecoder  = true; // new -tb- 2008-02-19
 
   string readerArg = argv[optind];
   size_t iColon = readerArg.find(":");
   if (iColon == string::npos) {
+    // BEGIN check for IPE Katrin Crate file -tb- 2008-02-19
+    // 
+    if(argc==2){
+      //debug -tb- cout << "Filename: " << argv[1] << endl;
+      TFile *tf=new TFile(argv[1],"raw");
+      char buff[4096];
+      tf->ReadBuffer(buff,2048);
+      //debug -tb- cout << "Buffer: " << buff << endl;
+      string str=buff;
+      size_t iKatrinKey = str.find("ORKatrinFLTModel");
+      if(iKatrinKey != string::npos){
+        ORLog(kRoutine) << "Found key " << "ORKatrinFLTModel" << " ... is a IPE crate file ..." << endl;
+        useShaperDecoder = false;
+      }
+      //exit(999);
+    }else{
+      ORLog(kRoutine) << "More than 1 inputs: Using all implemented decoders   ... " << endl;
+    }    
+    // END check for IPE Katrin Crate file -tb- 2008-02-19
     reader = new ORFileReader;
     for (int i=optind; i<argc; i++) {
       ((ORFileReader*) reader)->AddFileToProcess(argv[i]);
@@ -194,17 +221,19 @@ int main(int argc, char** argv)
   
   
   //this part is for the UW crate
-  ORShaperShaperDecoder shaperShaperDecoder;
-  ORTrig4ChanDecoder trig4ChanDecoder; 
+  //ORShaperShaperDecoder shaperShaperDecoder;
+  //ORTrig4ChanDecoder trig4ChanDecoder; 
 
-  ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
-  dataProcManager.AddProcessor(&shaperShaperTreeWriter);
+  //ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
+  //dataProcManager.AddProcessor(&shaperShaperTreeWriter);
 
-  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
-  dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
+  //ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
+  //dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
 
   ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
-  dataProcManager.AddProcessor(&triggerShaperTreeWriter);
+  if(useShaperDecoder){
+    dataProcManager.AddProcessor(&triggerShaperTreeWriter);
+  }
   
 
   //ADDITION FOR KATRIN - Stop
