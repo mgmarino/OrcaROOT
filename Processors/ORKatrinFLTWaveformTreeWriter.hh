@@ -12,11 +12,13 @@ class ORKatrinFLTWaveformTreeWriter : public ORVTreeWriter
     ORKatrinFLTWaveformTreeWriter(std::string treeName = "");
     virtual ~ORKatrinFLTWaveformTreeWriter();
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
+    virtual EReturnCode EndRun();
     virtual inline void Clear() 
       { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; 
         fChannel = 0; fEnergy = 0; fWaveformLength = 0;
         fResetSec=0; fResetSubSec=0;   //-tb- 2008-02-12
-        fChannelMap=0; fPageNumber=0; }//-tb- 2008-02-12
+        fChannelMap=0; fPageNumber=0; //-tb- 2008-02-12
+        saveOnlyNonemptyTrees=true; }
     enum EKatrinFLTWFTreeWriter{
       kMaxWFLength = ORKatrinFLTWaveformDecoder::kWaveformLength};
   protected:
@@ -30,6 +32,7 @@ class ORKatrinFLTWaveformTreeWriter : public ORVTreeWriter
     UShort_t fWaveform[kMaxWFLength];
     Int_t fWaveformLength;
     UInt_t fEnergy;
+    Bool_t saveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-02-19
 };
 
 #endif
