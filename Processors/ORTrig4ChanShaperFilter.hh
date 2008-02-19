@@ -51,7 +51,7 @@ class ORTrig4ChanShaperFilter : public ORCompoundDataProcessor
     OR64PDHistDrawer* f64PDHistDrawer;
     
     UInt_t fLastRecordDataId;
- 
+   UInt_t Reset;
 };
 
 #endif

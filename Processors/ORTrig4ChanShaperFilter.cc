@@ -24,6 +24,7 @@ ORTrig4ChanShaperFilter::ORTrig4ChanShaperFilter()
   
   fLastTriggerRecordPtr = NULL;
   fTempShaperRecordPtr = NULL;
+   Reset = 0;
 }
 
 ORTrig4ChanShaperFilter::~ORTrig4ChanShaperFilter()
@@ -49,16 +50,21 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperFilter::StartRun()
 ORDataProcessor::EReturnCode ORTrig4ChanShaperFilter::ProcessDataRecord(UInt_t* record)
 {
   UInt_t thisDataId = fShaperDecoder.DataIdOf(record);
-  
+ 
   if( thisDataId == fShaperDataId ) {
+     Reset++;
     if (fTempShaperRecordPtr==NULL) { 
        fShaperRecordLength = fShaperDecoder.LengthOf(record);
     }
     UInt_t tagNoise = 0;
     UInt_t thisLowClock = fTriggerDecoder.LowClockOf(fLastTriggerRecordPtr);
     UInt_t thisUpClock = fTriggerDecoder.UpClockOf(fLastTriggerRecordPtr);
-    fThisTriggerTime = thisUpClock * (0xFFFFFFFFL/50E+06) + thisLowClock/50E+06;
-    fThisCard = fShaperDecoder.CardOf(record);  
+    fThisTriggerTime = (thisUpClock * (Double_t)(0xFFFFFFFFU) + thisLowClock)/(Double_t)50000000.0;
+     ORLog(kDebug) << "Low CLock " << thisLowClock << endl;
+     ORLog(kDebug) << "UpClock " << thisUpClock  << endl;
+     ORLog(kDebug) << "Trigger time " << fThisTriggerTime << endl;
+     
+     fThisCard = fShaperDecoder.CardOf(record);  
     fThisChannel = fShaperDecoder.ChannelOf(record);
     if ( fBothRecords.size() > 0 ) {
       //iterator to tag records old enough to delete
@@ -69,36 +75,36 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperFilter::ProcessDataRecord(UInt_t* 
          ++it) {
         fMapTriggerTime = it->first;
         if ( fThisTriggerTime - fMapTriggerTime > fTimeCutLength ) {
-          if ( fThisTriggerTime < fMapTriggerTime ) {
-            ORLog(kWarning) << "Trigger coming out of order!" << endl;
-            ORLog(kWarning) << "Processing record " << fThisTriggerTime  << endl;
-            ORLog(kWarning) << "Map record Time " << fMapTriggerTime << endl;
-          } else {
-            //done with old records
+           //done with old records
             delete[] it->second;
             it->second = NULL;
             //save iterator location of last record to erase 
             del_It++;
-          }
          } else { //within time cut
           fLastCard = fShaperDecoder.CardOf(it->second);  
           fLastChannel = fShaperDecoder.ChannelOf(it->second);
-          if ( fThisTriggerTime < fMapTriggerTime ) {
-            //correct for out of order events
-            if (fMapTriggerTime - fThisTriggerTime > fTimeCutLength ) {
-              if ( fThisCard == fLastCard ) {
+          if ( fThisTriggerTime >= fMapTriggerTime ) {
+             //normal order events
+             if ( fThisCard == fLastCard ) {
                 if ( fThisChannel == fLastChannel ) {
-                  tagNoise = 1;//don't print current record
+                   tagNoise = 1;//don't print current record
                 }
-              }
-            }
-          } else { //normal order events
-            if ( fThisCard == fLastCard ) {
-              if ( fThisChannel == fLastChannel ) {
-                tagNoise = 1;//don't print current record
-              }
-            }
-            
+             }
+          } else { 
+             //correct for out of order events
+             ORLog(kDebug) << "Cut Triggers coming out of order!" << endl;
+             ORLog(kDebug) << "Processing record " << fThisTriggerTime  << endl;
+             ORLog(kDebug) << "Map record Time " << fMapTriggerTime << endl;
+             ORLog(kDebug) << "Difference " << fThisTriggerTime - fMapTriggerTime << endl;
+             ORLog(kDebug) << "Reset " << Reset << endl;
+             if (fMapTriggerTime - fThisTriggerTime > fTimeCutLength ) {
+                if ( fThisCard == fLastCard ) {
+                   if ( fThisChannel == fLastChannel ) {
+                      tagNoise = 1;//don't print current record
+                   }
+                }
+             }
+             
           }
         }
       }
@@ -128,10 +134,12 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperFilter::ProcessDataRecord(UInt_t* 
     fBothRecords.insert(pair<Double_t, UInt_t*>(fThisTriggerTime, fTempShaperRecordPtr) );
     fLastRecordDataId = thisDataId;  
   } else if( thisDataId == fTriggerDataId ) {
+     Reset = 0;
     if (fLastTriggerRecordPtr==NULL) { 
       /* if not allocated, reallocate a buffer and then copy. */
       fTriggerRecordLength = fShaperDecoder.LengthOf(record);
       fLastTriggerRecordPtr = new UInt_t[fTriggerRecordLength];  
+       ORLog(kDebug) << "Trigger Length" << fTriggerRecordLength << endl;
     }
     /* copy */
     memcpy(fLastTriggerRecordPtr, record, fTriggerRecordLength*sizeof(UInt_t));

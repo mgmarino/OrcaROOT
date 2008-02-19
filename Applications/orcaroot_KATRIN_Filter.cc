@@ -137,6 +137,14 @@ int main(int argc, char** argv)
   ORShaperShaperDecoder shaperShaperDecoder;
   ORTrig4ChanDecoder trig4ChanDecoder; 
 
+
+  //Don't delete, need these processors to make the compound processors work
+  ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
+  dataProcManager.AddProcessor(&shaperShaperTreeWriter);
+
+  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
+  dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
+  
   ORTrig4ChanShaperFilter triggerShaperHistDrawer;
   dataProcManager.AddProcessor(&triggerShaperHistDrawer);
 
