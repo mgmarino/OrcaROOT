@@ -60,3 +60,44 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::ProcessMyDataRecord(UI
   return kSuccess;
 }
 
+/**  End decoding the current file. Writes the tree to the output file.
+  *  This is almost an exact copy of the original ORVTreeWriter::EndRun()
+  *  except that empty trees are not written to the root file if the flag 
+  *  saveOnlyNonemptyTrees is set to @e true.
+  *
+  *  
+  */   // -tb- 2008-02-19
+ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::EndRun()
+{
+  // Write the tree only if this processor is meant to write it.
+  // fUniqueTree implies that the tree was manually filled; it still should
+  // be written automatically. A manual write can be performed by
+  // overloading this function.
+  if (fThisProcessorAutoFillsTree || fUniqueTree) {
+    if (fFillMethod == kFillBeforeProcessDataRecord && fLastProcessedRecordRetCode == kSuccess) fTree->Fill();
+
+    if (fTree->GetEntries() == 0) {
+      ORLog(kWarning) << "EndRun(): no entries in fTree " << fTree->GetName() << endl;
+    }
+
+    if (fThisProcessorAutoFillsTree) {
+      if (fTree->GetEntries() != fFillCount/fFillPeriod) {
+        ORLog(kWarning) << fFillCount << ' ' << fFillPeriod << endl;
+        ORLog(kWarning) << "EndRun(): expected tree to have "
+                        << fFillCount/fFillPeriod << " entries, but found "
+		        << fTree->GetEntries() << ": did more than one "
+		        << "processor try to fill this tree? " << endl;
+      }
+    }
+
+    if(saveOnlyNonemptyTrees){// -tb- 2008-02-19
+      if (fTree->GetEntries() != 0) fTree->Write(fTree->GetName(), TObject::kOverwrite);
+      else ORLog(kWarning) << "EndRun(): did not write empty fTree " << fTree->GetName() << endl;
+
+    }else{
+       fTree->Write(fTree->GetName(), TObject::kOverwrite);
+    }
+  }
+  return kSuccess;
+}
+
