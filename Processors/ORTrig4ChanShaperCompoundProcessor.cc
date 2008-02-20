@@ -43,15 +43,21 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperCompoundProcessor::EndRun()
 
 ORDataProcessor::EReturnCode ORTrig4ChanShaperCompoundProcessor::ProcessDataRecord(UInt_t* record)
 {
-  UInt_t thisDataId = fShaperDecoder.DataIdOf(record);
+  /* Call the parent function here, since it takes care of data swapping. */
+  ORDataProcessor::EReturnCode code = 
+    ORCompoundDataProcessor::ProcessDataRecord(record);
+  if ( code != kSuccess ) return code;
   
+  UInt_t thisDataId = fShaperDecoder.DataIdOf(record);
   if( thisDataId == fShaperDataId ) {
     if ( fLastRecordDataId == fShaperDataId ) {
       //duplicate trigger record
       /* Here the last record was a shaper, so we have to duplicate the record. */
       /* Call the trigger tree writer to do this. */
-      fTriggerTreeWriter->ProcessDataRecord(fLastTriggerRecordPtr);
-    }  
+      code = fTriggerTreeWriter->ProcessDataRecord(fLastTriggerRecordPtr);
+    }  else {
+      code = kSuccess;
+    } 
     fLastRecordDataId = thisDataId;  
   } else if( thisDataId == fTriggerDataId ) {
     //normal processing
@@ -63,8 +69,8 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperCompoundProcessor::ProcessDataReco
     /* copy */
     memcpy(fLastTriggerRecordPtr, record, fTriggerRecordLength*sizeof(UInt_t));
     fLastRecordDataId = thisDataId;  
+    code = kSuccess;
   } 
-  
-  return ORCompoundDataProcessor::ProcessDataRecord(record);
+  return code;
 }
 
