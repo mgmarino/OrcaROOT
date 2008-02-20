@@ -8,6 +8,7 @@
 #include "ORShaperShaperDecoder.hh"
 #include "OR64PDHistDrawer.hh"
 #include "ORBasicTreeWriter.hh"
+#include "ORTrig4ChanTreeWriter.hh"
 #include "ORCompoundDataProcessor.hh"
 #include <utility>
 #include <map>
@@ -28,7 +29,7 @@ class ORTrig4ChanShaperFilter : public ORCompoundDataProcessor
     Double_t fTimeCutLength; 
     
     ORTrig4ChanDecoder fTriggerDecoder;
-    ORBasicTreeWriter* fTriggerTreeWriter;
+    ORTrig4ChanTreeWriter* fTriggerTreeWriter;
     UInt_t fTriggerDataId; 
     size_t fTriggerRecordLength;
     Double_t fMapTriggerTime;

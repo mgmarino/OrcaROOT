@@ -11,7 +11,6 @@ ORTrig4ChanShaperFilter::ORTrig4ChanShaperFilter()
   SetComponentBreakReturnsFailure();
   
   fTimeCutLength = 0.0005;// in units of secs
-  
   f64PDHistDrawer = new OR64PDHistDrawer(&fShaperDecoder);
   AddProcessor(f64PDHistDrawer);
 
@@ -19,7 +18,7 @@ ORTrig4ChanShaperFilter::ORTrig4ChanShaperFilter()
   fShaperTreeWriter = new ORBasicTreeWriter(&fShaperDecoder, "shaperFilterTree");
   AddProcessor(fShaperTreeWriter);
   
-  fTriggerTreeWriter = new ORBasicTreeWriter(&fTriggerDecoder, "triggerFilterTree");
+  fTriggerTreeWriter = new ORTrig4ChanTreeWriter("triggerFilterTree");
   AddProcessor(fTriggerTreeWriter);
   
   fLastTriggerRecordPtr = NULL;
@@ -57,14 +56,8 @@ ORDataProcessor::EReturnCode ORTrig4ChanShaperFilter::ProcessDataRecord(UInt_t* 
        fShaperRecordLength = fShaperDecoder.LengthOf(record);
     }
     UInt_t tagNoise = 0;
-    UInt_t thisLowClock = fTriggerDecoder.LowClockOf(fLastTriggerRecordPtr);
-    UInt_t thisUpClock = fTriggerDecoder.UpClockOf(fLastTriggerRecordPtr);
-    fThisTriggerTime = (thisUpClock * (Double_t)(0xFFFFFFFFU) + thisLowClock)/(Double_t)50000000.0;
-     ORLog(kDebug) << "Low CLock " << thisLowClock << endl;
-     ORLog(kDebug) << "UpClock " << thisUpClock  << endl;
-     ORLog(kDebug) << "Trigger time " << fThisTriggerTime << endl;
-     
-     fThisCard = fShaperDecoder.CardOf(record);  
+    fThisTriggerTime = (Double_t)fTriggerDecoder.ClockOf(fLastTriggerRecordPtr)/50000000.0;
+    fThisCard = fShaperDecoder.CardOf(record);  
     fThisChannel = fShaperDecoder.ChannelOf(record);
     if ( fBothRecords.size() > 0 ) {
       //iterator to tag records old enough to delete

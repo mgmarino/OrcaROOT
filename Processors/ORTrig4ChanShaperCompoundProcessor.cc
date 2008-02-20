@@ -9,7 +9,7 @@ ORTrig4ChanShaperCompoundProcessor::ORTrig4ChanShaperCompoundProcessor()
   fShaperTreeWriter = new ORBasicTreeWriter(&fShaperDecoder, "shaperTree");
   AddProcessor(fShaperTreeWriter);
   
-  fTriggerTreeWriter = new ORBasicTreeWriter(&fTriggerDecoder, "triggerTree");
+  fTriggerTreeWriter = new ORTrig4ChanTreeWriter("triggerTree");
   AddProcessor(fTriggerTreeWriter);
   
   fLastTriggerRecordPtr = NULL;

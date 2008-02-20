@@ -134,23 +134,13 @@ int main(int argc, char** argv)
 
   //ADDITION FOR KATRIN - Start
 
-  ORShaperShaperDecoder shaperShaperDecoder;
-  ORTrig4ChanDecoder trig4ChanDecoder; 
-
-
-  //Don't delete, need these processors to make the compound processors work
-  ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
-  dataProcManager.AddProcessor(&shaperShaperTreeWriter);
-
-  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
-  dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
+  //Order Matters!  Compound Processor must come before the Filter!
+  ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
+  dataProcManager.AddProcessor(&triggerShaperTreeWriter);
   
   ORTrig4ChanShaperFilter triggerShaperHistDrawer;
   dataProcManager.AddProcessor(&triggerShaperHistDrawer);
 
-  ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
-  dataProcManager.AddProcessor(&triggerShaperTreeWriter);
-  
   //ADDITION FOR KATRIN - Stop
 
   ORLog(kRoutine) << "Start processing..." << endl;

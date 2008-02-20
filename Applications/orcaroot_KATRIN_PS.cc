@@ -135,16 +135,6 @@ int main(int argc, char** argv)
 
   //ADDITION FOR KATRIN - Start
 
-  ORShaperShaperDecoder shaperShaperDecoder;
-  ORTrig4ChanDecoder trig4ChanDecoder; 
-
-//Don't delete or the compound processors don't work correctly
-  ORBasicTreeWriter shaperShaperTreeWriter(&shaperShaperDecoder, "OldshaperTree");
-  dataProcManager.AddProcessor(&shaperShaperTreeWriter);
-
-  ORBasicTreeWriter trig4ChanTreeWriter(&trig4ChanDecoder, "OldtriggerTree");
-  dataProcManager.AddProcessor(&trig4ChanTreeWriter);  
-
   ORTrig4ChanShaperCompoundProcessor triggerShaperTreeWriter;
   dataProcManager.AddProcessor(&triggerShaperTreeWriter);
   

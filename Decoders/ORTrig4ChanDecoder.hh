@@ -18,7 +18,10 @@ class ORTrig4ChanDecoder : public ORVBasicTreeDecoder
       { return (record[1] & 0x00ffffff);}
     virtual inline UInt_t LowClockOf(UInt_t* record)
       { return (record[2] & 0xffffffff); }
-
+   virtual inline ULong64_t ClockOf(UInt_t* record)
+   { return ( (ULong64_t) UpClockOf( record ) << 32 ) + 
+   (ULong64_t) LowClockOf( record ); }
+   
     // for basic trees
     virtual inline size_t GetNPars() { return 3; }
     virtual std::string GetParName(size_t iPar);

@@ -7,6 +7,7 @@
 #include "ORTrig4ChanDecoder.hh"
 #include "ORShaperShaperDecoder.hh"
 #include "ORBasicTreeWriter.hh"
+#include "ORTrig4ChanTreeWriter.hh"
 #include "ORCompoundDataProcessor.hh"
 
 
@@ -21,7 +22,7 @@ class ORTrig4ChanShaperCompoundProcessor : public ORCompoundDataProcessor
 
   protected:
     ORTrig4ChanDecoder fTriggerDecoder;
-    ORBasicTreeWriter* fTriggerTreeWriter;
+    ORTrig4ChanTreeWriter* fTriggerTreeWriter;
     UInt_t fTriggerDataId; 
     
     ORShaperShaperDecoder fShaperDecoder;
