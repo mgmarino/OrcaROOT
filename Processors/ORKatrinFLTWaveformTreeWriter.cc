@@ -78,8 +78,19 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
       << ") exceeds kMaxWFLength (" << kMaxWFLength << ")" << endl;
     return kFailure;
   }
+  
   memcpy(fWaveform, fEventDecoder->GetWaveformDataPointer(), 
     fWaveformLength*sizeof(UShort_t));
+	
+  // Swap the data when reading by a big endian machine
+  // ak 6.3.08
+  if (ntohl(1) == 1){ // big endian host
+    unsigned long *ptr = (unsigned long *) fWaveform; 
+		
+	for (int i=0;i<fWaveformLength/2;i++)
+	  ptr[i] = (ptr[i] >> 16)  |  (ptr[i] << 16);
+  }
+	
   return kSuccess;
 }
 
