@@ -53,6 +53,7 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
     virtual inline size_t GetDGFEventLen(size_t iEvent);      
     virtual inline size_t GetDGFNEvents();
     virtual inline UInt_t GetDGFEventTime(size_t iEvent);
+    virtual inline UShort_t GetDGFEventHitPattern(size_t iEvent);
     virtual inline UShort_t GetDGFEventTimeLo(size_t iEvent);
     virtual inline UShort_t GetDGFEventTimeHi(size_t iEvent);
 
@@ -148,9 +149,9 @@ inline UShort_t ORDGF4cEventDecoder::GetBufModNum() //returns module number
 } 
 
 inline UShort_t ORDGF4cEventDecoder::GetRunTask() //returns data format
-{ 
-  return (*((UShort_t*) (fDataRecord+2) + 2)  - 0x1000); 
-} 
+{
+  return (*((UShort_t*) (fDataRecord+2) + 2)  % 0x1000);
+}
 
 inline ULong64_t ORDGF4cEventDecoder::GetBufTime() 
 //returns run start time
@@ -230,6 +231,12 @@ inline UInt_t ORDGF4cEventDecoder::GetDGFEventTime(size_t iEvent)
 } 
 
 inline size_t ORDGF4cEventDecoder::GetDGFNEvents() { return fEventPtrs.size(); }
+
+inline UShort_t ORDGF4cEventDecoder::GetDGFEventHitPattern(size_t iEvent)
+//returns low word of event time
+{ 
+  return fEventPtrs[iEvent][0]; 
+}
 
 inline UShort_t ORDGF4cEventDecoder::GetDGFEventTimeLo(size_t iEvent)
 //returns low word of event time
