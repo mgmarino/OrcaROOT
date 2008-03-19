@@ -16,6 +16,7 @@ ORIgorFileReader::ORIgorFileReader(string filename) : ORFileReader(filename)
 
 bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 {
+  // First, read in the header if necessary.
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     string header = ReadHeader();
     UInt_t nBytes = header.size() + 1;
@@ -26,8 +27,15 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     buffer[0] = recordLength;
     buffer[1] = nBytes;
     memcpy(buffer+2, header.c_str(), nBytes);
-    if(ORUtils::SysIsLittleEndian()) fStreamVersion = ORHeaderDecoder::kNewUnswapped;
-    else fStreamVersion = ORHeaderDecoder::kNewSwapped;
+    /* Here we assume that the igor files come from a little endian (PC) 
+       machine. */
+    if(ORUtils::SysIsLittleEndian()) {
+      fStreamVersion = ORHeaderDecoder::kNewUnswapped;
+      fMustSwap = false;
+    } else {
+      fStreamVersion = ORHeaderDecoder::kNewSwapped;
+      fMustSwap = true;
+    }
     return true;
   }
 
