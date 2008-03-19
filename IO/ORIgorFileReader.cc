@@ -29,11 +29,10 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     memcpy(buffer+2, header.c_str(), nBytes);
     /* Here we assume that the igor files come from a little endian (PC) 
        machine. */
+    fStreamVersion = ORHeaderDecoder::kOld;
     if(ORUtils::SysIsLittleEndian()) {
-      fStreamVersion = ORHeaderDecoder::kNewUnswapped;
       fMustSwap = false;
     } else {
-      fStreamVersion = ORHeaderDecoder::kNewSwapped;
       fMustSwap = true;
     }
     return true;
@@ -43,7 +42,7 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
   UInt_t theBuffSizeLong = 0;
   Read(((char*) &theBuffSizeLong), 4); // XIA specific, we grab the first 32-bits
   if(MustSwap()) ORUtils::Swap(theBuffSizeLong);
-  UShort_t theBuffSize = (UShort_t) theBuffSizeLong;
+  UShort_t theBuffSize = (theBuffSizeLong & 0x0000FFFF);
   
   // the first 32-bits on an Orca file gives the length of the buffer dump
   // in 32-bit words.  plugging in the appropriate values.

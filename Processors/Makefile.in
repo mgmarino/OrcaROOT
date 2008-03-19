@@ -13,13 +13,13 @@ all: depend $(SHLIB)
 
 .depend depend:
 	@echo Checking dependencies...
-	@g++ -M $(ORROOT_HAS_FFTW) $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
+	@g++ -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
 
 $(SHLIB): $(OBJECTS) 
 	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
 
 .cc.o: 
-	$(CXX) $(CXXFLAGS) $(ORROOT_HAS_FFTW) $(ROOTFLAGS) $(ORFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -c $<
 
 clean:
 	rm -f $(SHLIB) *.o *~ .depend

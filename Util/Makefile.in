@@ -13,13 +13,13 @@ all: depend $(SHLIB)
 
 .depend depend:
 	@echo Checking dependencies...
-	@g++ -M $(CXXFLAGS) $(ORBIG_ENDIAN_MACHINE) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
+	@g++ -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
 
 $(SHLIB): $(OBJECTS) 
 	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
 
 .cc.o: 
-	$(CXX) $(CXXFLAGS) $(ORBIG_ENDIAN_MACHINE) $(ORFLAGS) $(ROOTFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) $(ORFLAGS) $(ROOTFLAGS) -c $<
 
 clean:
 	rm -f $(SHLIB) *.o *~ .depend
