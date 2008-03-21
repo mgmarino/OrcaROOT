@@ -57,7 +57,7 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     virtual inline size_t GetWaveformLen(); 
     virtual size_t CopyWaveformData(UShort_t* waveform, size_t len);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
-    virtual inline const UInt_t* GetWaveformDataPointer();
+    virtual inline UInt_t* GetWaveformDataPointer();
  
     /* Functions that return information about card/channel settings. */
     /* These are static throughout a run, so a processor should take  * 
@@ -88,10 +88,10 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     virtual inline ULong64_t GetEventTime(size_t /*event*/) {return GetCFDTimeStamp();}
     virtual inline UInt_t GetEventEnergy(size_t /*event*/) {return GetEnergy();}
     virtual inline UShort_t GetEventChannel(size_t /*event*/) {return GetChannelNum();}
-    virtual inline size_t GetEventWaveformLength(size_t /*event*/) 
-      {return GetWaveformLen();}
-    virtual inline void* GetEventWaveformPointer(size_t /*event*/) 
-      {return (void*)GetWaveformDataPointer();}
+    virtual size_t GetEventWaveformLength(size_t /*event*/) 
+      { return GetWaveformLen(); }
+    virtual UInt_t GetEventWaveformPoint( size_t /*event*/, 
+                                          size_t waveformPoint );
     
     
 
@@ -103,9 +103,11 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     void Dump(UInt_t* dataRecord);
     
   protected:
-    virtual inline size_t GetRecordOffset() {return 2;}
     /* GetRecordOffset() returns how many words the record is offset from the 
        beginning.  This is useful when additional headers are added. */
+    virtual inline size_t GetRecordOffset() {return 2;}
+    // This is a bit mask to grab the correct values from the waveform data.
+    UInt_t fBitMask;
 };
 
 //inline functions: ************************************************************************
@@ -222,9 +224,10 @@ inline size_t ORGretaDecoder::GetWaveformLen()
   return (GetPacketLength() - GetBufHeadLen())*2;
 }
 
-inline const UInt_t* ORGretaDecoder::GetWaveformDataPointer()
+inline UInt_t* ORGretaDecoder::GetWaveformDataPointer()
 {
   return (fDataRecord + GetRecordOffset() + GetBufHeadLen());
 }
+
 #endif
 

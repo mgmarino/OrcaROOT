@@ -51,7 +51,7 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     // Waveform Functions
     virtual inline UInt_t GetIndexOffset();
     virtual inline size_t GetWaveformLen(); 
-    virtual inline const Short_t* GetWaveformDataPointer();
+    virtual inline UShort_t* GetWaveformDataPointer();
       /* Returns number of shorts in the waveform. */
     virtual size_t CopyWaveformData(Short_t* waveform, size_t len);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
@@ -83,13 +83,13 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     virtual UShort_t GetBitResolution() {return 12;}
     virtual size_t GetNumberOfEvents() {return 1;}
     virtual ULong64_t GetEventTime(size_t /*event*/) { return GetTimeStamp(); }
-    virtual UInt_t GetEventEnergy(size_t /*event*/) { return 0; }
       /* This card doesn't calculate energy. */
+    virtual UInt_t GetEventEnergy(size_t /*event*/) { return 0; }
     virtual UShort_t GetEventChannel(size_t /*event*/) { return GetChannelNum();}
     virtual size_t GetEventWaveformLength(size_t /*event*/) 
       { return GetWaveformLen(); }
-    virtual void* GetEventWaveformPointer(size_t /*event*/) 
-      { return (void*) GetWaveformDataPointer();}
+    virtual UInt_t GetEventWaveformPoint( size_t /*event*/, 
+                                          size_t waveformPoint );
 
 };
 
@@ -133,9 +133,9 @@ inline size_t ORAcqirisDC440Decoder::GetWaveformLen()
   return (fDataRecord[5]);
 }
 
-inline const Short_t* ORAcqirisDC440Decoder::GetWaveformDataPointer()
+inline UShort_t* ORAcqirisDC440Decoder::GetWaveformDataPointer()
 {
-  return (Short_t*) (fDataRecord + kBufHeadLen + GetIndexOffset());
+  return (UShort_t*)(fDataRecord + kBufHeadLen + GetIndexOffset());
 }
 #endif
 

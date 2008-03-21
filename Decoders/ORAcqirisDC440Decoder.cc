@@ -56,8 +56,8 @@ size_t ORAcqirisDC440Decoder::CopyWaveformData(Short_t* waveform, size_t len)
   else {
     len = GetWaveformLen(); 
   }
-  const Short_t* waveformData = GetWaveformDataPointer();
-  memcpy(waveform, waveformData, sizeof(waveformData)*len);
+  UShort_t* waveformData = GetWaveformDataPointer();
+  memcpy(waveform, waveformData, sizeof(UShort_t)*len);
   return len;
 }
 
@@ -74,7 +74,7 @@ size_t ORAcqirisDC440Decoder::CopyWaveformDataDouble(double* waveform, size_t le
   else {
     len = GetWaveformLen(); 
   }
-  const Short_t* waveformData = GetWaveformDataPointer();
+  UShort_t* waveformData = GetWaveformDataPointer();
   for(size_t i=0;i<len;i++) 
   {
     waveform[i] = (Double_t) waveformData[i];  
@@ -177,4 +177,10 @@ void ORAcqirisDC440Decoder::Dump(UInt_t* dataRecord) //debugging
     << "    Timestamp: " << GetTimeStamp() << endl
     << "    Index offset: " << GetIndexOffset() << endl
     << "    The waveform data has " << GetWaveformLen() << " (16-bit) words" << endl;
+}
+
+UInt_t ORAcqirisDC440Decoder::GetEventWaveformPoint( size_t /*event*/, 
+                                                     size_t waveformPoint )
+{
+  return (UInt_t)GetWaveformDataPointer()[waveformPoint]; 
 }

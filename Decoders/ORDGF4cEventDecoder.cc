@@ -457,3 +457,11 @@ void ORDGF4cEventDecoder::Dump(UInt_t* dataRecord) //debugging
 	  CopyWaveformDataDouble(waveformDouble, len, iEvent, iChannel);
 
 }
+
+UInt_t ORDGF4cEventDecoder::GetEventWaveformPoint( size_t event, 
+                                                   size_t waveformPoint ) 
+{
+  return (UInt_t) GetWaveformDataPointer(fEventVector[event].first,
+    fEventVector[event].second)[waveformPoint];
+
+}

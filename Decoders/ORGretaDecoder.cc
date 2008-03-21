@@ -8,7 +8,15 @@ using namespace std;
 
 //**************************************************************************************
 
-ORGretaDecoder::ORGretaDecoder() { fDataRecord = NULL; }
+ORGretaDecoder::ORGretaDecoder() 
+{ 
+  fDataRecord = NULL; 
+  fBitMask = 0x1;
+  for( size_t i=1;i<GetBitResolution();i++) {
+    fBitMask <<= 1; 
+    fBitMask += 1;
+  }
+}
 /*
 void ORGretaDecoder::Swap(UInt_t* dataRecord)
 {
@@ -66,8 +74,8 @@ size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
   // the data.
   for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = (UShort_t) waveformData[i/2] & 0xfff;  
-    waveform[i+1] = (UShort_t) (waveformData[i/2] & 0x0fff0000) >> 16;
+    waveform[i] = (UShort_t) waveformData[i/2] & fBitMask;  
+    waveform[i+1] = (UShort_t) (waveformData[i/2] & (fBitMask << 16) ) >> 16;
   }
   return len;
 }
@@ -86,8 +94,8 @@ size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
   const UInt_t* waveformData = GetWaveformDataPointer();
   for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = (double) (waveformData[i/2] & 0xfff);  
-    waveform[i+1] = (double) ((waveformData[i/2] & 0x0fff0000) >> 16);
+    waveform[i] = (double) (waveformData[i/2] & fBitMask);  
+    waveform[i+1] = (double) ((waveformData[i/2] & (fBitMask << 16)) >> 16);
   }
   return len;
 }
@@ -244,4 +252,14 @@ void ORGretaDecoder::Dump(UInt_t* dataRecord) //debugging
 	  << "    The waveform data has " << GetWaveformLen() 
 	    << " (16-bit) words" << endl;
 
+}
+
+UInt_t ORGretaDecoder::GetEventWaveformPoint( size_t /*event*/, 
+                                                     size_t waveformPoint )
+{
+  if ( waveformPoint % 2 == 0 ) {
+    return GetWaveformDataPointer()[waveformPoint/2] & fBitMask; 
+  } else {
+    return ( GetWaveformDataPointer()[waveformPoint/2] & (fBitMask << 16) ) >> 16; 
+  } 
 }

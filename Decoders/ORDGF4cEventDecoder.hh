@@ -98,11 +98,12 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
     virtual inline double GetSamplingFrequency() {return .04;}
     virtual inline UShort_t GetBitResolution() {return 14;}
     virtual inline size_t GetNumberOfEvents() {return fEventVector.size();}
-    virtual inline ULong64_t GetEventTime(size_t event); 
-    virtual inline UInt_t GetEventEnergy(size_t event); 
-    virtual inline UShort_t GetEventChannel(size_t event); 
-    virtual inline size_t GetEventWaveformLength(size_t event); 
-    virtual inline void* GetEventWaveformPointer(size_t event); 
+    virtual ULong64_t GetEventTime(size_t event); 
+    virtual UInt_t GetEventEnergy(size_t event); 
+    virtual UShort_t GetEventChannel(size_t event); 
+    virtual size_t GetEventWaveformLength(size_t event); 
+    virtual UInt_t GetEventWaveformPoint( size_t event, 
+                                          size_t waveformPoint );
     
 
 
@@ -149,9 +150,9 @@ inline UShort_t ORDGF4cEventDecoder::GetBufModNum() //returns module number
 } 
 
 inline UShort_t ORDGF4cEventDecoder::GetRunTask() //returns data format
-{
-  return (*((UShort_t*) (fDataRecord+2) + 2)  % 0x1000);
-}
+{ 
+  return (*((UShort_t*) (fDataRecord+2) + 2) % 0x1000); 
+} 
 
 inline ULong64_t ORDGF4cEventDecoder::GetBufTime() 
 //returns run start time
@@ -302,12 +303,7 @@ inline size_t ORDGF4cEventDecoder::GetEventWaveformLength(size_t event)
   return GetWaveformLen(fEventVector[event].first, fEventVector[event].second);
 }
 
-inline void* ORDGF4cEventDecoder::GetEventWaveformPointer(size_t event) 
-{
-  return (void*) GetWaveformDataPointer(fEventVector[event].first,
-    fEventVector[event].second);
-
-} 
+ 
 
 #endif
 

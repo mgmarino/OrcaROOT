@@ -47,7 +47,7 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
 
     // Waveform Functions
     virtual inline size_t GetWaveformLen() {return kWaveformLength;} 
-    virtual inline const UShort_t* GetWaveformDataPointer();
+    virtual inline UShort_t* GetWaveformDataPointer();
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
 
     /* Satisfying ORVDigitizerDecoder interface. */
@@ -58,9 +58,10 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
     virtual UInt_t GetEventEnergy(size_t /*event*/) {return GetEnergy();}
     virtual UShort_t GetEventChannel(size_t /*event*/) {return GetChannel();}
     virtual size_t GetEventWaveformLength(size_t /*event*/) 
-      {return GetWaveformLen();}
-    virtual void* GetEventWaveformPointer(size_t /*event*/) 
-      {return (void*)GetWaveformDataPointer();} 
+      { return GetWaveformLen(); }
+    virtual UInt_t GetEventWaveformPoint( size_t /*event*/, 
+                                          size_t waveformPoint )
+      { return (UInt_t) GetWaveformDataPointer()[waveformPoint]; }
  
     //Error checking:
     virtual bool IsValid();
@@ -118,7 +119,7 @@ inline UShort_t ORKatrinFLTWaveformDecoder::GetChannel()
   return ( fDataRecord[4] & 0xFF000000 ) >> 24;
 }
 
-inline const UShort_t* ORKatrinFLTWaveformDecoder::GetWaveformDataPointer()
+inline UShort_t* ORKatrinFLTWaveformDecoder::GetWaveformDataPointer()
 {
   return (UShort_t*)(fDataRecord + kBufHeadLen);
 }

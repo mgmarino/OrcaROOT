@@ -65,6 +65,7 @@ class ORVDataDecoder
       UInt_t crate, UInt_t card, size_t index);
     
 
+  private:
     const ORDecoderDictionary* fDecoderDictionary;
 };
 
