@@ -85,18 +85,15 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
   // Swap the data when reading by a big endian machine
   // ak 6.3.08
   // ntohl is non-standard or at least resides in non-standard
-  // header files.  Use ORBIG_ENDIAN_MACHINE instead
-  // FixME ALL swapping should be performed by the decoder's Swap() function
-  // since the processor should not need to know about the
-  // structure of the data. 
-#ifdef ORBIG_ENDIAN_MACHINE 
+  // header files.  Use SysIsNotLittleEndian() instead
+  // to ensure portability
 //  if (ntohl(1) == 1){ // big endian host
+  if (ORUtils::SysIsNotLittleEndian()){ // big endian host
     UInt_t *ptr = (UInt_t *) fWaveform; 
 		
-	for (int i=0;i<fWaveformLength/2;i++)
-	  ptr[i] = (ptr[i] >> 16)  |  (ptr[i] << 16);
-//  }
-#endif
+    for (int i=0;i<fWaveformLength/2;i++)
+      ptr[i] = (ptr[i] >> 16)  |  (ptr[i] << 16);
+  }
 	
   return kSuccess;
 }
