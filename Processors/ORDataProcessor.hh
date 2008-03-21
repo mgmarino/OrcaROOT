@@ -53,11 +53,11 @@ class ORDataProcessor
 
     virtual void SetDebugRecord(bool debug = true) { fDebugRecord = debug; }
 
-    friend class ORCompoundDataProcessor;
-    friend class ORDataProcManager;;
     /* This is to allow a ORCompoundDataProcessor to access the protected members
        of other ORDataProcessors, for example, SetRunContext, which we want to 
        remain protected. */
+    friend class ORCompoundDataProcessor;
+    friend class ORDataProcManager;;
 
   protected:
     virtual void SetRunContext(ORRunContext* aContext) { fRunContext = aContext; }

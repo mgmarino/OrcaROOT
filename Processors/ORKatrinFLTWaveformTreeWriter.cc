@@ -2,6 +2,7 @@
 
 #include "ORKatrinFLTWaveformTreeWriter.hh"
 #include "ORLogger.hh"
+#include "ORUtils.hh"
 
 using namespace std;
 
