@@ -139,16 +139,48 @@ enough that the user can get a general idea of how it works without
 the help of extensive comments. Please contact me with any questions:
 jasondet@gmail.com
 
+The following provides an outline of each major base class.  In all
+cases, header files provide more extensive 
+
 Util
 - ORLogger: utility for centralized info/error logging
 - ORVSigHandler: virtual base class for objects that need to perform
-  special clean-up procedures on SIGINT (ctrl-c)
+  special clean-up procedures on SIGINT (ctrl-c).
 - ORUtils: bit-swapping utilities for cross-platform endian issues
 
 Decoders 
 - ORVDataDecoder: virtual base classes for decoders. Derived classes
   must define a function that returns a string containing the path to
-  its associated data record's description in the header.
+  its associated data record's description in the header.  
+  - Swap(): This function swaps the data when necessary (i.e. when 
+    the endianness of the DAQ computer differs from that of the
+    OrcaROOT computer.
+  - GetDataObjectPath(): This function returns the path in the xml header
+    for a particular dataId.  For example, if the dataId is located under
+    <key>dataDescription</key>
+    <dict>
+    ...
+        <key>AnObject</key>
+        <dict>
+        ...
+            <key>DataFromObject</key>
+            <dict>
+                <key>dataId</key>
+                <integer>9909</integer>
+
+    ...
+    then GetDataObjectPath() would return "AnObject:DataFromObject".
+    It automatically searches in the dataDescription dictionary and 
+    automatically adds the dataId key.
+  - GetDictionaryObjectPath(): Some records include a hardware dictionary
+    residing in the xml header
+    that is static information associated with the hardware such as
+    parameters, timing, etc.  If this function returns a non-zero sized
+    string, then OrcaROOT will search for all the cards that fit this parameter.
+  - For more information please see the header file.
+- ORVDigitizerDecoder: This virtual class provides an interface to which all
+  digitizer type record decoders should adhere.
+                    
 - ORBasicDataDecoder: wrapped version of ORVDataDecoder for use primarily by
   ORVReader; not associated with a particular data-producing DAQ component¬
 - ORVBasicTreeDecoder: virtual base class defining interface for decoders

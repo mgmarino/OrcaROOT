@@ -12,7 +12,7 @@ class ORVDigitizerDecoder: public ORVDataDecoder
 
     /* Basic functions. */
 
-    ///* Should return in units of 1 GHz. */
+    //!/* Should return in units of 1 GHz. */
     virtual double GetSamplingFrequency() = 0;
     virtual UShort_t GetBitResolution() = 0;
     virtual bool SetDataRecord(UInt_t* dataRecord) = 0;
@@ -20,7 +20,8 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     virtual inline UInt_t CardOf();
 
     /* Event Functions */
-    ///* It is possible to have more than one event in a record. */
+
+    //!/* It is possible to have more than one event in a record. */
     virtual size_t GetNumberOfEvents() = 0;
     virtual ULong64_t GetEventTime(size_t event) = 0;
     virtual UInt_t GetEventEnergy(size_t event) = 0; 
@@ -28,13 +29,15 @@ class ORVDigitizerDecoder: public ORVDataDecoder
      
     /* Now waveforms */ 
 
-    ///* This length should be in number of words. */
+    //!/* This length should be in number of words. */
     virtual size_t GetEventWaveformLength(size_t event) = 0;
 
+    /**
     // Gets a point in the waveform.  One can mask this this off to reduce the 
     // size of the data using GetBitResolution(). 
     // e.g. UInt_t mask = 0x1; size_t i=1; 
     //             while (i<GetBitResolution()) { mask << 1; mask += 1; i++; }  
+    */
     virtual UInt_t GetEventWaveformPoint( size_t event, size_t waveformPoint ) = 0;
 
   protected:
@@ -42,7 +45,8 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     
 
 };
-inline UInt_t ORVDigitizerDecoder::CrateOf() //returns crate # of Greta card
+
+inline UInt_t ORVDigitizerDecoder::CrateOf() 
 { 
   return (fDataRecord[1] & 0x01e00000) >> 21; 
 }

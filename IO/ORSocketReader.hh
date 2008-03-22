@@ -6,9 +6,9 @@
 #include "ORVReader.hh"
 #include "ORVSigHandler.hh"
 #include <pthread.h>
+#include "TSocket.h"
 
-class TMonitor;
-
+//! Struct encapsulating a circular buffer
 typedef struct {
    pthread_rwlock_t cbMutex;
    UInt_t*          buffer;
@@ -21,6 +21,7 @@ typedef struct {
    bool             isRunning;
 } CircularBufferStruct;
 
+//! Struct encapsulating a linear buffer
 typedef struct {
     UInt_t*         buffer;
     size_t          bufferLength;
@@ -30,12 +31,36 @@ typedef struct {
 
 extern "C" void* SocketReadoutThread(void*);
 
+//! ORSocketReader provides a class to read data from a socket.  
+/*!
+    It runs a thread which takes data from a socket and fills
+    a circular buffer.  This circular buffer can then 
+    be read out using Read().  The class will not
+    block indefinitely on a call to read from the socket.
+    Instead it periodically times out to check if it has
+    been canceled ( from ORVSigHandler ) and exits nicely
+    if so.
+ */
 class ORSocketReader : public ORVReader, public ORVSigHandler
 {
   friend void* SocketReadoutThread(void*);  
  
   public:
+    
+    //! Open a socket with host:port
+    /*!
+       If the socket can be written back upon
+       set writable to true.  This is used for example when OrcaROOT is run
+       as a daemon.
+     */
     ORSocketReader(const char* host, int port, bool writable = false);
+
+    //! Open a socket using a TSocket. 
+    /*!
+       If the socket can be written back upon
+       set writable to true.  This is used for example when OrcaROOT is run
+       as a daemon.
+     */
     ORSocketReader(TSocket* aSocket, bool writable = false);
     virtual ~ORSocketReader(); 
 
@@ -46,29 +71,42 @@ class ORSocketReader : public ORVReader, public ORVSigHandler
     virtual void SetCircularBufferLength(Int_t length) 
       {fBufferLength = length;}
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};
+
+    //! Returns a socket to which a processor can write.
+    /*!
+        This functionality is used with regards to requests from 
+        Orca which require a response from OrcaROOT.  OrcaROOT
+        responds on the socket if the opened socket has
+        been flagged as writable.
+     */
     TSocket* GetSocketToWrite() { return fSocketToWrite; } 
 
-    //virtual void AddSocket(TSocket* sock);
-
   protected:
-    ORSocketReader() {} //disallows calling this
+    ORSocketReader() {} //<disallows calling this
     void Initialize();
+
+    //! Begin Socket readout Thread.
     bool StartThread();
+
+    //! Stop Socket readout Thread.
     void StopThread();
     void ResetCircularBuffer();
+
+    /*! 
+        This function blocks until numLongWords are available. 
+        Returns the number of bytes read, 0 if there's nothing left. 
+     */
     size_t ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords, size_t minWords);
-      /* This function blocks until numLongWords are available. */
-      /* Returns the number of bytes read, 0 if there's nothing left. */
     bool ThreadIsStillRunning();
     TSocket* fSocket;
     TSocket* fSocketToWrite;
     bool fIOwnSocket;
     bool fSocketIsOK;
 
-
   private:
     /* We collect the thread management and buffers here because derived 
        classes really shouldn't be modifying them. */
+
     pthread_t fThreadId;
     pthread_attr_t fThreadAttr;
     Int_t fBufferLength;

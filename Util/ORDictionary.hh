@@ -7,26 +7,48 @@
 #include <map>
 #include <vector>
 
+//! Dictionary type base class
+/*!
+  Provides a base class for a dictionary type data
+  structure.
+ */
 class ORVDictValue 
 {
   public:
+    //! Allowable types
     enum EValType { kDict, kString, kReal, kInt, kBool, kArray };
     ORVDictValue() {}
     virtual ~ORVDictValue() {}
 
     virtual EValType GetValueType() const = 0;
-    virtual bool IsA(EValType valType) const { return valType == GetValueType(); }
+    virtual bool IsA(EValType valType) const 
+      { return valType == GetValueType(); }
+
+    //! Returns a string of the value.
+    /*!
+        For example, for the number 1, it would
+        return a string "1".  This is useful for 
+        generating a string output of a dictionary.
+     */ 
     virtual std::string GetStringOfValue() const = 0;
-    virtual const size_t GetNValues() const {return 1;} // overload this for dict, array
+
+    //! overload this for dict, array
+    virtual const size_t GetNValues() const { return 1; } 
 };
 
+//! True dictionary class
+/*!
+    Stores ORVDictValue data types accoring to a string
+    key.
+ */
 class ORDictionary : public ORVDictValue
 {
   public:
     ORDictionary(std::string name = "") 
       { SetName(name);}
+
+    //! Copy constructor to handle making a new dictionary from another.
     ORDictionary(const ORDictionary& dict);
-      /* Copy constructor to handle making a new dictionary from another.*/
     virtual ~ORDictionary();
 
     virtual EValType GetValueType() const { return kDict; }
@@ -42,13 +64,14 @@ class ORDictionary : public ORVDictValue
     // The following functions are useful for iterating over the contents of
     // the dictionary:
     virtual const std::map<const std::string, ORVDictValue*>* 
-      GetDictMap() const {return &fDictMap;}
+      GetDictMap() const { return &fDictMap; }
 
   protected:
     std::string fName;
     std::map<const std::string, ORVDictValue*> fDictMap;
 };
 
+//! Dictionary value for string
 class ORDictValueS : public ORVDictValue
 {
   public:
@@ -65,6 +88,7 @@ class ORDictValueS : public ORVDictValue
     std::string fS;
 };
 
+//! Dictionary value for double
 class ORDictValueR : public ORVDictValue
 {
   public:
@@ -81,6 +105,7 @@ class ORDictValueR : public ORVDictValue
     double fR;
 };
 
+//! Dictionary value for integer
 class ORDictValueI : public ORVDictValue
 {
   public:
@@ -97,6 +122,7 @@ class ORDictValueI : public ORVDictValue
     int fI;
 };
 
+//! Dictionary value for bool
 class ORDictValueB : public ORVDictValue
 {
   public:
@@ -113,6 +139,10 @@ class ORDictValueB : public ORVDictValue
     bool fB;
 };
 
+//! Dictionary value for array
+/*!
+    Provides an array full of the same type of ORVDictValues.
+ */
 class ORDictValueA : public ORVDictValue
 {
   public:

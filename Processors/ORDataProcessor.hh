@@ -12,6 +12,7 @@ class ORDataProcManager;
 class ORDataProcessor
 {
   public:
+    /**
     // Return Codes:
     // kSuccess = normal execution; no warning or error messages should
     //            be emitted
@@ -28,6 +29,7 @@ class ORDataProcessor
     //            accompanied by an error message
     // Note: if StartProcessing() returns kFailure or worse, the analyzer will
     // be killed for processing.
+    */
     enum EReturnCode { kSuccess, kFailure, kBreak, kAlarm };
     
     ORDataProcessor(ORVDataDecoder* decoder);
@@ -53,15 +55,17 @@ class ORDataProcessor
 
     virtual void SetDebugRecord(bool debug = true) { fDebugRecord = debug; }
 
-    /* This is to allow a ORCompoundDataProcessor to access the protected members
+    /** 
+       This is to allow a ORCompoundDataProcessor to access the protected members
        of other ORDataProcessors, for example, SetRunContext, which we want to 
-       remain protected. */
+       remain protected. 
+     */
     friend class ORCompoundDataProcessor;
     friend class ORDataProcManager;;
 
   protected:
     virtual void SetRunContext(ORRunContext* aContext) { fRunContext = aContext; }
-    ORRunContext* fRunContext; //  
+    ORRunContext* fRunContext; 
     UInt_t fDataId;
     bool fDoProcess;
     bool fDoProcessRun;

@@ -4,6 +4,10 @@
 #define _ORReadWriteLock_hh
 
 #include <pthread.h>
+//! Read/Write lock wrapper class
+/*!
+    This class wraps pthread_rwlock_t
+ */
 class ORReadWriteLock
 {
   public:
