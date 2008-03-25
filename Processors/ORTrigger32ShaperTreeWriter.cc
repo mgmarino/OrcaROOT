@@ -8,7 +8,7 @@ using namespace std;
 
 ORTrigger32ShaperTreeWriter::ORTrigger32ShaperTreeWriter(string treeBaseName)
 {
-  /*string treeName = treeBaseName + "1Tree";
+  string treeName = treeBaseName + "1Tree";
   fTriggerGTID1TreeWriter = new ORTrigger32GTIDTreeWriter(&fTriggerGTID1Decoder, treeName);
   fTriggerGTID1TreeWriter->SetThisProcessorAutoFillsTree(true);
   fTriggerGTID1TreeWriter->SetFillMethod(ORVTreeWriter::kFillBeforeProcessDataRecord);
@@ -16,7 +16,7 @@ ORTrigger32ShaperTreeWriter::ORTrigger32ShaperTreeWriter(string treeBaseName)
   fTrigger1ClockTreeWriter = new ORTrigger32ClockTreeWriter(treeName);
   fTrigger1ClockTreeWriter->SetThisProcessorAutoFillsTree(false);
   fTrigger1ClockTreeWriter->SetTriggerBitsFilter(ORTrigger32ClockTreeWriter::kTrigger1); 
-  AddProcessor(fTrigger1ClockTreeWriter);*/
+  AddProcessor(fTrigger1ClockTreeWriter);
 //Shaper record is trigger 2 event.
   treeName = treeBaseName + "2Tree";
   fTriggerGTID2TreeWriter = new ORTrigger32GTIDTreeWriter(&fTriggerGTID2Decoder, treeName);
