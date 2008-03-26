@@ -13,22 +13,22 @@ class ORDataProcessor
 {
   public:
     /**
-    // Return Codes:
-    // kSuccess = normal execution; no warning or error messages should
-    //            be emitted
-    // kFailure = something didn't work, but okay to continue processing;
-    //            usually accompanied by a warning message, and perhaps an
-    //            error message; useful for more complicated co-
-    //            dependencies between elements of a compound analyzer
-    //            (i.e. if this analyzer failed, do this, otherwise, do
-    //            that)
-    // kBreak   = same as kSuccess/kFailure, but useful for telling a
-    //            compound analyzer to stop here and move on to the next
-    //            data record; may be accompanied by a warning message
-    // kAlarm   = something is wrong, stop processing data; usually
-    //            accompanied by an error message
-    // Note: if StartProcessing() returns kFailure or worse, the analyzer will
-    // be killed for processing.
+       Return Codes:
+       - kSuccess = normal execution; no warning or error messages should
+                    be emitted
+       - kFailure = something didn't work, but okay to continue processing;
+                    usually accompanied by a warning message, and perhaps an
+                    error message; useful for more complicated co-
+                    dependencies between elements of a compound analyzer
+                    (i.e. if this analyzer failed, do this, otherwise, do
+                    that)
+       - kBreak   = same as kSuccess/kFailure, but useful for telling a
+                    compound analyzer to stop here and move on to the next
+                    data record; may be accompanied by a warning message
+       - kAlarm   = something is wrong, stop processing data; usually
+                    accompanied by an error message
+       Note: if StartProcessing() returns kFailure or worse, the analyzer will
+       be killed for processing.
     */
     enum EReturnCode { kSuccess, kFailure, kBreak, kAlarm };
     

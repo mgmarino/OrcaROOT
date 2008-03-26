@@ -50,6 +50,27 @@ void ORKatrinFLTWaveformDecoder::DumpBufferHeader()
   }
 }
 
+size_t ORKatrinFLTWaveformDecoder::CopyWaveformData( UShort_t* waveform, 
+                                                     size_t len )
+//copies the waveform data to the array pointed to by
+//waveform, which is of length len
+{
+  size_t wflen = GetWaveformLen();
+  if (wflen == 0) return 0;
+  if ((len < wflen) || (len == 0)) {
+    ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
+                    << "; waveform data length is " << GetWaveformLen() << endl;
+  }
+  else len = GetWaveformLen(); 
+  UInt_t* waveformData = GetWaveformDataPointer();
+  for(size_t i=0;i<len;i+=2) 
+  {
+    waveform[i] = ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
+    waveform[i+1] = (waveformData[i/2] & 0xFFFF);  
+  }
+  return len;
+}
+
 size_t ORKatrinFLTWaveformDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
 //copies the waveform data to the array pointed to by
 //waveform, which is of length len
@@ -61,10 +82,11 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformDataDouble(double* waveform, size
                     << "; waveform data length is " << GetWaveformLen() << endl;
   }
   else len = GetWaveformLen(); 
-  const UShort_t* waveformData = GetWaveformDataPointer();
-  for(size_t i=0;i<len;i++) 
+  UInt_t* waveformData = GetWaveformDataPointer();
+  for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = (double) waveformData[i];  
+    waveform[i] = (double) ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
+    waveform[i+1] = (double) (waveformData[i/2] & 0xFFFF);  
   }
   return len;
 }

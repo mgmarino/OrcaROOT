@@ -7,14 +7,15 @@
 #include "TROOT.h"
 #include "ORDecoderDictionary.hh"
 
+//! Base Class for all data decoders
+/** 
+  ORVDataDecoder provides a number of functions for all decoders
+  and additionally defines a function that must be overloaded by
+  derived classes: GetDataObjectPath();
+*/
 class ORVDataDecoder
 {
-  //! Base Class for all data decoders
-  /** 
-    ORVDataDecoder provides a number of functions for all decoders
-    and additionally defines a function that must be overloaded by
-    derived classes: GetDataObjectPath();
-  */
+
   public:
     ORVDataDecoder() {fDecoderDictionary = NULL;}
     virtual ~ORVDataDecoder() {}
@@ -107,40 +108,40 @@ class ORVDataDecoder
      * For example, 
        \verbatim
         <key>ObjectInfo</key>
-     *  <dict>
-     *          <key>Crates</key>
-     *          <array>
-     *                  <dict>
-     *                          <key>Cards</key>
-     *                          <array>
-     *                                <dict>
-     *                                        <key>Card</key>
-     *                                        <integer>0</integer>
-     *                                        <key>Class Name</key>
-     *                                        <string>ORVmecpuModel</string>
-     *                                </dict>
-     *                                <dict>
-     *                                        <key>Class Name>
-     *                                        <string>ORGretina4Model</string>
-     *                                        <key>CFD Delay</key>
-     *                                        <array>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                                <integer>63</integer>
-     *                                        </array>
-     *                                        <key>CFD Fraction</key>
-     *                                        <array>
-     *                                                <integer>0</integer>
-     *                                                <integer>0</integer>
-     * ...
-     *
+        <dict>
+                <key>Crates</key>
+                <array>
+                        <dict>
+                                <key>Cards</key>
+                                <array>
+                                      <dict>
+                                              <key>Card</key>
+                                              <integer>0</integer>
+                                              <key>Class Name</key>
+                                              <string>ORVmecpuModel</string>
+                                      </dict>
+                                      <dict>
+                                              <key>Class Name>
+                                              <string>ORGretina4Model</string>
+                                              <key>CFD Delay</key>
+                                              <array>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                                      <integer>63</integer>
+                                              </array>
+                                              <key>CFD Fraction</key>
+                                              <array>
+                                                      <integer>0</integer>
+                                                      <integer>0</integer>
+       ...
+      
        \endverbatim
      * To access the Gretina4 dictionary, GetDictionaryObjectPath() would
      * return "ORGretina4Model".  To grab the CFD Delay for index 0, 
