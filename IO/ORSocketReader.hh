@@ -69,7 +69,7 @@ class ORSocketReader : public ORVReader, public ORVSigHandler
     virtual bool OpenDataStream() { return StartThread(); } 
     virtual void Close() { if(TestCancel() || !fSocketIsOK) StopThread(); } 
     virtual void SetCircularBufferLength(Int_t length) 
-      {fBufferLength = length;}
+      { fBufferLength = length; }
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};
 
     //! Returns a socket to which a processor can write.
