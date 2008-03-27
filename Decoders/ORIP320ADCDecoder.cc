@@ -11,7 +11,7 @@ std::string ORIP320ADCDecoder::GetParName( size_t iPar )
     case 2: return "IP Slot";
     case 3: return "Time";
     case 4: return "Channel";
-    case 6: return "ADC";
+    case 5: return "ADC";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
                       << ") out of range." << std::endl;
@@ -29,7 +29,7 @@ UInt_t ORIP320ADCDecoder::GetPar( UInt_t* record,
     case 2: return IPSlotNumberOf( record );
     case 3: return TimeOf( record );
     case 4: return ChannelOf( record, iRow );
-    case 6: return ADCValueOf( record, iRow );
+    case 5: return ADCValueOf( record, iRow );
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
                       << ") out of range." << std::endl;
