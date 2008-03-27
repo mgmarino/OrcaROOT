@@ -77,7 +77,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
     virtual inline UInt_t GetCFDPointTwo();
 
     /* Functions satisfying the ORVDigitizerDecoder interface. */
-    virtual inline UShort_t GetBitResolution() {return 14;}
+    virtual inline UShort_t GetBitResolution() { return 14; }
       /* All other functions are correctly inherited from the parent class. */
 
    

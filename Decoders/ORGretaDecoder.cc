@@ -11,33 +11,20 @@ using namespace std;
 ORGretaDecoder::ORGretaDecoder() 
 { 
   fDataRecord = NULL; 
-  fBitMask = 0x1;
-  for( size_t i=1;i<GetBitResolution();i++) {
-    fBitMask <<= 1; 
-    fBitMask += 1;
-  }
+  fBitMask = 0x0;
 }
-/*
-void ORGretaDecoder::Swap(UInt_t* dataRecord)
-{
-  // Given that there is a 16-bit buffer, we have to swap things if there has 
-  // been a switch of endian-ness.  This means the data looks like 2143 and it 
-  // needs to look like 1234, so we just need to swap the 16-bit words. 
-  // The first long word has already been swapped
-  ORLog(kDebug) << "Calling Swap()" << endl; 
-  UInt_t lengthOfBuffer = LengthOf(dataRecord);
-  if(lengthOfBuffer < 2) return;
-  UShort_t* theShortDataRecord = (UShort_t*) (dataRecord + 1);
-  for(size_t i=0;i<2*(lengthOfBuffer-1);i++) {
-    ORUtils::Swap(theShortDataRecord[i]);
-  }
-}
-*/
+
 bool ORGretaDecoder::SetDataRecord(UInt_t* dataRecord) 
-//sets fDataRecord to beginning of data record; generates vector of pointers to events, 
-//maps event pointers to vectors of channel pointers
 {
   fDataRecord = dataRecord;
+
+  if ( fBitMask == 0x0 ) {
+    fBitMask = 0x1;
+    for( size_t i=1;i<GetBitResolution();i++) {
+      fBitMask <<= 1; 
+      fBitMask += 1;
+    }
+  }
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
   if (GetPacketLength() == GetBufHeadLen()) {
@@ -58,9 +45,9 @@ bool ORGretaDecoder::SetDataRecord(UInt_t* dataRecord)
 //Channel functions: ******************************************************************
 
 
-size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
 //copies the waveform data to the array pointed to by
 //waveform, which is of length len
+size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
 {
   size_t wflen = GetWaveformLen();
   if (wflen == 0) return 0;
@@ -80,9 +67,9 @@ size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
   return len;
 }
 
-size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
 //copies the waveform data to the array pointed to by
 //waveform, which is of length len
+size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
 {
   size_t wflen = GetWaveformLen();
   if (wflen == 0) return 0;
