@@ -53,7 +53,7 @@ class ORIP320ADCDecoder: public ORVBasicTreeDecoder, public ORVIndustryPakDecode
       { return TotalADCValuesOf( record ); }
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t iRow);
     virtual std::string GetDataObjectPath() 
-      { return "ORIP320Model:IP320ADC"; }  
+      { return "IP320:IP320ADC"; }  
     
 };
 
