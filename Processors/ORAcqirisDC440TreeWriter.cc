@@ -58,24 +58,8 @@ ORDataProcessor::EReturnCode ORAcqirisDC440TreeWriter::ProcessMyDataRecord(UInt_
       << fWaveformLength << "-"
       << endl;
   }
-  ostringstream os;
-  os << "crate " << fCrate-1 << ":station " << fCard+1;
-  const ORDictionary* dict = NULL;
-  if (fRunContext) {
-    dict = dynamic_cast<const ORDictionary*>(fRunContext->GetHeader()->LookUp(os.str()));
-  }
-  if(!dict) {
-    ORLog(kError) << "Header corrupt!" << endl;
-    return kFailure;
-  }
 
-  const ORDictValueR* sampleInterval = dynamic_cast<const ORDictValueR*>(dict->LookUp("sampleInterval")); 
-  const ORDictValueR* delayTime = dynamic_cast<const ORDictValueR*>(dict->LookUp("delayTime")); 
-  if(!sampleInterval || !delayTime) {
-    ORLog(kError) << "sample or delay time not found!" << endl;
-    return kFailure;
-  }
-  fSamplingPeriod = sampleInterval->GetR();
+  fSamplingPeriod = fEventDecoder->GetSampleInterval();
   if (fWaveformLength > kMaxWFLength) {
     ORLog(kError) << "Waveform too long for kMaxWFLength!" << endl;
     return kFailure;
