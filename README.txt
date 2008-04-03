@@ -4,6 +4,12 @@ Created by Jason Detwiler, 2005
 Updated by Michael Marino, 2007
 For questions/information, contact jasondet@gmail.com, or mmarino@gmail.com.
 
+   Pre-Installation
+
+   Ensure the ROOT is installed correctly, with xml and threading enabled.  
+   Thread should be enabled by default and xml is automatically enabled
+   if ROOT's configure can find libxml2.  Also, optionally enable fftw3 
+   support.
 
 I. Installation
 

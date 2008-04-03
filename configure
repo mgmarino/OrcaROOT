@@ -2045,22 +2045,91 @@ echo "${ECHO_T}yes" >&6; }
   if test "x$no_root" = "x" ; then
     :
   else
-    { { echo "$as_me:$LINENO: error: ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS is define corectly or root-config is in the path.  One can pass --with-rootsys=/path/to/rootsys to configure as well." >&5
-echo "$as_me: error: ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS is define corectly or root-config is in the path.  One can pass --with-rootsys=/path/to/rootsys to configure as well." >&2;}
+    { { echo "$as_me:$LINENO: error:
+  ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS
+  is defined corectly or root-config is in the path.
+  One can pass --with-rootsys=/path/to/rootsys to configure to specify the correct path." >&5
+echo "$as_me: error:
+  ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS
+  is defined corectly or root-config is in the path.
+  One can pass --with-rootsys=/path/to/rootsys to configure to specify the correct path." >&2;}
    { (exit 1); exit 1; }; }
   fi
 
 
+{ echo "$as_me:$LINENO: checking whether ROOT is compiled with xml support" >&5
+echo $ECHO_N "checking whether ROOT is compiled with xml support... $ECHO_C" >&6; }
+ROOTXML=`$ROOTCONF --has-xml`
+if test ! x"$ROOTXML" = xyes; then
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  { { echo "$as_me:$LINENO: error:
+   ROOT is not installed with XML enabled which is a required feature of OrcaROOT.
+   Please reinstall ROOT using during the ROOT install process:
+
+   \"./configure --enable-xml\" OR
+   \"./configure --with-xml-incdir=/path/to/include  --with-xml-libdir=/path/to/lib\"
+
+   where /path/to/include specifies the location of libxml/tree.h and
+   /path/to/lib specifies the location of libxml2" >&5
+echo "$as_me: error:
+   ROOT is not installed with XML enabled which is a required feature of OrcaROOT.
+   Please reinstall ROOT using during the ROOT install process:
+
+   \"./configure --enable-xml\" OR
+   \"./configure --with-xml-incdir=/path/to/include  --with-xml-libdir=/path/to/lib\"
+
+   where /path/to/include specifies the location of libxml/tree.h and
+   /path/to/lib specifies the location of libxml2" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+{ echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+{ echo "$as_me:$LINENO: checking whether ROOT is compiled with thread support" >&5
+echo $ECHO_N "checking whether ROOT is compiled with thread support... $ECHO_C" >&6; }
+ROOTXML=`$ROOTCONF --has-thread`
+if test ! x"$ROOTXML" = xyes; then
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  { { echo "$as_me:$LINENO: error:
+   ROOT is not installed with threading enabled which is a required feature of OrcaROOT.
+   This means ROOT did not find the correct thread library (pthread) during configure.
+   Please reinstall ROOT using during the ROOT install process:
+
+   \"./configure --with-thread-libdir=/path/to/lib\"
+
+   /path/to/lib specifies the location of libpthread" >&5
+echo "$as_me: error:
+   ROOT is not installed with threading enabled which is a required feature of OrcaROOT.
+   This means ROOT did not find the correct thread library (pthread) during configure.
+   Please reinstall ROOT using during the ROOT install process:
+
+   \"./configure --with-thread-libdir=/path/to/lib\"
+
+   /path/to/lib specifies the location of libpthread" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+{ echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+
+
+{ echo "$as_me:$LINENO: checking whether ROOT is compiled with fftw support" >&5
+echo $ECHO_N "checking whether ROOT is compiled with fftw support... $ECHO_C" >&6; }
 ROOTFFTW=`$ROOTCONF --has-fftw3`
 ORROOT_HAS_FFTW=""
 ROOTFFTWLIB=""
 if test x"$ROOTFFTW" = xyes; then
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
   # fftw is installed with root.
   ORROOT_HAS_FFTW="-DORROOT_HAS_FFTW"
   ROOTFFTWLIB="-lFFTW"
-  echo "ROOT is installed with FFTW."
 else
-  echo "ROOT is not installed with FFTW, some functionality is disabled."
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+  { echo "$as_me:$LINENO: ROOT is not installed with fftw, some functionality is disabled." >&5
+echo "$as_me: ROOT is not installed with fftw, some functionality is disabled." >&6;}
 fi
 
 

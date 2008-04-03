@@ -51,18 +51,55 @@ AC_SUBST(ORLIBEXTSHARED)
 echo ""
 echo "${BOLD}Checking for ROOT: ${OFFBOLD} "
 m4_include(root.m4)
-ROOT_PATH(5.04,AC_DEFUN(HAVE_ROOT), AC_MSG_ERROR([ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS is define corectly or root-config is in the path.  One can pass --with-rootsys=/path/to/rootsys to configure as well.]))
+ROOT_PATH(5.04,AC_DEFUN(HAVE_ROOT), AC_MSG_ERROR([
+  ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS 
+  is defined corectly or root-config is in the path.  
+  One can pass --with-rootsys=/path/to/rootsys to configure to specify the correct path.]))
 
+AC_MSG_CHECKING([whether ROOT is compiled with xml support])
+ROOTXML=`$ROOTCONF --has-xml`
+if test ! x"$ROOTXML" = xyes; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+   ROOT is not installed with XML enabled which is a required feature of OrcaROOT. 
+   Please reinstall ROOT using during the ROOT install process: 
+
+   "./configure --enable-xml" OR
+   "./configure --with-xml-incdir=/path/to/include  --with-xml-libdir=/path/to/lib"
+
+   where /path/to/include specifies the location of libxml/tree.h and 
+   /path/to/lib specifies the location of libxml2])
+fi
+AC_MSG_RESULT(yes)
+
+AC_MSG_CHECKING([whether ROOT is compiled with thread support])
+ROOTXML=`$ROOTCONF --has-thread`
+if test ! x"$ROOTXML" = xyes; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+   ROOT is not installed with threading enabled which is a required feature of OrcaROOT. 
+   This means ROOT did not find the correct thread library (pthread) during configure.
+   Please reinstall ROOT using during the ROOT install process: 
+
+   "./configure --with-thread-libdir=/path/to/lib"
+
+   /path/to/lib specifies the location of libpthread])
+fi
+AC_MSG_RESULT(yes)
+
+
+AC_MSG_CHECKING([whether ROOT is compiled with fftw support])
 ROOTFFTW=`$ROOTCONF --has-fftw3` 
 ORROOT_HAS_FFTW=""
 ROOTFFTWLIB=""
 if test x"$ROOTFFTW" = xyes; then
+  AC_MSG_RESULT(yes)
   # fftw is installed with root.
   ORROOT_HAS_FFTW="-DORROOT_HAS_FFTW"
   ROOTFFTWLIB="-lFFTW"
-  echo "ROOT is installed with FFTW."
 else
-  echo "ROOT is not installed with FFTW, some functionality is disabled."
+  AC_MSG_RESULT(no)
+  AC_MSG_NOTICE([ROOT is not installed with fftw, some functionality is disabled.])
 fi
 AC_SUBST(ORROOT_HAS_FFTW)
 AC_SUBST(ROOTFFTWLIB)
