@@ -21,7 +21,7 @@ class ORAcqirisDC440TreeWriter : public ORVTreeWriter
 
   protected:
     ORAcqirisDC440Decoder* fEventDecoder;
-    Double_t fEventTime;
+    ULong64_t fEventTime;
     Double_t fSamplingPeriod;
     UShort_t fCrate, fCard, fChannel;
     Short_t fWaveform[kMaxWFLength];

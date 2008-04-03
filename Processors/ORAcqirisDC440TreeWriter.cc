@@ -28,7 +28,7 @@ ORAcqirisDC440TreeWriter::~ORAcqirisDC440TreeWriter()
 ORDataProcessor::EReturnCode ORAcqirisDC440TreeWriter::InitializeBranches()
 {
   fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
-  fTree->Branch("EventTime", &fEventTime, "LEDEventTime/D");
+  fTree->Branch("EventTime", &fEventTime, "LEDEventTime/l");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
