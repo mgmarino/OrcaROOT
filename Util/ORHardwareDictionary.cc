@@ -79,7 +79,8 @@ bool ORHardwareDictionary::LoadCratesAndCards(const ORDictionary* dict)
             return false;
           }
           /* Is there an offset? */
-          int slotCrateNum = slotNumber->GetI() + crateOffset->GetI(); 
+          //int slotCrateNum = slotNumber->GetI() + crateOffset->GetI(); 
+          int slotCrateNum = slotNumber->GetI(); 
           ORDecoderDictionary* decoderCrateDict = 0;
           
           if ((fDictMap.find(className->GetS())) == fDictMap.end()) {
