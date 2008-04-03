@@ -12,7 +12,7 @@ ORAcqirisDC440TreeWriter::ORAcqirisDC440TreeWriter(string treeName) :
 ORVTreeWriter(new ORAcqirisDC440Decoder, treeName)
 {
   fEventDecoder = dynamic_cast<ORAcqirisDC440Decoder*>(fDataDecoder);
-  fEventTime = 0.;
+  fEventTime = 0;
   fCrate = 0;
   fCard = 0;
   fChannel = 0;
