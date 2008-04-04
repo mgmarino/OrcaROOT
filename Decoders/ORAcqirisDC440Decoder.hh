@@ -135,7 +135,7 @@ inline size_t ORAcqirisDC440Decoder::GetWaveformLen()
 
 inline UShort_t* ORAcqirisDC440Decoder::GetWaveformDataPointer()
 {
-  return (UShort_t*)(fDataRecord + kBufHeadLen + GetIndexOffset());
+  return (UShort_t*)(fDataRecord + kBufHeadLen) + GetIndexOffset();
 }
 #endif
 
