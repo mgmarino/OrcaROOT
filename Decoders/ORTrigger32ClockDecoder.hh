@@ -6,7 +6,8 @@
 #include "ORVBasicTreeDecoder.hh"
 #include "ORVEventCounterDecoder.hh"
 
-class ORTrigger32ClockDecoder : public ORVBasicTreeDecoder, public ORVEventCounterDecoder
+class ORTrigger32ClockDecoder : public ORVBasicTreeDecoder, 
+                                public ORVEventCounterDecoder
 {
   public:
     ORTrigger32ClockDecoder() {}
@@ -19,7 +20,8 @@ class ORTrigger32ClockDecoder : public ORVBasicTreeDecoder, public ORVEventCount
     virtual inline UInt_t MacTimeBottomBitsOf(UInt_t* record)
       { return record[2]; }
     virtual inline ULong64_t MacTimeOf(UInt_t* record)
-      { return (((ULong64_t) MacTimeTopBitsOf(record)) << 32) + MacTimeBottomBitsOf(record); }
+      { return (((ULong64_t) MacTimeTopBitsOf(record)) << 32) 
+                + MacTimeBottomBitsOf(record); }
     virtual inline double GetMacTime_s(UInt_t* record)
       { return double(MacTimeOf(record)) * 1.0e-7; }
 
@@ -31,7 +33,8 @@ class ORTrigger32ClockDecoder : public ORVBasicTreeDecoder, public ORVEventCount
     // for event counters
     virtual inline size_t GetEventCount(UInt_t* /*record*/) { return 1; }
 
-    virtual inline std::string GetDataObjectPath() { return "ORTrigger32Model:100MHz Clock Record"; }
+    virtual inline std::string GetDataObjectPath() 
+      { return "ORTrigger32Model:10MHz Clock Record"; }
 };
 
 #endif
