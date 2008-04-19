@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iomanip>
 #include <string>
-#include <cstring>
+#include <cstdlib>
 #include "ORBasicDataDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"

@@ -3,6 +3,7 @@
 #include "ORSocketReader.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
+#include <sys/select.h>
 
 ORSocketReader::ORSocketReader(const char* host, int port, bool writable) 
 {

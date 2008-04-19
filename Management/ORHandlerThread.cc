@@ -2,6 +2,7 @@
 #include "ORVSigHandler.hh"
 #include "ORLogger.hh"
 #include <signal.h>
+#include <cstdlib>
 
 ORReadWriteLock ORHandlerThread::fRWLock;
 ORHandlerThread* ORHandlerThread::fHandlerThread = 0;

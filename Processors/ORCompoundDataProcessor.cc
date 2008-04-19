@@ -79,7 +79,7 @@ ORDataProcessor::EReturnCode ORCompoundDataProcessor::EndProcessing()
 
 ORDataProcessor::EReturnCode ORCompoundDataProcessor::ProcessMyDataRecord(UInt_t* /*record*/)
 {
-  ORLog(kWarning) << "ProcessMyDataRecord() should never be called..." << endl;
+  ORLog(kWarning) << "ProcessMyDataRecord() should never be called..." << std::endl;
   return kFailure;
 }
 
@@ -102,7 +102,7 @@ void ORCompoundDataProcessor::SetRunContext(ORRunContext* aContext)
 void ORCompoundDataProcessor::AddProcessor(ORDataProcessor* processor) 
 { 
   if (processor == NULL) {
-    ORLog(kWarning) << "AddProcessor(processor): processor can't be NULL!" << endl;
+    ORLog(kWarning) << "AddProcessor(processor): processor can't be NULL!" << std::endl;
     return;
   }
   processor->SetRunContext(fRunContext);
@@ -116,7 +116,7 @@ void ORCompoundDataProcessor::RemoveProcessor(ORDataProcessor* processor)
   if (it != fDataProcessors.end()) {
     fDataProcessors.erase(it);
   } else {
-    ORLog(kWarning) << "Unable to remove processor, not found!" << endl;
+    ORLog(kWarning) << "Unable to remove processor, not found!" << std::endl;
   }
   
 }

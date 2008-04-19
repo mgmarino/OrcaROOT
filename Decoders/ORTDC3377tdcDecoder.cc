@@ -43,7 +43,7 @@ UInt_t ORTDC3377tdcDecoder::IthTDCValueOf(UInt_t* record, size_t i)
 {
   UShort_t* data = GetTDCLocPtr(record, i);
   if (IsDoubleWordFormat(record)) {
-    if (data[0] & 0x0100 == 0) {
+    if ( (data[0] & 0x0100) == 0) {
       ORLog(kWarning) << "First data word of double word format does not "
                       << "have the high-word bit set: crate " << CrateOf(record)
                       << ", card " << CardOf(record) << ", channel "

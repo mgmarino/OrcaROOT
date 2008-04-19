@@ -33,7 +33,7 @@ class ORVDictValue
     virtual std::string GetStringOfValue() const = 0;
 
     //! overload this for dict, array
-    virtual const size_t GetNValues() const { return 1; } 
+    virtual size_t GetNValues() const { return 1; } 
 };
 
 //! True dictionary class
@@ -59,7 +59,7 @@ class ORDictionary : public ORVDictValue
     virtual void LoadEntry(std::string key, ORVDictValue* value) { fDictMap[key] = value; }
     virtual void SetName(std::string name) { fName = name; }
     virtual std::string GetStringOfValue() const {return "";}
-    virtual const size_t GetNValues() const {return fDictMap.size();}
+    virtual size_t GetNValues() const {return fDictMap.size();}
     
     // The following functions are useful for iterating over the contents of
     // the dictionary:
@@ -156,7 +156,7 @@ class ORDictValueA : public ORVDictValue
     virtual void LoadValue(ORVDictValue* value) { fDictVals.push_back(value); }
     virtual void SetName(std::string name) { fName = name; }
     virtual std::string GetStringOfValue() const {return "";}
-    virtual const size_t GetNValues() const { return fDictVals.size(); }
+    virtual size_t GetNValues() const { return fDictVals.size(); }
     virtual const ORVDictValue* At(int i) const { return fDictVals[i]; }
 
   protected:

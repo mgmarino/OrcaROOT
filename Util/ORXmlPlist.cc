@@ -3,6 +3,7 @@
 #include "ORXmlPlist.hh"
 #include "TXMLNode.h"
 #include <fstream>
+#include <cstdlib>
 #include "ORLogger.hh"
 #include "TDOMParser.h"
 

@@ -46,23 +46,23 @@ inline bool ORDGF4cLiveTimeDecoder::SetDataRecord(UInt_t* record)
   if((fDataRecordLength != (UInt_t) length)&&(length > 0))
   {
     ORLog(kWarning) 
-      << "Record length from xml header does not match record header" << endl
+      << "Record length from xml header does not match record header" << std::endl
       << "xml header: " << length << ", header length: " 
-      << fDataRecordLength << endl;
+      << fDataRecordLength << std::endl;
   }
   if(fDataRecordLength == 13)
   {
     ORLog(kWarning) 
-    << "This data was taken with an outdated version of Orca.  " << endl
-    << "DGF4c run times, live times, and real times have been truncated." << endl
-    << "Live time data record length: " << fDataRecordLength << endl;
+    << "This data was taken with an outdated version of Orca.  " << std::endl
+    << "DGF4c run times, live times, and real times have been truncated." << std::endl
+    << "Live time data record length: " << fDataRecordLength << std::endl;
   }else if(fDataRecordLength != 19)
   {
     ORLog(kWarning) 
     << "SetDataRecord(): The length of the live time record is not an expected value: " 
-    << fDataRecordLength << endl;
+    << fDataRecordLength << std::endl;
   }
-  ORLog(kDebug) << "length " << fDataRecordLength << endl;
+  ORLog(kDebug) << "length " << fDataRecordLength << std::endl;
   return true;
 }
 
@@ -120,8 +120,8 @@ inline Double_t ORDGF4cLiveTimeDecoder::CalculateTime(UInt_t* recordPtr)
   UInt_t b = bc >> 16;
   // time in seconds:
   Double_t time = (a*TMath::Power(65536.0,2.0)+b*65536.0+c)*1.0e-6/40.;
-  ORLog(kDebug) << "CalculateTime(): a = " << a << ", b = " << b << ", c = " << c<< endl;
-  ORLog(kDebug) << "CalculateTime(): time = " << time << "s" << endl;
+  ORLog(kDebug) << "CalculateTime(): a = " << a << ", b = " << b << ", c = " << c<< std::endl;
+  ORLog(kDebug) << "CalculateTime(): time = " << time << "s" << std::endl;
   return time;
 }
 
@@ -140,8 +140,8 @@ inline Double_t ORDGF4cLiveTimeDecoder::UnpackDouble(UInt_t record)
   if(exponent > 0) exponent -= 1023;
   Double_t mantissa = (Double_t) (record & ~expMask);
   if(mantissa > 0) mantissa += 0x100000;
-  ORLog(kDebug) << "UnpackDouble() "  << endl;
-  return (1-2*sign)*mantissa*TMathh::Power(2,exponent-20.0);    
+  ORLog(kDebug) << "UnpackDouble() "  << std::endl;
+  return (1-2*sign)*mantissa*TMath::Power(2,exponent-20.0);    
 }
 
 inline UInt_t ORDGF4cLiveTimeDecoder::GetChanNumEvents(UInt_t channelNum)
