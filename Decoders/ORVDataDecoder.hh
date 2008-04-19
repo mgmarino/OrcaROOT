@@ -22,7 +22,7 @@ class ORVDataDecoder
 
     //! Is the record short, (i.e. one 32-bit word)
     virtual inline bool IsShort(UInt_t* dataRecord) 
-      { return dataRecord[0] & 0x80000000; }
+      { return ( (dataRecord[0] & 0x80000000) == 0x80000000 ); }
 
     //! Is the record long
     virtual inline bool IsLong(UInt_t* dataRecord) 

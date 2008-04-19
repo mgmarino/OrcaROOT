@@ -3,9 +3,8 @@
 #include "ORRunDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
 
-string ORRunDecoder::GetParName(size_t iPar)
+std::string ORRunDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "isRemoteControlRun";
@@ -17,7 +16,7 @@ string ORRunDecoder::GetParName(size_t iPar)
     case 6: return "timeToNextHeartBeat";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -34,7 +33,7 @@ UInt_t ORRunDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     case 6: return TimeToNextHeartBeat(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

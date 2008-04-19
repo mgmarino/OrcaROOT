@@ -5,8 +5,6 @@
 #include "ORUtils.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 void ORL4532mainTriggerDecoder::Swap(UInt_t* record)
 {
   ORUtils::Swap(record[1]); 
@@ -36,7 +34,7 @@ double ORL4532mainTriggerDecoder::ReferenceDateOf(UInt_t* record)
 }
 
 
-string ORL4532mainTriggerDecoder::GetParName(size_t iPar)
+std::string ORL4532mainTriggerDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "crate";
@@ -44,7 +42,7 @@ string ORL4532mainTriggerDecoder::GetParName(size_t iPar)
     case 2: return "eventCount";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -57,7 +55,7 @@ UInt_t ORL4532mainTriggerDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*i
     case 2: return EventCountOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

@@ -4,7 +4,6 @@
 
 #include <sstream>
 
-using namespace std;
 
 /* This is not thread-safe, but it doesn't matter what gets written to this when. */
 static struct nullstream: std::ostream {
@@ -15,15 +14,15 @@ static struct nullstream: std::ostream {
 } gDevNull;
 
 
-ostream* ORLogger::fgMyOstream = &cout;
-ostream* ORLogger::fgMyNullstream = &gDevNull;
+std::ostream* ORLogger::fgMyOstream = &std::cout;
+std::ostream* ORLogger::fgMyNullstream = &gDevNull;
 bool ORLogger::fgIsInitialized = false;
 std::map<pthread_t, std::pair<ORLogger::ESeverity, std::ostream*> > ORLogger::fgLoggerMap;
 ORReadWriteLock ORLogger::fgRWLock;
 
-ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const char* location)
+std::ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const char* location)
 {
-  ostream* theThreadStream;
+  std::ostream* theThreadStream;
   ORLogger::ESeverity theThreadSeverity;
 
   /* critical part */
@@ -46,7 +45,7 @@ ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const cha
   }
 
   if ( severity == kFatal ){
-    if (severity >= theThreadSeverity) *theThreadStream << endl;
+    if (severity >= theThreadSeverity) *theThreadStream << std::endl;
     //::abort();  
     /* When we're striving for safety, abort takes down the whole shebang! */
     pthread_exit((void *) 0);
@@ -56,7 +55,7 @@ ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, const cha
 
 std::ostream* ORLogger::GetORLoggerOStream(pthread_t thread) 
 {
-  ostream* theThreadStream;
+  std::ostream* theThreadStream;
   fgRWLock.readLock();
   std::map<pthread_t, std::pair<ORLogger::ESeverity, std::ostream* > >::iterator anIter = fgLoggerMap.find(thread);
 
@@ -151,7 +150,7 @@ void ORLogger::SetORLoggerSeverity(pthread_t thread, ORLogger::ESeverity severit
   fgRWLock.unlock();
 }
 
-string ORLogger::toString(ORLogger::ESeverity severity)
+std::string ORLogger::toString(ORLogger::ESeverity severity)
 {
   switch (severity) {
     case kDebug: return "Debug";

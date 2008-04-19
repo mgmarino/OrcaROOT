@@ -5,8 +5,6 @@
 #include "ORLogger.hh"
 #include "ORUtils.hh"
 
-using namespace std;
-
 void ORVBasicADCDecoder::Swap(UInt_t* record)
 {
   if (IsShort(record)) return;
@@ -34,7 +32,7 @@ double ORVBasicADCDecoder::ReferenceDateOf(UInt_t* record)
 }
 
 
-string ORVBasicADCDecoder::GetHistName(int iHist)
+std::string ORVBasicADCDecoder::GetHistName(int iHist)
 {
   const int kNCards = 0x1f+1;
   const int kNChannels = 0xf+1;
@@ -48,7 +46,7 @@ string ORVBasicADCDecoder::GetHistName(int iHist)
   return ::Form("h%s_%d_%d_%d", GetLabel().c_str(), iCrate, iCard, iChannel);
 }
 
-string ORVBasicADCDecoder::GetHistTitle(int iHist)
+std::string ORVBasicADCDecoder::GetHistTitle(int iHist)
 {
   const int kNCards = 0x1f+1;
   const int kNChannels = 0xf+1;
@@ -79,7 +77,7 @@ std::string ORVBasicADCDecoder::GetParName(size_t iPar)
     case 3: return "adc";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -93,7 +91,7 @@ UInt_t ORVBasicADCDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     case 3: return ADCValueOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

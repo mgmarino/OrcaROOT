@@ -4,9 +4,6 @@
 #define _ORKatrinFLTWaveformDecoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
-#include <vector>
-#include <map>
-using namespace std;
 
 /** Decodes the binary Orca data format and writes it into a ROOT TFile.
   * The binary data format description is in \file ORKatrinFLTDecoder.m .

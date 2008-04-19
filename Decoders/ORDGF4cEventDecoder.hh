@@ -6,7 +6,6 @@
 #include "ORVDigitizerDecoder.hh"
 #include <vector>
 #include <map>
-using namespace std;
 
 class ORDGF4cEventDecoder: public ORVDigitizerDecoder
 {
@@ -119,10 +118,10 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
     virtual size_t FillChannelPtrs(size_t iEvent);
     virtual inline const UShort_t* GetChannelPointer(size_t iEvent, size_t iChannel); 
 
-    vector<UShort_t*> fEventPtrs;				
-    map< UShort_t*, vector<UShort_t*> > fChannelPtrs;
-    map< UShort_t*, vector<size_t> > fChannelNumbers;
-    vector< pair<size_t, size_t> > fEventVector;
+    std::vector<UShort_t*> fEventPtrs;				
+    std::map< UShort_t*, std::vector<UShort_t*> > fChannelPtrs;
+    std::map< UShort_t*, std::vector<size_t> > fChannelNumbers;
+    std::vector< std::pair<size_t, size_t> > fEventVector;
 };
 
 

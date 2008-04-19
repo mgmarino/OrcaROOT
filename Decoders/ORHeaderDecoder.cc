@@ -4,8 +4,6 @@
 #include "ORLogger.hh"
 #include "ORUtils.hh"
 
-using namespace std;
-
 ORHeaderDecoder::EOrcaStreamVersion ORHeaderDecoder::GetStreamVersion(UInt_t firstWordOfStream)
 {
   // check this first, for speed.

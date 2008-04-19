@@ -3,7 +3,6 @@
 #include "ORDGF4cEventDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
-using namespace std;
 
 
 //**************************************************************************************
@@ -37,33 +36,33 @@ bool ORDGF4cEventDecoder::SetDataRecord(UInt_t* dataRecord)
   fEventVector.clear();
   
 
-  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
+  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   if (GetBufNData() == kBufHeadLen) {
-    //ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << endl;
+    //ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << std::endl;
     return true;
   }	
   size_t i = 0;
   fEventPtrs.push_back(((UShort_t*) (fDataRecord + 2)) + kBufHeadLen);
   size_t length = FillChannelPtrs(i);
   for (size_t j=0;j<GetNChannels(i);j++) {
-    fEventVector.push_back(pair<size_t, size_t>(i, j));
+    fEventVector.push_back(std::pair<size_t, size_t>(i, j));
   }
   for(i = 1; PtrIsInDataRecord(fEventPtrs[i-1]+length, false); i++) { 
     fEventPtrs.push_back(fEventPtrs[i-1]+length);
     length = FillChannelPtrs(i);
     for (size_t j=0;j<GetNChannels(i);j++) {
-      fEventVector.push_back(pair<size_t, size_t>(i, j));
+      fEventVector.push_back(std::pair<size_t, size_t>(i, j));
     }
   }
   if(!IsValid()) {
-    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << endl;
+    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
     fEventPtrs.clear();
     fChannelPtrs.clear();
     fChannelNumbers.clear();
     fDataRecord = NULL;
     return false;
   }
-  ORLog(kDebug) << "SetDataRecord(): Exiting" << endl;
+  ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;
   return true;
 }
 
@@ -75,7 +74,7 @@ size_t ORDGF4cEventDecoder::FillChannelPtrs(size_t iEvent)
   //4 LSBs determine # of channels:
   size_t num = (ep & 0x1) + ((ep & 0x2) >> 1) + ((ep & 0x4) >> 2) + ((ep & 0x8) >> 3);	
   if(num > 4) {		//there should be 0-4 channels
-    ORLog(kError) << "GetNChannels(): Invalid number of channels: " << num << endl;
+    ORLog(kError) << "GetNChannels(): Invalid number of channels: " << num << std::endl;
     return 0;
   }
   UShort_t* channelData = fEventPtrs[iEvent] + kEventHeadLen;
@@ -102,7 +101,7 @@ size_t ORDGF4cEventDecoder::GetChanHeadLen()	//returns channel header length
   if ( IsListModeAnyC2() ) return 4; 
   if ( IsListModeAnyC3() ) return 2; 
   if ( IsListModeAnyStdC1() ) return 9; 
-  ORLog(kWarning) << "GetChanHeadLen(): Invalid channel header length" << endl; 
+  ORLog(kWarning) << "GetChanHeadLen(): Invalid channel header length" << std::endl; 
   return 0; 
 }
 
@@ -130,7 +129,7 @@ double ORDGF4cEventDecoder::GetChanXiaPsa(size_t iEvent, size_t iChannel)
            ((double)(GetChannelPointer(iEvent, iChannel)[2] & 0xff))/256); 
   }
   ORLog(kWarning) << "GetChanXiaPsa(): Data record is in compression 3 format and "
-                  << "does not contain an XIA PSA value" << endl;
+                  << "does not contain an XIA PSA value" << std::endl;
   return 0xffff; 
 }
 
@@ -139,7 +138,7 @@ UShort_t ORDGF4cEventDecoder::GetChanUserPsa(size_t iEvent, size_t iChannel)
   if (IsListModeAnyStdC1()) return GetChannelPointer(iEvent, iChannel)[4] & 0xff00; 
   if (IsListModeAnyC2()) return GetChannelPointer(iEvent, iChannel)[3]; 
   ORLog(kWarning) << "GetChanUserPsa(): Data record is in compression 3 format and " 
-                  << "does not contain a user PSA value" << endl;
+                  << "does not contain a user PSA value" << std::endl;
   return 0xffff; 
 }
 
@@ -152,7 +151,7 @@ ULong64_t ORDGF4cEventDecoder::GetChanGSLT(size_t iEvent, size_t iChannel)
                      GetChannelPointer(iEvent, iChannel)[5]); 
   }
   ORLog(kWarning) << "GetChanGSLT(): Data record is in compression 3 format and does " 
-	          << "not contain a GSLT time stamp" << endl;
+	          << "not contain a GSLT time stamp" << std::endl;
   return 0xffffffffffffffffLL;  
 }
 
@@ -161,7 +160,7 @@ UShort_t ORDGF4cEventDecoder::GetChanRealTime(size_t iEvent, size_t iChannel)
 {	  
   if (IsListModeAnyStdC1()) return GetChannelPointer(iEvent, iChannel)[8]; 
   ORLog(kWarning) << "GetChanRealTime(): Data record is in compression 3 format and " 
-	          << "does not contain the real time" << endl;
+	          << "does not contain the real time" << std::endl;
   return 0xffff;  
 }
 
@@ -182,7 +181,7 @@ size_t ORDGF4cEventDecoder::CopyWaveformData(UShort_t* waveform, size_t len,
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen(iEvent, iChannel) << endl;
+                    << "; waveform data length is " << GetWaveformLen(iEvent, iChannel) << std::endl;
   }
   else len = GetWaveformLen(iEvent, iChannel); 
   const UShort_t* waveformData = GetChannelPointer(iEvent, iChannel) + GetChanHeadLen();
@@ -199,7 +198,7 @@ size_t ORDGF4cEventDecoder::CopyWaveformDataDouble(double* waveform, size_t len,
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen(iEvent, iChannel) << endl;
+                    << "; waveform data length is " << GetWaveformLen(iEvent, iChannel) << std::endl;
   }
   else len = GetWaveformLen(iEvent, iChannel); 
   const UShort_t* waveformData = GetChannelPointer(iEvent, iChannel) + GetChanHeadLen();
@@ -313,17 +312,17 @@ bool ORDGF4cEventDecoder::PtrIsInDataRecord(UShort_t* ptr, bool verbose)
 //returns true if ptr points to a valid location within the data record
 {
   if (ptr == NULL) { 
-    if (verbose) ORLog(kWarning) << "PtrIsInDataRecord(): pointer is NULL" << endl; 
+    if (verbose) ORLog(kWarning) << "PtrIsInDataRecord(): pointer is NULL" << std::endl; 
     return false; 
   }
   if (!fEventPtrs.size()) return false; 
   if ((ptr < fEventPtrs[0]) || (ptr >= fEventPtrs[0] + GetBufNData() - kBufHeadLen)) {
     if (verbose) {
       ORLog(kWarning) << "PtrIsInDataRecord(): pointer is not within data record" 
-                      << endl << "  The pointer is " << ptr - fEventPtrs[0] 
-                      << " short words past the 0th event " << endl << "  The data record has " 
+                      << std::endl << "  The pointer is " << ptr - fEventPtrs[0] 
+                      << " short words past the 0th event " << std::endl << "  The data record has " 
                       << GetBufNData() - GetChanHeadLen() << " short words past the 0th event" 
-                      << endl;
+                      << std::endl;
     }
     return false; 
   }
@@ -332,76 +331,76 @@ bool ORDGF4cEventDecoder::PtrIsInDataRecord(UShort_t* ptr, bool verbose)
 
 bool ORDGF4cEventDecoder::IsValid() 
 { 
-  ORLog(kDebug) << "IsValid(): starting... " << endl;
+  ORLog(kDebug) << "IsValid(): starting... " << std::endl;
   if(IsShort(fDataRecord)) { 
-    ORLog(kError) << "Data file is short" << endl; 
+    ORLog(kError) << "Data file is short" << std::endl; 
     return false;
   } 
-  ORLog(kDebug) << "  Data record is not short" << endl;
+  ORLog(kDebug) << "  Data record is not short" << std::endl;
   if (!IsListModeAnyStdC1() && !IsListModeAnyC2() && !IsListModeAnyC3() ) {
-    ORLog(kError) << "The channel data is not in a valid format" << endl;
+    ORLog(kError) << "The channel data is not in a valid format" << std::endl;
     DumpBufferHeader();
     return false;
   }
-  ORLog(kDebug) << "  Channel data is in a valid format" << endl;    
+  ORLog(kDebug) << "  Channel data is in a valid format" << std::endl;    
   //check that BufNData matches file length XIA is in 16-bit!!!:  
   if((size_t) (2*LengthOf(fDataRecord) - 4) != (GetBufNData() + GetBufNData()%2)) {
     // 16-bit to 32-bit would create some padding for odd numbers of
     // 16-bit words, but there should always be more 32-bit words.
     ORLog(kError) << "2*Length of record - 4 (" << 2*LengthOf(fDataRecord) - 4 
                   << ") does not match length of BufNData + BufNData % 2 (" 
-                  << GetBufNData() + GetBufNData()%2<< ")" << endl; 
+                  << GetBufNData() + GetBufNData()%2<< ")" << std::endl; 
     DumpBufferHeader();
     return false;
   } 
-  ORLog(kDebug) << "  Buffer length matches file length" << endl;
+  ORLog(kDebug) << "  Buffer length matches file length" << std::endl;
   //check sum of event lengths matches buffer size:
   size_t length = kBufHeadLen;
   for (size_t i = 0; i < GetDGFNEvents(); i++) length += GetDGFEventLen(i);
   if(length != GetBufNData()) {
     ORLog(kError) << "The buffer is of length " << GetBufNData() 
-                  << " but the sum of event lengths are of length " << length << endl; 
+                  << " but the sum of event lengths are of length " << length << std::endl; 
     DumpBufferHeader();
     return false; 
   }
-  ORLog(kDebug) << "  Sum of event lengths matches buffer size" << endl;
+  ORLog(kDebug) << "  Sum of event lengths matches buffer size" << std::endl;
   //check channel lengths + event header length equals event length for each event:
   for (size_t i = 0; i < GetDGFNEvents(); i++) { 
     length = kEventHeadLen;
     for (size_t k = 0; k < GetNChannels(i); k++) length += GetChanNData(i,k);
     if (length  != GetDGFEventLen(i)) { 
       ORLog(kError) << "Event " << i << " has length " << GetDGFEventLen(i) 
-                    << " but its header + channels are of length " << length << endl;
+                    << " but its header + channels are of length " << length << std::endl;
       DumpBufferHeader();
       return false;
     }
   } 
-  ORLog(kDebug) << "  Length of event header + channel lengths matches event lengths" << endl;
-  ORLog(kDebug) << "Data record is valid " << endl;
+  ORLog(kDebug) << "  Length of event header + channel lengths matches event lengths" << std::endl;
+  ORLog(kDebug) << "Data record is valid " << std::endl;
   return true;  
 }
 
 void ORDGF4cEventDecoder::DumpBufferHeader()
 {
   
-  ORLog(kDebug) << "Dumping Buffer Header: " << endl
-    << "BufNData: " << GetBufNData() << endl
-    << "BufModNum: " << GetBufModNum() << endl
-    << "RunTask: " << GetRunTask() << endl
-    << "BufTime: " << GetBufTime() << endl
-    << "Total Events: " << GetDGFNEvents() << endl;
+  ORLog(kDebug) << "Dumping Buffer Header: " << std::endl
+    << "BufNData: " << GetBufNData() << std::endl
+    << "BufModNum: " << GetBufModNum() << std::endl
+    << "RunTask: " << GetRunTask() << std::endl
+    << "BufTime: " << GetBufTime() << std::endl
+    << "Total Events: " << GetDGFNEvents() << std::endl;
   
   if(fDataRecord)
   {
-    ORLog(kDebug) << "Dumping Data Record: " << endl;
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "Dumping Data Record: " << std::endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
     /*for(size_t i=2;i<LengthOf(fDataRecord); i+=2)
     {
-      ORLog(kDebug) << fDataRecord[i] << endl;
+      ORLog(kDebug) << fDataRecord[i] << std::endl;
       ORLog(kDebug) << *((UShort_t*) (fDataRecord + i)) << " "
-        << *((UShort_t*) (fDataRecord + i)+ 1) << endl; 
+        << *((UShort_t*) (fDataRecord + i)+ 1) << std::endl; 
     }*/
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
   }
 }
 
@@ -416,38 +415,38 @@ void ORDGF4cEventDecoder::Dump(UInt_t* dataRecord) //debugging
   UShort_t* waveform; 
   double* waveformDouble;
   
-  cout << endl << endl << "ORDGF4cEventDecoder::Dump():" << endl ;
+  ORLog(kDebug) << std::endl << std::endl << "ORDGF4cEventDecoder::Dump():" << std::endl ;
   iChannel = 0;
   iEvent = 0;
   if(!SetDataRecord(dataRecord)) return; 
-	cout 
-	  << "  Header functions: " << endl
-	  << "    Crate = " << CrateOf() << "; card = " << CardOf() << endl
-	  << "    The buffer is " << GetBufNData() << " words long" << endl
-	  << "    The module number is " << GetBufModNum() << endl
+	ORLog(kDebug) 
+	  << "  Header functions: " << std::endl
+	  << "    Crate = " << CrateOf() << "; card = " << CardOf() << std::endl
+	  << "    The buffer is " << GetBufNData() << " words long" << std::endl
+	  << "    The module number is " << GetBufModNum() << std::endl
           << "    RunTask: " << GetRunTask() << " ChanHeadLen: " << GetChanHeadLen() 
-	    << endl
-	  << "    Run Start time: " << GetBufTime() << endl;
+	    << std::endl
+	  << "    Run Start time: " << GetBufTime() << std::endl;
 	  
-	  cout << "  Event functions: " << endl	  
+	  ORLog(kDebug) << "  Event functions: " << std::endl	  
           << "    Event " << iEvent << " has " << GetNChannels(iEvent) << " channels and " 
-            << GetDGFEventLen(iEvent) << " words" << endl
+            << GetDGFEventLen(iEvent) << " words" << std::endl
 	  << "    The ith active channel, where i = " << iChannel << " is channel number " 
-	    << GetChannelNumber(iEvent, iChannel) << endl
-	  << "    Event time: " << GetDGFEventTime(iEvent) << endl 
-	  << "    There are " << GetDGFNEvents() << " events" << endl  
+	    << GetChannelNumber(iEvent, iChannel) << std::endl
+	  << "    Event time: " << GetDGFEventTime(iEvent) << std::endl 
+	  << "    There are " << GetDGFNEvents() << " events" << std::endl  
 	  
-	  << "  Channel functions: " << endl  
+	  << "  Channel functions: " << std::endl  
           << "    Channel " << iChannel << " in event "   
-	    << iEvent << " has " << GetChanNData(iEvent, iChannel) << " words" << endl  
-	  << "    Trigger time: " << GetChanTrigTime(iEvent, iChannel) << endl  
-	  << "    Energy: " << GetChanEnergy(iEvent,iChannel) << endl  
-	  << "    XIA PSA value: " << GetChanXiaPsa(iEvent,iChannel) << endl
-	  << "    User PSA value: " << GetChanUserPsa(iEvent,iChannel) << endl
-	  << "    GSLT time stamp: " << GetChanGSLT(iEvent,iChannel) << endl
-	  << "    Real time: " << GetChanRealTime(iEvent,iChannel) << endl
+	    << iEvent << " has " << GetChanNData(iEvent, iChannel) << " words" << std::endl  
+	  << "    Trigger time: " << GetChanTrigTime(iEvent, iChannel) << std::endl  
+	  << "    Energy: " << GetChanEnergy(iEvent,iChannel) << std::endl  
+	  << "    XIA PSA value: " << GetChanXiaPsa(iEvent,iChannel) << std::endl
+	  << "    User PSA value: " << GetChanUserPsa(iEvent,iChannel) << std::endl
+	  << "    GSLT time stamp: " << GetChanGSLT(iEvent,iChannel) << std::endl
+	  << "    Real time: " << GetChanRealTime(iEvent,iChannel) << std::endl
 	  << "    The waveform data has " << GetWaveformLen(iEvent,iChannel) 
-	    << " words" << endl;
+	    << " words" << std::endl;
 	  unsigned short wavedata[GetWaveformLen(iEvent,iChannel)];
 	  waveform = wavedata;
 	  double wavedataDouble[GetWaveformLen(iEvent,iChannel)];

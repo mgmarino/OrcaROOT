@@ -1,8 +1,7 @@
 // ORAmi286Decoder.cc
 
 #include "ORAmi286Decoder.hh"
-#include <iostream>
-using namespace std;
+#include "ORLogger.hh" 
 
 
 //**************************************************************************************
@@ -24,12 +23,12 @@ UInt_t ORAmi286Decoder::GetTimeOfChannel(UInt_t* record, UInt_t channel)
 
 void ORAmi286Decoder::Dump(UInt_t* record)
 {
-  cout << "*************** Dumping out Ami286 Data *************" << endl;
-  cout << "Number of Channels: " << GetNumberOfChannels() << endl;
+  ORLog(kDebug) << "*************** Dumping out Ami286 Data *************" << std::endl;
+  ORLog(kDebug) << "Number of Channels: " << GetNumberOfChannels() << std::endl;
   for (size_t i=0; i<GetNumberOfChannels();i++) {
-    cout << "Channel: " << i << endl
-      << " Level: " << GetLevelOfChannel(record, i) << endl
-      << " Time: " << GetTimeOfChannel(record, i) << endl;
+    ORLog(kDebug) << "Channel: " << i << std::endl
+      << " Level: " << GetLevelOfChannel(record, i) << std::endl
+      << " Time: " << GetTimeOfChannel(record, i) << std::endl;
   }
-  cout << "********************************************************" << endl;
+  ORLog(kDebug) << "********************************************************" << std::endl;
 }

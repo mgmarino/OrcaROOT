@@ -4,8 +4,6 @@
 #include "ORTrigger32ClockDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 std::string ORTrigger32ClockDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
@@ -14,7 +12,7 @@ std::string ORTrigger32ClockDecoder::GetParName(size_t iPar)
     case 2: return "timeBottom";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -27,7 +25,7 @@ UInt_t ORTrigger32ClockDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRo
     case 2: return MacTimeBottomBitsOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

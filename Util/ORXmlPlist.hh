@@ -3,10 +3,8 @@
 #ifndef _ORXmlPlist_hh_
 #define _ORXmlPlist_hh_
 
-#include <string>
 #include "TString.h"
 #include "ORDictionary.hh"
-#include "TXMLNode.h"
 
 /*!
    This class handles loading an xml Plist and parsing it into 
@@ -17,6 +15,7 @@
 
   
  */
+class TXMLNode;
 class ORXmlPlist
 {
   public:

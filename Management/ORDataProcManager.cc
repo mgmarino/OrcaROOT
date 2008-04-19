@@ -5,8 +5,6 @@
 #include "ORLogger.hh"
 #include "ORSocketReader.hh"
 
-using namespace std;
-
 ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runDataProc)
 { 
   // the optional runDataProc argument allows the user to pass in an
@@ -37,7 +35,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessDataStream()
   if (fReader == NULL) {
     ORLog(kError) << "ProcessDataStream(): fReader == NULL: "
                   << "you must set a ORVReader before attempting to process data"
-		  << endl;
+		  << std::endl;
     return kAlarm;
   }
 
@@ -59,7 +57,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   SetDoProcessRun();
 
 
-  ORLog(kDebug) << "ProcessRun(): calling fReader->Open()..." << endl;
+  ORLog(kDebug) << "ProcessRun(): calling fReader->Open()..." << std::endl;
   if(!fReader->Open()) return kBreak;
 
   EReturnCode retCode;
@@ -67,11 +65,11 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   UInt_t* buffer = new UInt_t[nLongsMax];
 
   bool continueProcessing = true;
-  ORLog(kDebug) << "ProcessRun(): reading header..." << endl;
+  ORLog(kDebug) << "ProcessRun(): reading header..." << std::endl;
   continueProcessing = fReader->ReadRecord(buffer, nLongsMax);
   if(continueProcessing) {
     if(fHeaderProcessor.ProcessDataRecord(buffer) != kSuccess) {
-      ORLog(kWarning) << "ProcessRun(): First record was not a header! Can't continue reading run." << endl;
+      ORLog(kWarning) << "ProcessRun(): First record was not a header! Can't continue reading run." << std::endl;
       continueProcessing = false;
     }
     fRunContext->SetMustSwap(fReader->MustSwap());
@@ -85,17 +83,17 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   }
   
   if(continueProcessing) {
-    ORLog(kDebug) << "ProcessRun(): loading dictionary..." << endl;
+    ORLog(kDebug) << "ProcessRun(): loading dictionary..." << std::endl;
     if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader())) {
       /* We have encountered a problem loading the header file. */
       /* Kill Run, try going to the next run. */
-      ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << endl;
+      ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << std::endl;
     } else {
-      ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << endl;
+      ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << std::endl;
       SetDataId();
       SetDecoderDictionary();
       
-      ORLog(kDebug) << "ProcessRun(): start reading records..." << endl;
+      ORLog(kDebug) << "ProcessRun(): start reading records..." << std::endl;
       while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
         fRunContext->ResetRecordFlags();
         fRunDataProcessor->ProcessDataRecord(buffer);
@@ -118,13 +116,13 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
         /*
         if (ORProcessStopper::StopNow()) {
-          ORLog(kTrace) << "ORProcessStopper stopped data processing..." << endl;
+          ORLog(kTrace) << "ORProcessStopper stopped data processing..." << std::endl;
           break;
         }*/
 
         if (TestCancel()) break;
       }
-      ORLog(kDebug) << "ProcessRun(): finished reading records..." << endl;
+      ORLog(kDebug) << "ProcessRun(): finished reading records..." << std::endl;
       
       retCode = EndRun();
       if (retCode >= kAlarm) return kAlarm;
@@ -132,13 +130,13 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     }
   }
 
-  ORLog(kDebug) << "ProcessRun(): calling fReader->Close()..." << endl;
+  ORLog(kDebug) << "ProcessRun(): calling fReader->Close()..." << std::endl;
   fReader->Close();
 
   delete [] buffer;
   /*
   if(ORProcessStopper::Stop()) {
-    ORLog(kDebug) << "ProcessRun(): ORProcessStopper is stopping the run processing..." << endl;
+    ORLog(kDebug) << "ProcessRun(): ORProcessStopper is stopping the run processing..." << std::endl;
     return kBreak;
   }
   else*/ 
@@ -149,7 +147,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
 /*
 void ORDataProcManager::Handle(int)
 {
-  ORLog(kWarning) << "Caught ctrl-c, trying to exit nicely" << endl;
+  ORLog(kWarning) << "Caught ctrl-c, trying to exit nicely" << std::endl;
   EndRun();
   fRunDataProcessor->OnEndRunComplete();
   EndProcessing();

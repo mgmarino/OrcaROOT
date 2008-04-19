@@ -5,8 +5,6 @@
 #include "ORUtils.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 void ORTDC3377tdcDecoder::Swap(UInt_t* record)
 {
   ORUtils::Swap(record[1]); 
@@ -49,7 +47,7 @@ UInt_t ORTDC3377tdcDecoder::IthTDCValueOf(UInt_t* record, size_t i)
       ORLog(kWarning) << "First data word of double word format does not "
                       << "have the high-word bit set: crate " << CrateOf(record)
                       << ", card " << CardOf(record) << ", channel "
-                      << IthChannelOf(record, i) << ", i = " << i << endl;
+                      << IthChannelOf(record, i) << ", i = " << i << std::endl;
     }
     return ((data[0] & 0x00ff) << 8) | (data[1] & 0x00ff);
   }
@@ -59,7 +57,7 @@ UInt_t ORTDC3377tdcDecoder::IthTDCValueOf(UInt_t* record, size_t i)
   }
 }
 
-string ORTDC3377tdcDecoder::GetParName(size_t iPar)
+std::string ORTDC3377tdcDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "crate";
@@ -69,7 +67,7 @@ string ORTDC3377tdcDecoder::GetParName(size_t iPar)
     case 4: return "edge";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -84,7 +82,7 @@ UInt_t ORTDC3377tdcDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 4: return IthTDCValueIsLeadingEdge(record, iRow);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

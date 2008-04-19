@@ -3,8 +3,7 @@
 #include "ORCompoundDataProcessor.hh"
 
 #include "ORLogger.hh"
-
-using namespace std;
+#include <algorithm>
 
 ORCompoundDataProcessor::ORCompoundDataProcessor()
 {
@@ -112,8 +111,8 @@ void ORCompoundDataProcessor::AddProcessor(ORDataProcessor* processor)
 
 void ORCompoundDataProcessor::RemoveProcessor(ORDataProcessor* processor)
 {
-  vector<ORDataProcessor*>::iterator it = 
-    find(fDataProcessors.begin(), fDataProcessors.end(), processor);
+  std::vector<ORDataProcessor*>::iterator it = 
+    std::find(fDataProcessors.begin(), fDataProcessors.end(), processor);
   if (it != fDataProcessors.end()) {
     fDataProcessors.erase(it);
   } else {

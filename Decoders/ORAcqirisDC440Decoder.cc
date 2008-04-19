@@ -5,7 +5,6 @@
 #include "ORUtils.hh"
 #include "ORDictionary.hh"
 #include <sstream>
-using namespace std;
 
 
 //**************************************************************************************
@@ -19,7 +18,7 @@ void ORAcqirisDC440Decoder::Swap(UInt_t* dataRecord)
   // needs to look like 1234, so we just need to swap the 16-bit words. 
   // The first long word has already been swapped.  There is a header of length
   // kBufHeadLen that needs to be swapped as longs.
-  ORLog(kDebug) << "Calling Swap()" << endl; 
+  ORLog(kDebug) << "Calling Swap()" << std::endl; 
   UInt_t lengthOfBuffer = LengthOf(dataRecord);
   if(lengthOfBuffer < 2) return;
   for(size_t i=1;i<kBufHeadLen; i++) {
@@ -34,7 +33,7 @@ void ORAcqirisDC440Decoder::Swap(UInt_t* dataRecord)
 bool ORAcqirisDC440Decoder::SetDataRecord(UInt_t* dataRecord) 
 {
   fDataRecord = dataRecord;
-  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
+  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   return true;
 }
 
@@ -51,7 +50,7 @@ size_t ORAcqirisDC440Decoder::CopyWaveformData(Short_t* waveform, size_t len)
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else {
     len = GetWaveformLen(); 
@@ -69,7 +68,7 @@ size_t ORAcqirisDC440Decoder::CopyWaveformDataDouble(double* waveform, size_t le
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else {
     len = GetWaveformLen(); 
@@ -140,9 +139,9 @@ double ORAcqirisDC440Decoder::GetVerticalOffset()
 
 bool ORAcqirisDC440Decoder::IsValid() 
 { 
-  ORLog(kDebug) << "IsValid(): starting... " << endl;
+  ORLog(kDebug) << "IsValid(): starting... " << std::endl;
   if(IsShort(fDataRecord)) { 
-    ORLog(kError) << "Data file is short" << endl; 
+    ORLog(kError) << "Data file is short" << std::endl; 
     return false;
   } 
   return true;
@@ -152,13 +151,13 @@ void ORAcqirisDC440Decoder::DumpBufferHeader()
 {
   if(fDataRecord)
   {
-    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << endl;
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << std::endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
     for(size_t i=1;i<kBufHeadLen; i++)
     {
-      ORLog(kDebug) << fDataRecord[i] << endl;
+      ORLog(kDebug) << fDataRecord[i] << std::endl;
     }
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
   }
 }
 
@@ -168,15 +167,15 @@ void ORAcqirisDC440Decoder::DumpBufferHeader()
 
 void ORAcqirisDC440Decoder::Dump(UInt_t* dataRecord) //debugging 
 {
-  cout << endl << endl << "ORAcqirisDC440Decoder::Dump():" << endl ;
+  ORLog(kDebug) << std::endl << std::endl << "ORAcqirisDC440Decoder::Dump():" << std::endl ;
   if(!SetDataRecord(dataRecord)) return; 
-  cout << "  Header functions: " << endl
-    << "    Crate = " << CrateOf() << "; card = " << CardOf() << endl
-    << "    The buffer is " << kBufHeadLen << " (32-bit) words long" << endl
-    << "    The channel is " << GetChannelNum() << endl
-    << "    Timestamp: " << GetTimeStamp() << endl
-    << "    Index offset: " << GetIndexOffset() << endl
-    << "    The waveform data has " << GetWaveformLen() << " (16-bit) words" << endl;
+  ORLog(kDebug) << "  Header functions: " << std::endl
+    << "    Crate = " << CrateOf() << "; card = " << CardOf() << std::endl
+    << "    The buffer is " << kBufHeadLen << " (32-bit) words long" << std::endl
+    << "    The channel is " << GetChannelNum() << std::endl
+    << "    Timestamp: " << GetTimeStamp() << std::endl
+    << "    Index offset: " << GetIndexOffset() << std::endl
+    << "    The waveform data has " << GetWaveformLen() << " (16-bit) words" << std::endl;
 }
 
 UInt_t ORAcqirisDC440Decoder::GetEventWaveformPoint( size_t /*event*/, 

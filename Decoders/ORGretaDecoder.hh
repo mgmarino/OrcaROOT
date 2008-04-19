@@ -4,9 +4,6 @@
 #define _ORGretaDecoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
-#include <vector>
-#include <map>
-using namespace std;
 
 class ORGretaDecoder: public ORVDigitizerDecoder
 {

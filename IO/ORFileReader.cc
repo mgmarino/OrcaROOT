@@ -2,12 +2,9 @@
 
 #include "ORFileReader.hh"
 
-#include <string>
 #include "ORLogger.hh"
 
-using namespace std;
-
-ORFileReader::ORFileReader(string filename)
+ORFileReader::ORFileReader(std::string filename)
 {
   if (filename != "") AddFileToProcess(filename);
 }
@@ -26,17 +23,17 @@ size_t ORFileReader::Read(char* buffer, size_t nBytesMax)
 bool ORFileReader::OpenDataStream()
 {
   if(fFileList.size() > 0) {
-    ORLog(kDebug) << "OpenDataStream(): opening file " << fFileList[0] << endl;
+    ORLog(kDebug) << "OpenDataStream(): opening file " << fFileList[0] << std::endl;
     open(fFileList[0].c_str());
     if(!OKToRead()) {
-      ORLog(kError) << "Could not open file " << fFileList[0] << endl;
+      ORLog(kError) << "Could not open file " << fFileList[0] << std::endl;
       return false;
     }
     fFileList.erase(fFileList.begin());
     return true;
   }
   else {
-    ORLog(kDebug) << "OpenDataStream(): no more files to open. " << endl;
+    ORLog(kDebug) << "OpenDataStream(): no more files to open. " << std::endl;
     return false;
   }
 }

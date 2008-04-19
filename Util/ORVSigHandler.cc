@@ -5,9 +5,7 @@
 #include <algorithm>
 #include "ORLogger.hh"
 
-using namespace std;
-
-map<pthread_t, vector<ORVSigHandler*> > ORVSigHandler::fgHandlers;
+std::map<pthread_t, std::vector<ORVSigHandler*> > ORVSigHandler::fgHandlers;
 ORReadWriteLock ORVSigHandler::fgBaseRWLock;
 
 ORVSigHandler::ORVSigHandler()
@@ -26,17 +24,17 @@ ORVSigHandler::~ORVSigHandler()
     fgHandlers.find(fMyThread);
   if (mapIt == fgHandlers.end()) {
     ORLog(kWarning) << "couldn't find this-ptr in fgHandlers! "
-                    << "Something is very wrong..." << endl;
+                    << "Something is very wrong..." << std::endl;
     fgBaseRWLock.unlock();
     return;
   }
-  vector<ORVSigHandler*>::iterator it = 
-    find(mapIt->second.begin(), mapIt->second.end(), this);
+  std::vector<ORVSigHandler*>::iterator it = 
+    std::find(mapIt->second.begin(), mapIt->second.end(), this);
   if (it != mapIt->second.end()) {
     mapIt->second.erase(it);
   } else {
     ORLog(kWarning) << "couldn't find this-ptr in fgHandlers! "
-                    << "Something is very wrong..." << endl;
+                    << "Something is very wrong..." << std::endl;
   }
   fgBaseRWLock.unlock();
 }

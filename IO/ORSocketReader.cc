@@ -4,8 +4,6 @@
 #include "ORLogger.hh"
 #include "ORUtils.hh"
 
-using namespace std;
-
 ORSocketReader::ORSocketReader(const char* host, int port, bool writable) 
 {
   Initialize();

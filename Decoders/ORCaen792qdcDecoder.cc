@@ -4,13 +4,11 @@
 #include "ORCaen792qdcDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 ORCaen792qdcDecoder::ORCaen792qdcDecoder()
 {
   fRecord = NULL;
   ORLog(kWarning) << "This decoder is untested. If you have problems with it, "
-                  << "contact Jason immediately (jasondet@gmail.com)." << endl;
+                  << "contact Jason immediately (jasondet@gmail.com)." << std::endl;
 }
 
 size_t ORCaen792qdcDecoder::NValuesOf(UInt_t* record)
@@ -28,13 +26,13 @@ void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
   size_t i=2;
   while(i<LengthOf(record)) {
     if(!IthWordIsHeader(record, i)) {
-      ORLog(kWarning) << "expected word " << i << " to be a block header." << endl;
+      ORLog(kWarning) << "expected word " << i << " to be a block header." << std::endl;
       return;
     }
 
     for(size_t j=0; j<NChannelsInBlock(record+i); j++) {
       if(!IthWordIsData(record, i+1+j)) {
-        ORLog(kWarning) << "expected word " << i+1+j << " to be a data word." << endl;
+        ORLog(kWarning) << "expected word " << i+1+j << " to be a data word." << std::endl;
         return;
       }
       fLocPtrs.push_back(record+i+1+j);
@@ -42,14 +40,14 @@ void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
 
     if(!IthWordIsEndOfBlock(record, i+1+NChannelsInBlock(record+i))) {
       ORLog(kWarning) << "expected word " << i+1+NChannelsInBlock(record+i) 
-                      << " to be end-of-block." << endl;
+                      << " to be end-of-block." << std::endl;
       return;
     }
     i += NChannelsInBlock(record+i) + 2;
   }
   if(i > LengthOf(record)) {
     ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
-                    << LengthOf(record) << endl;
+                    << LengthOf(record) << std::endl;
   }
 }
 
@@ -57,13 +55,13 @@ UInt_t* ORCaen792qdcDecoder::GetLocPtr(UInt_t* record, size_t i)
 {
   if(i >= NValuesOf(record)) {
     ORLog(kWarning) << "you asked for qdc value " << i << ", but there are only " 
-                    << NValuesOf(record) << " records" << endl;
+                    << NValuesOf(record) << " records" << std::endl;
     return NULL;
   }
   return fLocPtrs[i];
 }
 
-string ORCaen792qdcDecoder::GetParName(size_t iPar)
+std::string ORCaen792qdcDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "crate";
@@ -75,7 +73,7 @@ string ORCaen792qdcDecoder::GetParName(size_t iPar)
     case 6: return "isValid";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -92,7 +90,7 @@ UInt_t ORCaen792qdcDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 6: return IthValueIsValid(record, iRow);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

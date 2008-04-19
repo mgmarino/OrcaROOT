@@ -1,8 +1,7 @@
 // ORLakeshore210Decoder.cc
 
 #include "ORLakeshore210Decoder.hh"
-#include <iostream>
-using namespace std;
+#include "ORLogger.hh"
 
 
 //**************************************************************************************
@@ -24,15 +23,15 @@ UInt_t ORLakeshore210Decoder::GetTimeOfChannel(UInt_t* record, UInt_t channel)
 
 void ORLakeshore210Decoder::Dump(UInt_t* record)
 {
-  cout << "*************** Dumping out Lakeshore Data *************" << endl;
-  cout << "Number of Channels: " << GetNumberOfChannels() << endl;
-  cout << "Temperature Units: ";
-  if (GetTemperatureUnits(record) == kKelvin) cout << "Kelvin" << endl;
-  else cout << "Celsius" << endl;
+  ORLog(kDebug) << "*************** Dumping out Lakeshore Data *************" << std::endl;
+  ORLog(kDebug) << "Number of Channels: " << GetNumberOfChannels() << std::endl;
+  ORLog(kDebug) << "Temperature Units: ";
+  if (GetTemperatureUnits(record) == kKelvin) ORLog(kDebug) << "Kelvin" << std::endl;
+  else ORLog(kDebug) << "Celsius" << std::endl;
   for (size_t i=0; i<GetNumberOfChannels();i++) {
-    cout << "Channel: " << i << endl
-      << " Temperature: " << GetTempOfChannel(record, i) << endl
-      << " Time: " << GetTimeOfChannel(record, i) << endl;
+    ORLog(kDebug) << "Channel: " << i << std::endl
+      << " Temperature: " << GetTempOfChannel(record, i) << std::endl
+      << " Time: " << GetTimeOfChannel(record, i) << std::endl;
   }
-  cout << "********************************************************" << endl;
+  ORLog(kDebug) << "********************************************************" << std::endl;
 }

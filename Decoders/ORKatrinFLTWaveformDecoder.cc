@@ -3,7 +3,6 @@
 #include "ORKatrinFLTWaveformDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
-using namespace std;
 
 
 //**************************************************************************************
@@ -14,23 +13,23 @@ bool ORKatrinFLTWaveformDecoder::SetDataRecord(UInt_t* dataRecord)
 {
   fDataRecord = dataRecord;
 
-  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
+  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + kWaveformLength/2) {
-    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << endl;
+    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
     ORLog(kDebug) << "LengthOf(data record) : " << LengthOf(fDataRecord)
-      << " kBufHeadLen + kWaveformLength/2: " << kBufHeadLen + kWaveformLength/2 << endl;
+      << " kBufHeadLen + kWaveformLength/2: " << kBufHeadLen + kWaveformLength/2 << std::endl;
     fDataRecord = NULL;
     return false;
   }
-  ORLog(kDebug) << "SetDataRecord(): Exiting" << endl;
+  ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;
   return true;
 }
 
 bool ORKatrinFLTWaveformDecoder::IsValid() 
 { 
-  ORLog(kDebug) << "IsValid(): starting... " << endl;
+  ORLog(kDebug) << "IsValid(): starting... " << std::endl;
   if(IsShort(fDataRecord)) { 
-    ORLog(kError) << "Data file is short" << endl; 
+    ORLog(kError) << "Data file is short" << std::endl; 
     return false;
   } 
   return true;
@@ -40,13 +39,13 @@ void ORKatrinFLTWaveformDecoder::DumpBufferHeader()
 {
   if(fDataRecord)
   {
-    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << endl;
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << std::endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
     for(size_t i=2;i<kBufHeadLen; i++)
     {
-      ORLog(kDebug) << fDataRecord[i] << endl;
+      ORLog(kDebug) << fDataRecord[i] << std::endl;
     }
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
   }
 }
 
@@ -59,7 +58,7 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformData( UShort_t* waveform,
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else len = GetWaveformLen(); 
   UInt_t* waveformData = GetWaveformDataPointer();
@@ -79,7 +78,7 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformDataDouble(double* waveform, size
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else len = GetWaveformLen(); 
   UInt_t* waveformData = GetWaveformDataPointer();
@@ -95,19 +94,19 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformDataDouble(double* waveform, size
 
 void ORKatrinFLTWaveformDecoder::Dump(UInt_t* dataRecord) //debugging 
 {
-  cout << endl << endl << "ORKatrinFLTWaveformDecoder::Dump():" << endl ;
+  ORLog(kDebug) << std::endl << std::endl << "ORKatrinFLTWaveformDecoder::Dump():" << std::endl ;
   if(!SetDataRecord(dataRecord)) return; 
-  cout 
-    << "  Header functions: " << endl
-    << "    Crate = " << CrateOf() << "; card = " << CardOf() << endl
-    << "    The buffer is " << kBufHeadLen << " (32-bit) words long" << endl
-    << "    The Sec is " << GetSec() << endl
-    << "    The SubSec is " << GetSubSec() << endl
-    << "    The channel is " << GetChannel() << endl
-    << "    The channel map is " << GetChannelMap() << endl
-    << "    Energy: " << GetEnergy() << endl  
-    << "    The ResetSec is " << GetResetSec() << endl        // -tb- 2008-02-12
-    << "    The ResetSubSec is " << GetResetSubSec() << endl  // -tb- 2008-02-12
+  ORLog(kDebug) 
+    << "  Header functions: " << std::endl
+    << "    Crate = " << CrateOf() << "; card = " << CardOf() << std::endl
+    << "    The buffer is " << kBufHeadLen << " (32-bit) words long" << std::endl
+    << "    The Sec is " << GetSec() << std::endl
+    << "    The SubSec is " << GetSubSec() << std::endl
+    << "    The channel is " << GetChannel() << std::endl
+    << "    The channel map is " << GetChannelMap() << std::endl
+    << "    Energy: " << GetEnergy() << std::endl  
+    << "    The ResetSec is " << GetResetSec() << std::endl        // -tb- 2008-02-12
+    << "    The ResetSubSec is " << GetResetSubSec() << std::endl  // -tb- 2008-02-12
     << "    The waveform data has " << GetWaveformLen() 
-      << " (32-bit) words" << endl;
+      << " (32-bit) words" << std::endl;
 }

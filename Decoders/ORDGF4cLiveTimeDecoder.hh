@@ -6,9 +6,8 @@
 #include "ORUtils.hh"
 
 #include <string>
-#include <math.h>
+#include "TMath.h" 
 #include "ORVDataDecoder.hh"
-using namespace std;
 
 class ORDGF4cLiveTimeDecoder : public ORVDataDecoder
 {
@@ -120,7 +119,7 @@ inline Double_t ORDGF4cLiveTimeDecoder::CalculateTime(UInt_t* recordPtr)
   UInt_t c = bc & 0xffff;
   UInt_t b = bc >> 16;
   // time in seconds:
-  Double_t time = (a*pow(65536.0,2.0)+b*65536.0+c)*1.0e-6/40.;
+  Double_t time = (a*TMath::Power(65536.0,2.0)+b*65536.0+c)*1.0e-6/40.;
   ORLog(kDebug) << "CalculateTime(): a = " << a << ", b = " << b << ", c = " << c<< endl;
   ORLog(kDebug) << "CalculateTime(): time = " << time << "s" << endl;
   return time;
@@ -142,7 +141,7 @@ inline Double_t ORDGF4cLiveTimeDecoder::UnpackDouble(UInt_t record)
   Double_t mantissa = (Double_t) (record & ~expMask);
   if(mantissa > 0) mantissa += 0x100000;
   ORLog(kDebug) << "UnpackDouble() "  << endl;
-  return (1-2*sign)*mantissa*pow(2,exponent-20.0);    
+  return (1-2*sign)*mantissa*TMathh::Power(2,exponent-20.0);    
 }
 
 inline UInt_t ORDGF4cLiveTimeDecoder::GetChanNumEvents(UInt_t channelNum)

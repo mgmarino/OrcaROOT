@@ -4,8 +4,6 @@
 #include "ORLogger.hh"
 #include <sstream> 
 
-using namespace std;
-
 ORDictionary::ORDictionary(const ORDictionary& dict) : ORVDictValue(dict)
 {
   SetName(dict.fName);
@@ -38,67 +36,67 @@ ORDictionary::ORDictionary(const ORDictionary& dict) : ORVDictValue(dict)
     if (insertDictValue) {
       LoadEntry(dictIter->first, insertDictValue);
     } else {
-      ORLog(kError) << "DictValue type not found!" << endl;
+      ORLog(kError) << "DictValue type not found!" << std::endl;
     }
   }
 }
 
 ORDictionary::~ORDictionary()
 {
-  map<const std::string, ORVDictValue*>::iterator i;
+  std::map<const std::string, ORVDictValue*>::iterator i;
   for (i = fDictMap.begin(); i != fDictMap.end(); i++) {
     delete i->second;
   }
 }
 
-ORVDictValue* ORDictionary::LookUp(string key, char delimiter) 
+ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter) 
 {
   std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
-  if (delimPos == string::npos) {
+  if (delimPos == std::string::npos) {
     dictIter = fDictMap.find(key); 
     if (dictIter==fDictMap.end()) {
       ORLog(kDebug) << "ORDictionary::LookUp(): could not find key " << key
-                      << " in dictionary " << fName << endl;
+                      << " in dictionary " << fName << std::endl;
       return NULL;
     }
     return dictIter->second; 
   } else {
-    string nextDictName = key.substr(0, delimPos);
-    string nextKeyName = key.substr(delimPos+1);
+    std::string nextDictName = key.substr(0, delimPos);
+    std::string nextKeyName = key.substr(delimPos+1);
     const ORVDictValue* nextDict = LookUp(nextDictName);
     if (nextDict == NULL) return NULL;
     if (nextDict->GetValueType() != kDict) {
       ORLog(kDebug) << "ORDictionary::LookUp(): key " << nextDictName 
                     << " in dictionary " << fName << " is not a dictionary (ValueType = " 
-		    << nextDict->GetValueType() << ")." << endl;
+		    << nextDict->GetValueType() << ")." << std::endl;
       return NULL;
     }
     return ((ORDictionary*) nextDict)->LookUp(nextKeyName);
   }
 }
 
-const ORVDictValue* ORDictionary::LookUp(string key, char delimiter) const 
+const ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter) const 
 {
   std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
-  if (delimPos == string::npos) {
+  if (delimPos == std::string::npos) {
     dictIter = fDictMap.find(key); 
     if (dictIter==fDictMap.end()) {
       ORLog(kDebug) << "ORDictionary::LookUp(): could not find key " << key
-                      << " in dictionary " << fName << endl;
+                      << " in dictionary " << fName << std::endl;
       return NULL;
     }
     return (const ORVDictValue*) dictIter->second; 
   } else {
-    string nextDictName = key.substr(0, delimPos);
-    string nextKeyName = key.substr(delimPos+1);
+    std::string nextDictName = key.substr(0, delimPos);
+    std::string nextKeyName = key.substr(delimPos+1);
     const ORVDictValue* nextDict = LookUp(nextDictName);
     if (nextDict == NULL) return NULL;
     if (nextDict->GetValueType() != kDict) {
       ORLog(kDebug) << "ORDictionary::LookUp(): key " << nextDictName 
                     << " in dictionary " << fName << " is not a dictionary (ValueType = " 
-		    << nextDict->GetValueType() << ")." << endl;
+		    << nextDict->GetValueType() << ")." << std::endl;
       return NULL;
     }
     return ((const ORDictionary*) nextDict)->LookUp(nextKeyName);
@@ -150,7 +148,7 @@ ORDictValueA::ORDictValueA(const ORDictValueA& dictA) : ORVDictValue(dictA)
     if (insertDictValue) {
       LoadValue(insertDictValue);
     } else {
-      ORLog(kError) << "DictValue type not found!" << endl;
+      ORLog(kError) << "DictValue type not found!" << std::endl;
     }
   }
 }

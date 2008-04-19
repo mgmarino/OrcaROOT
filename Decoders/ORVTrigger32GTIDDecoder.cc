@@ -4,8 +4,6 @@
 #include "ORVTrigger32GTIDDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 std::string ORVTrigger32GTIDDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
@@ -13,7 +11,7 @@ std::string ORVTrigger32GTIDDecoder::GetParName(size_t iPar)
     case 1: return "GTID";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -25,7 +23,7 @@ UInt_t ORVTrigger32GTIDDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRo
     case 1: return GTIDOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

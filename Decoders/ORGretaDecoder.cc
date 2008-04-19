@@ -3,7 +3,6 @@
 #include "ORGretaDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
-using namespace std;
 
 
 //**************************************************************************************
@@ -26,17 +25,17 @@ bool ORGretaDecoder::SetDataRecord(UInt_t* dataRecord)
     }
   }
 
-  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << endl;
+  ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   if (GetPacketLength() == GetBufHeadLen()) {
-    ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << endl;
+    ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << std::endl;
     return true;
   }	
   if(!IsValid()) {
-    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << endl;
+    ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
     fDataRecord = NULL;
     return false;
   }
-  ORLog(kDebug) << "SetDataRecord(): Exiting" << endl;
+  ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;
   return true;
 }
 
@@ -53,7 +52,7 @@ size_t ORGretaDecoder::CopyWaveformData(UShort_t* waveform, size_t len)
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else len = GetWaveformLen(); 
   const UInt_t* waveformData = GetWaveformDataPointer();
@@ -75,7 +74,7 @@ size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
   if (wflen == 0) return 0;
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << endl;
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
   }
   else len = GetWaveformLen(); 
   const UInt_t* waveformData = GetWaveformDataPointer();
@@ -185,9 +184,9 @@ ORGretaDecoder::EGretaTriggerMode ORGretaDecoder::GetTriggerMode()
 
 bool ORGretaDecoder::IsValid() 
 { 
-  ORLog(kDebug) << "IsValid(): starting... " << endl;
+  ORLog(kDebug) << "IsValid(): starting... " << std::endl;
   if(IsShort(fDataRecord)) { 
-    ORLog(kError) << "Data file is short" << endl; 
+    ORLog(kError) << "Data file is short" << std::endl; 
     return false;
   } 
   return true;
@@ -197,13 +196,13 @@ void ORGretaDecoder::DumpBufferHeader()
 {
   if(fDataRecord)
   {
-    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << endl;
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << std::endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
     for(size_t i=2;i<GetBufHeadLen(); i++)
     {
-      ORLog(kDebug) << fDataRecord[i] << endl;
+      ORLog(kDebug) << fDataRecord[i] << std::endl;
     }
-    ORLog(kDebug) << "**************************************************" << endl;
+    ORLog(kDebug) << "**************************************************" << std::endl;
   }
 }
 
@@ -215,29 +214,29 @@ void ORGretaDecoder::Dump(UInt_t* dataRecord) //debugging
 {
   size_t iChannel, iEvent;
   
-  cout << endl << endl << "ORGretaDecoder::Dump():" << endl ;
+  ORLog(kDebug) << std::endl << std::endl << "ORGretaDecoder::Dump():" << std::endl ;
   iChannel = 0;
   iEvent = 0;
   if(!SetDataRecord(dataRecord)) return; 
-	cout 
-	  << "  Header functions: " << endl
-	  << "    Crate = " << CrateOf() << "; card = " << CardOf() << endl
-	  << "    The buffer is " << GetBufHeadLen() << " (32-bit) words long" << endl
-	  << "    The Board Id is " << GetBoardId() << endl
-	  << "    The channel is " << GetChannelNum() << endl
+	ORLog(kDebug) 
+	  << "  Header functions: " << std::endl
+	  << "    Crate = " << CrateOf() << "; card = " << CardOf() << std::endl
+	  << "    The buffer is " << GetBufHeadLen() << " (32-bit) words long" << std::endl
+	  << "    The Board Id is " << GetBoardId() << std::endl
+	  << "    The channel is " << GetChannelNum() << std::endl
 	  << "    The packet length is (32-bit words) " << GetPacketLength() 
-            << endl
-	  << "    LED/external Timestamp: " << GetLEDExtTimeStamp() << endl
-	  << "    CFD Timestamp: " << GetCFDTimeStamp() << endl
-	  << "    CFD Point One: " << GetCFDPointOne() << endl
-	  << "    CFD Point Two: " << GetCFDPointTwo() << endl
-	  << "    Energy: " << GetEnergy() << endl  
-	  << "    LED Crossing is negative: " << IsLEDCrossingNeg() << endl  
-	  << "    External Trigger Flag: " << IsExternalTrigFlag() << endl  
-	  << "    CFD Crossing Flag: " << IsCFDCrossingFlag() << endl  
-	  << "    Pileup Flag: " << IsPileupFlag() << endl  
+            << std::endl
+	  << "    LED/external Timestamp: " << GetLEDExtTimeStamp() << std::endl
+	  << "    CFD Timestamp: " << GetCFDTimeStamp() << std::endl
+	  << "    CFD Point One: " << GetCFDPointOne() << std::endl
+	  << "    CFD Point Two: " << GetCFDPointTwo() << std::endl
+	  << "    Energy: " << GetEnergy() << std::endl  
+	  << "    LED Crossing is negative: " << IsLEDCrossingNeg() << std::endl  
+	  << "    External Trigger Flag: " << IsExternalTrigFlag() << std::endl  
+	  << "    CFD Crossing Flag: " << IsCFDCrossingFlag() << std::endl  
+	  << "    Pileup Flag: " << IsPileupFlag() << std::endl  
 	  << "    The waveform data has " << GetWaveformLen() 
-	    << " (16-bit) words" << endl;
+	    << " (16-bit) words" << std::endl;
 
 }
 

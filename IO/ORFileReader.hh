@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 #include "ORVReader.hh"
 
 //! Class to read in files

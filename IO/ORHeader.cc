@@ -2,12 +2,9 @@
 
 #include "ORHeader.hh"
 
-#include <fstream>
 #include "ORLogger.hh"
 #include "ORVDataDecoder.hh"
 #include "TDOMParser.h"
-
-using namespace std;
 
 ORHeader::ORHeader(const char* fullHeaderAsString, size_t lengthOfString) :
   ORXmlPlist(fullHeaderAsString, lengthOfString)
@@ -29,14 +26,14 @@ bool ORHeader::LoadHeaderFile(const char* fileName)
 }
 
 
-int ORHeader::GetDataId(string dataObjPath) const
+int ORHeader::GetDataId(std::string dataObjPath) const
 {
-  string fullDataObjPath = string("dataDescription:") + dataObjPath + ":dataId";
+  std::string fullDataObjPath = std::string("dataDescription:") + dataObjPath + ":dataId";
   ORDictValueI* dataIdDVI = (ORDictValueI*) LookUp(fullDataObjPath);
   if(dataIdDVI == NULL) {
     ORLog(kWarning) << "GetDataId(): couldn't find data id for data object path "
                     << dataObjPath << " (full header path was "
-                    << fullDataObjPath << ")" << endl;
+                    << fullDataObjPath << ")" << std::endl;
     return ORVDataDecoder::GetIllegalDataId();
   }
   return dataIdDVI->GetI();
@@ -47,7 +44,7 @@ int ORHeader::GetRunNumber() const
 { 
   ORDictValueI* runNumDictVal = (ORDictValueI*) LookUp("Run Control.RunNumber");
   if (runNumDictVal == NULL || !runNumDictVal->IsA(ORVDictValue::kInt)) {
-    ORLog(kError) << "GetRunNumber(): Couldn't read run number from header; returning 0" << endl;
+    ORLog(kError) << "GetRunNumber(): Couldn't read run number from header; returning 0" << std::endl;
     return 0;
   }
   return runNumDictVal->GetI();

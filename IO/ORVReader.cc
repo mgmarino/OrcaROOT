@@ -5,11 +5,10 @@
 #include <cmath>
 #include <iomanip>
 #include <string>
+#include <cstring>
 #include "ORBasicDataDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
-
-using namespace std;
 
 ORVReader::ORVReader()
 {
@@ -42,7 +41,7 @@ bool ORVReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 
   // Handle header packets special-like for backwards compatibility
   if (fHeaderDecoder.IsHeader(buffer[0])) {
-    ORLog(kDebug) << "Reading rest of header..." << endl;
+    ORLog(kDebug) << "Reading rest of header..." << std::endl;
     stillOpen = ReadRestOfHeader(buffer, nLongsMax);
     if (!stillOpen) return false;
   } else if (fBasicDecoder.IsLong(buffer)) {
@@ -55,8 +54,8 @@ bool ORVReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     if (fHeaderDecoder.IsHeader(buffer[0])) type = 'h';
     else if (fBasicDecoder.IsShort(buffer)) type = 's';
     ORLog(kDebug) << "ReadRecord(): " << type << ": id = " 
-                  << setw(11) << fBasicDecoder.DataIdOf(buffer) 
-		  << "\tlen = " << fBasicDecoder.LengthOf(buffer) << endl;
+                  << std::setw(11) << fBasicDecoder.DataIdOf(buffer) 
+		  << "\tlen = " << fBasicDecoder.LengthOf(buffer) << std::endl;
   }
 
   return OKToRead();
@@ -65,10 +64,10 @@ bool ORVReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 size_t ORVReader::DeleteAndResizeBuffer(UInt_t*& buffer, size_t newNLongsMax)
 {
   delete [] buffer;
-  buffer = new (nothrow) UInt_t[newNLongsMax]; // reallocation; deletion of buffer must be handled by calling procedure
+  buffer = new (std::nothrow) UInt_t[newNLongsMax]; // reallocation; deletion of buffer must be handled by calling procedure
   if(buffer == NULL) {
     ORLog(kFatal) << "Ran out of memory attempting to allocate buffer of length " 
-                  << newNLongsMax << ". " << endl;
+                  << newNLongsMax << ". " << std::endl;
     exit(0);
   }
   return newNLongsMax;
@@ -88,10 +87,10 @@ void ORVReader::DetermineFileTypeAndSetupSwap(char* buffer)
   }
   else if (fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
     ORLog(kError) << "The file type could not be determined from the header!" 
-                  << endl << "Buffer in char was " << endl
+                  << std::endl << "Buffer in char was " << std::endl
                   << buffer[0] << buffer[1] << buffer[2] << buffer[3] 
-                  << endl << "Buffer as hex was 0x" 
-                  << hex << ((UInt_t*) buffer)[0] << dec << endl;
+                  << std::endl << "Buffer as hex was 0x" 
+                  << std::hex << ((UInt_t*) buffer)[0] << std::dec << std::endl;
   }
 }
 
@@ -127,11 +126,11 @@ bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
     memset(lineBuffer, 0, lineBufferSize);
     memcpy(lineBuffer, buffer, 4);
     ReadPartialLineWithCR(lineBuffer+4, lineBufferSize);
-    string header = lineBuffer;
-    while (string(lineBuffer) != "</plist>\n") {
+    std::string header = lineBuffer;
+    while (std::string(lineBuffer) != "</plist>\n") {
       ReadPartialLineWithCR(lineBuffer, lineBufferSize);
       if (!OKToRead()) return false;
-      //ORLog(kDebug) << "ReadLine retrieved:" << lineBuffer << endl;
+      //ORLog(kDebug) << "ReadLine retrieved:" << lineBuffer << std::endl;
       header += lineBuffer;
     }
     delete [] lineBuffer;
@@ -141,7 +140,7 @@ bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
       nLongsMax = DeleteAndResizeBuffer(buffer, recordLength);
     }
     ORLog(kDebug) << "ReadRestOfHeader(): rec len = " << recordLength 
-                  << ", nBytes = " << nBytes << endl;
+                  << ", nBytes = " << nBytes << std::endl;
     buffer[0] = recordLength;
     buffer[1] = nBytes;
     memcpy(buffer+2, header.c_str(), nBytes);
@@ -169,7 +168,7 @@ bool ORVReader::ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax)
     buffer[0] = tmp;
   }
   if (longRecordLength < 1) { 
-    ORLog(kError) << "Record length is less than one!" << endl;
+    ORLog(kError) << "Record length is less than one!" << std::endl;
     return false; // We will have a problem here.
   }
   size_t nBytesToRead = (longRecordLength-1)*4;
@@ -178,7 +177,7 @@ bool ORVReader::ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax)
     ORLog(kWarning) << "ReadRecord(): attempt to read " << nBytesToRead
                     << " B only returned " << nBytesRead << "B "
       	      << "(id = " << fBasicDecoder.DataIdOf(buffer) << ", "
-      	      << "len = " << longRecordLength << ")" << endl;
+      	      << "len = " << longRecordLength << ")" << std::endl;
     return false;
   }
   return true;

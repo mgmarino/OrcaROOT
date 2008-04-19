@@ -4,7 +4,6 @@
 #include "ORTrig4ChanDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
 
 std::string ORTrig4ChanDecoder::GetParName(size_t iPar)
 {
@@ -14,7 +13,7 @@ std::string ORTrig4ChanDecoder::GetParName(size_t iPar)
     case 2: return "LowClock";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -27,7 +26,7 @@ UInt_t ORTrig4ChanDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     case 2: return LowClockOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

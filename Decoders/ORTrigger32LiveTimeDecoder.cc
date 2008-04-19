@@ -4,8 +4,6 @@
 #include "ORTrigger32LiveTimeDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
 std::string ORTrigger32LiveTimeDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
@@ -24,7 +22,7 @@ std::string ORTrigger32LiveTimeDecoder::GetParName(size_t iPar)
     case 12: return "scopeLTBottom";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -47,7 +45,7 @@ UInt_t ORTrigger32LiveTimeDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*
     case 12: return ScopeLiveTimeBottomOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

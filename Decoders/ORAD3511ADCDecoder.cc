@@ -4,8 +4,6 @@
 #include "ORLogger.hh"
 #include "ORUtils.hh"
 
-using namespace std;
-
 void ORAD3511ADCDecoder::Swap(UInt_t* record)
 {
   ORUtils::Swap(record[1]); 
@@ -33,7 +31,7 @@ double ORAD3511ADCDecoder::ReferenceDateOf(UInt_t* record)
 }
 
 
-string ORAD3511ADCDecoder::GetHistName(int iHist)
+std::string ORAD3511ADCDecoder::GetHistName(int iHist)
 {
   const int kNCards = 0x1f+1;
   const int kNChannels = 0xf+1;
@@ -47,7 +45,7 @@ string ORAD3511ADCDecoder::GetHistName(int iHist)
   return ::Form("hAD3511_%d_%d_%d", iCrate, iCard, iChannel);
 }
 
-string ORAD3511ADCDecoder::GetHistTitle(int iHist)
+std::string ORAD3511ADCDecoder::GetHistTitle(int iHist)
 {
   const int kNCards = 0x1f+1;
 
@@ -72,7 +70,7 @@ std::string ORAD3511ADCDecoder::GetParName(size_t iPar)
     case 2: return "adc";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -85,7 +83,7 @@ UInt_t ORAD3511ADCDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 2: return IthADCValueOf(record, iRow);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }

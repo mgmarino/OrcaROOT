@@ -4,9 +4,7 @@
 #include "ORL2551ScalersDecoder.hh"
 #include "ORLogger.hh"
 
-using namespace std;
-
-string ORL2551ScalersDecoder::GetParName(size_t iPar)
+std::string ORL2551ScalersDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "crate";
@@ -15,7 +13,7 @@ string ORL2551ScalersDecoder::GetParName(size_t iPar)
     case 3: return "scaler";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return "unknown";
   }
 }
@@ -29,7 +27,7 @@ UInt_t ORL2551ScalersDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 3: return IthScalerOf(record, iRow);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << endl;
+                      << ") out of range." << std::endl;
       return 0;
   }
 }
