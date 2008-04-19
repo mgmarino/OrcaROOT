@@ -10,6 +10,7 @@ echo "Run ./configure --help for a list of options"
 echo
 
 AC_CANONICAL_HOST
+AC_PROG_CXX
 
 # defaults, these will work for linux
 # but NOT in screen.  Perhaps a fix for this?

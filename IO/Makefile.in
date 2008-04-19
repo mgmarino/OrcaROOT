@@ -13,7 +13,7 @@ all: depend $(SHLIB)
 
 .depend depend:
 	@echo Checking dependencies...
-	@g++ -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
+	@$(CXX) -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
 
 $(SHLIB): $(OBJECTS) 
 	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
