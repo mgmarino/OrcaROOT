@@ -9,7 +9,7 @@ all: depend bin $(APPS)
 
 .depend depend: 
 	@echo Checking dependencies...
-	@g++ -M $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) *.cc > .depend
+	@$(CXX) -M $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) *.cc > .depend
 
 %.o: %.cc 
 	$(CXX) -c $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) $< 
