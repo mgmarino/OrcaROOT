@@ -3,7 +3,6 @@
 #include "ORSocketReader.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
-#include <sys/select.h>
 
 ORSocketReader::ORSocketReader(const char* host, int port, bool writable) 
 {
@@ -239,20 +238,21 @@ void* SocketReadoutThread(void* input)
      it emits Events which are not pleasant to deal with in Threads. */
 
   TSocket* sock = socketReader->fSocket;
-  fd_set fileDescriptors; 
+  //fd_set fileDescriptors; 
   Int_t testValue;
 
   while (socketReader->fSocketIsOK) {
     /* In this thread, we readout the socket into the circular buffer. */
     pthread_testcancel(); // When we are here, it is safe to cancel the thread.
-    FD_ZERO(&fileDescriptors);
-    FD_SET(sock->GetDescriptor(), &fileDescriptors);
-    timeval timeout;
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-    testValue = select(sock->GetDescriptor()+1,
-                       &fileDescriptors, 0, 0, &timeout);
-    if (testValue == 0) continue;
+    //FD_ZERO(&fileDescriptors);
+    //FD_SET(sock->GetDescriptor(), &fileDescriptors);
+    //timeval timeout;
+    //timeout.tv_sec = 1;
+    //timeout.tv_usec = 0;
+    //testValue = select(sock->GetDescriptor()+1,
+    //                   &fileDescriptors, 0, 0, &timeout);
+    testValue = sock->Select(TSocket::kRead, 1000);
+    if (testValue == 0) continue; // timeout
     if (testValue < 0) {
       socketReader->fSocketIsOK = false;
       break;
