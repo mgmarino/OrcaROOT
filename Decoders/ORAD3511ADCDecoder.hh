@@ -9,6 +9,8 @@
 class ORAD3511ADCDecoder : public ORVHistDecoder, public ORVBasicRDTreeDecoder
 {
   public:
+    enum EAD3511ADCConsts { kNCards = 32 };
+
     ORAD3511ADCDecoder() {}
     virtual ~ORAD3511ADCDecoder() {}
 

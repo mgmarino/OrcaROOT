@@ -33,32 +33,22 @@ double ORAD3511ADCDecoder::ReferenceDateOf(UInt_t* record)
 
 std::string ORAD3511ADCDecoder::GetHistName(int iHist)
 {
-  const int kNCards = 0x1f+1;
-  const int kNChannels = 0xf+1;
-
-  int iChannel = iHist % kNChannels;
-  iHist = (iHist - iChannel) / kNChannels;
-
   int iCard = iHist % kNCards;
-  int iCrate = (iHist - kNCards) / kNCards;
+  int iCrate = (iHist - iCard) / kNCards;
 
-  return ::Form("hAD3511_%d_%d_%d", iCrate, iCard, iChannel);
+  return ::Form("hAD3511_%d_%d", iCrate, iCard);
 }
 
 std::string ORAD3511ADCDecoder::GetHistTitle(int iHist)
 {
-  const int kNCards = 0x1f+1;
-
   int iCard = iHist % kNCards;
-  int iCrate = (iHist - kNCards) / kNCards;
+  int iCrate = (iHist - iCard) / kNCards;
 
   return ::Form("AD3511: Crate %d, Card %d", iCrate, iCard);
 }
 
 int ORAD3511ADCDecoder::GetHistIndex(UInt_t* record)
 {
-  const int kNCards = 0x1f+1;
-
   return CardOf(record) + kNCards*CrateOf(record);
 }
 
