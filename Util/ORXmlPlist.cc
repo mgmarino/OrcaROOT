@@ -6,10 +6,12 @@
 #include <cstdlib>
 #include "ORLogger.hh"
 #include "TDOMParser.h"
+#include "TSocket.h"
 
 ORXmlPlist::ORXmlPlist(const char* fullHeaderAsString, size_t lengthOfBuffer)
 { 
   fDictionary = NULL; 
+  fDoValidate = false;
 
   if (fullHeaderAsString) LoadXmlPlist(fullHeaderAsString, lengthOfBuffer);
 }
@@ -52,18 +54,29 @@ bool ORXmlPlist::LoadXmlPlist(const char* fullHeaderAsString, size_t lengthOfBuf
 
   ORLog(kDebug) << "LoadXmlPlist(): Parsing..." << std::endl;
   TDOMParser domParser;
+  if(!fDoValidate) {
+      ORLog(kWarning) << "LoadXmlPlist(): xml plist validation is disabled.  "
+                      << "If you are concerned about the integrity of your "
+                      << "data and wish to turn on validation, call "
+                      << "ORXmlPlist::ValidateXML() before loading your "
+                      << "data file. Typical applications may activate this "
+                      << "option via ORDataProcManager::ValidateHeaderXML(). "
+                      << "To use this option, you must be connected to the "
+                      << "internet." << std::endl;
+  }
+  domParser.SetValidate(fDoValidate);
   domParser.ParseBuffer(fullHeaderAsString, lengthOfBuffer);
   TXMLDocument* doc = domParser.GetXMLDocument();
+  if (doc == NULL) {
+    ORLog(kError) << "LoadXmlPlist(): couldn't parse buffer. Parse code was " 
+                  << domParser.GetParseCode() << std::endl;
+    return false;
+  }
   if(((size_t)fRawXML.Length()) != lengthOfBuffer) { 
     //we have to copy to fRawXML.  Making sure we're not copying again.
     fRawXML.Resize(lengthOfBuffer);
   }
   fRawXML.Replace(0, lengthOfBuffer, fullHeaderAsString, lengthOfBuffer);
-  if (doc == NULL) {
-    ORLog(kError) << "LoadXmlPlist(): couldn't parse buffer " 
-      << std::endl;
-    return false;
-  }
 
   ORLog(kDebug) << "LoadXmlPlist(): Getting root node..." << std::endl;
   TXMLNode* rootNode = doc->GetRootNode();

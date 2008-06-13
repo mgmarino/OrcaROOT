@@ -21,6 +21,8 @@ class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
     virtual EReturnCode ProcessRun();
     virtual void SetReader(ORVReader* reader) { fReader = reader; }
     virtual void SetDataId();
+    virtual inline void ValidateHeaderXML(bool doValidate = true)
+      { fHeaderProcessor.GetHeader()->ValidateXML(doValidate); }
 
   protected:
     virtual void SetRunContext(ORRunContext* aContext);
