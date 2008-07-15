@@ -22,13 +22,14 @@ class ORNPLpCMeterDecoder : public ORVBasicTreeDecoder
     inline UInt_t DataOf( UInt_t* record )
       { return ( record[3] & 0x000FFFFF ); } 
 
-    virtual std::string GetDataObjectPath() 
-      { return ""; }
 
 
     virtual size_t GetNPars() { return 7; }
     virtual std::string GetParName( size_t iPar );
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t iRow);
+
+    virtual std::string GetDataObjectPath() 
+      { return "NplpCMeter:NplpCMeter"; }
 };
 
 #endif
