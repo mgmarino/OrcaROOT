@@ -15,7 +15,7 @@ class ORVBasicTreeDecoder : virtual public ORVDataDecoder
     // functions to overload
     virtual size_t GetNPars() = 0;
     virtual std::string GetParName(size_t iPar) = 0;
-    virtual inline size_t GetNRows(UInt_t* /*record*/) { return 1; }
+    virtual size_t GetNRows(UInt_t* /*record*/) { return 1; }
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t iRow) = 0;
 };
 
