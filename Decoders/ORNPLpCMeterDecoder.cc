@@ -6,8 +6,8 @@ std::string ORNPLpCMeterDecoder::GetParName( size_t iPar )
   switch(iPar) {
     case 0: return "Crate";
     case 1: return "Card";
-    case 2: return "Device Number";
-    case 3: return "Unix Time";
+    case 2: return "DeviceNumber";
+    case 3: return "UnixTime";
     case 4: return "ID";
     case 5: return "IsSignal";
     case 6: return "Channel";
