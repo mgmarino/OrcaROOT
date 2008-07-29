@@ -18,8 +18,10 @@ I. Installation
      A failure here should generate a message that can aid in rectifying
      the problem.
 
-  2) make
-
+  2) make [-j#] 
+     Replace # with the number of processors or cores.  This will speed
+     up the compilation process.
+    
   3) set env vars:
      On Mac OS X:
      setenv ORDIR [path to OrcaRoot directory, e.g. /home/OrcaRoot]
