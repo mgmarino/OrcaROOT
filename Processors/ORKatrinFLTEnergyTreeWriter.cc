@@ -27,7 +27,7 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::InitializeBranches()
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
-  fTree->Branch("energy", &fEnergy, "energy/i");
+  fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
   fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
   return kSuccess;
@@ -52,7 +52,7 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::ProcessMyDataRecord(UI
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
-      << "sec-subsec-ID-crate-card-channel-energy = "
+      << "sec-subsec-ID-crate-card-channel-energy_adc = "
       << fSec << "-" << fSubSec << "-" << fCrate << "-"
       << fEventID << "-"
       << fCard << "-" << fChannel << "-" << fEnergy << endl;
@@ -60,6 +60,8 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::ProcessMyDataRecord(UI
   return kSuccess;
 }
 
+
+#if 0 //XXX
 /**  End decoding the current file. Writes the tree to the output file.
   *  This is almost an exact copy of the original ORVTreeWriter::EndRun()
   *  except that empty trees are not written to the root file if the flag 
@@ -100,4 +102,4 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::EndRun()
   }
   return kSuccess;
 }
-
+#endif

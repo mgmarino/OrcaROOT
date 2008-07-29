@@ -55,6 +55,14 @@ class ORVTreeWriter : public ORDataProcessor
     // SetFillMethod(kFillBeforeProcessDataRecord) should be used.
     virtual void SetFillMethod(EFillMethod fillMethod) { fFillMethod = fillMethod; }
 
+
+    /** Empty trees are written by TreeWriters to the root file, if this is set to @e true.
+      * Setting this to @e false won't write empty trees to root files - this will avoid lot of empty trees in the root file.
+      */
+    virtual void SetSaveNonemptyTrees(bool saveNonemptyTrees = true) { fSaveOnlyNonemptyTrees = saveNonemptyTrees; }
+    /** The counterpart to SetSaveNonemptyTrees(). */
+    virtual bool GetSaveNonemptyTrees() { return fSaveOnlyNonemptyTrees; }
+
     // Provide a means to clear the fields to be filled to the tree when
     // there are multiple processors writing to the same tree. While this
     // function is not used within the autofilling routines, it can be useful
@@ -80,6 +88,7 @@ class ORVTreeWriter : public ORDataProcessor
     EFillMethod fFillMethod;
     int fFillCount;
     EReturnCode fLastProcessedRecordRetCode;
+    Bool_t fSaveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-07-25
 };
 
 #endif

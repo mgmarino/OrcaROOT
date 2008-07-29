@@ -7,11 +7,11 @@
 
 /** Decodes the binary Orca data format and writes it into a ROOT TFile.
   * The binary data format description is in \file ORKatrinFLTDecoder.m .
-  * In  \file ORKatrinFLTModel.m in in - (NSDictionary*) dataRecordDescription
+  * In  \file ORKatrinFLTModel.m in - (NSDictionary*) dataRecordDescription
   * the entries in the data dictionary define the data key and its according
   * selector of the decoder. In this case it is "KatrinFLTWaveForm". The decoder of
   * this dictionary is defined as ORKatrinFLTDecoderForEnergy.
-  * The source code (in \file ORKatrinFLTDecoder.m) of this method (ORKatrinFLTDecoderForEnergy)
+  * The source code (in \file ORKatrinFLTDecoder.m) of this method (ORKatrinFLTDecoderForWaveForm)
   * holds the description of this format.
   *
   * This format is recognized by the return value of GetDataObjectPath() which is
@@ -23,11 +23,13 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
     ORKatrinFLTWaveformDecoder();
     virtual ~ORKatrinFLTWaveformDecoder() {}
     enum EKatrinFLTWaveformConsts {kBufHeadLen = 9, 
-                                  kWaveformLength = 1024,
+                                  kWaveformLength = 1024, //this is no longer valid, use GetWaveformLen() -tb-
+                                                          //maybe rename to kWaveformPageLength ... ?
                                   kNumFLTChannels = 22};
+    size_t fWaveformLength;
     
     virtual std::string GetDataObjectPath() { return "ORKatrinFLTModel:KatrinFLTWaveForm"; }  
-    //!< KatrinFLTWaveForm is the key in ORKatrinFLTModel.m in - (NSDictionary*) dataRecordDescription -tb- 2008-02-12
+    //!< KatrinFLTWaveForm is the key in ORKatrinFLTModel.m in - (NSDictionary*) ORKatrinFLTModel::dataRecordDescription -tb- 2008-02-12 
 
     virtual bool SetDataRecord(UInt_t* record);
        
@@ -43,7 +45,7 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
     virtual inline UInt_t GetResetSubSec();
 
     // Waveform Functions
-    virtual inline size_t GetWaveformLen() {return kWaveformLength;} 
+    virtual inline size_t GetWaveformLen(); 
     virtual inline UInt_t* GetWaveformDataPointer();
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
     virtual size_t CopyWaveformData(UShort_t* waveform, size_t len);
@@ -71,6 +73,14 @@ class ORKatrinFLTWaveformDecoder: public ORVDigitizerDecoder
 };
 
 //inline functions: ************************************************************************
+
+/*! Returns the number of the waveform in shorts (two shorts are stored in one long int).
+ *  Will be set by SetDataRecord(...)
+ */ // -tb-
+inline size_t ORKatrinFLTWaveformDecoder::GetWaveformLen() 
+{
+  return fWaveformLength;
+} 
 
 inline UInt_t ORKatrinFLTWaveformDecoder::GetSec()
 {

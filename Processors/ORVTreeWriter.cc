@@ -19,6 +19,7 @@ ORDataProcessor(decoder)
   fFillMethod = kFillAfterProcessDataRecord;
   fFillCount = 0;
   fLastProcessedRecordRetCode = kSuccess;
+  fSaveOnlyNonemptyTrees = false;  // I would prefer 'true', but this (false) will keep the ancient behaviour -tb- 2008-07-25
 }
 
 ORDataProcessor::EReturnCode ORVTreeWriter::StartRun()
@@ -68,6 +69,14 @@ ORDataProcessor::EReturnCode ORVTreeWriter::ProcessDataRecord(UInt_t* record)
   return fLastProcessedRecordRetCode;
 }
 
+/**  End decoding the current file. Writes the tree to the output file.
+  *
+  *  Empty trees are not written to the root file if the flag 
+  *  fSaveOnlyNonemptyTrees is set to @e true.
+  *  (This behaviour was implemented for ORKatrinFLTEnergyTreeWriter and ORKatrinFLTWaveformTreeWriter 
+  *  and was moved back to the base class ORVTreeWriter in 2008-07-25.)
+  *  
+  */   // -tb- 2008-02-19
 ORDataProcessor::EReturnCode ORVTreeWriter::EndRun()
 {
   // Write the tree only if this processor is meant to write it.
@@ -91,7 +100,14 @@ ORDataProcessor::EReturnCode ORVTreeWriter::EndRun()
       }
     }
 
-    fTree->Write(fTree->GetName(), TObject::kOverwrite);
+    // -tb- original code: fTree->Write(fTree->GetName(), TObject::kOverwrite);
+    if(fSaveOnlyNonemptyTrees){// -tb- 2008-02-19 - moved to base class ORVTreeWriter 2008-07-25
+      if (fTree->GetEntries() != 0) fTree->Write(fTree->GetName(), TObject::kOverwrite);
+      else ORLog(kWarning) << "EndRun(): did not write empty fTree " << fTree->GetName() << endl;
+
+    }else{
+       fTree->Write(fTree->GetName(), TObject::kOverwrite);
+    }
   }
   return kSuccess;
 }

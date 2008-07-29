@@ -33,7 +33,7 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::InitializeBranches()
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
   fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
-  fTree->Branch("energy", &fEnergy, "energy/i");
+  fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
   fTree->Branch("resetSec", &fResetSec, "resetSec/i");
   fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");
   fTree->Branch("waveform", fWaveform, "waveform[wfLength]/s");
@@ -67,7 +67,7 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
-      << "event-sec-subsec-crate-card-channel-energy-resetsec-resetsubsec-chmap-pagenum = "
+      << "event-sec-subsec-crate-card-channel-energy_adc-resetsec-resetsubsec-chmap-pagenum = "
       << fEventID << "-" << fSec << "-" << fSubSec << "-" << fCrate << "-"
       << fCard << "-" << fChannel << "-" << fEnergy 
       << "-" << fResetSec << "-" << fResetSubSec   //-tb- 2008-02-12
@@ -85,6 +85,8 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::ProcessMyDataRecord(
   return kSuccess;
 }
 
+
+#if 0   // XXXX
 /**  End decoding the current file. Writes the tree to the output file.
   *  This is almost an exact copy of the original ORVTreeWriter::EndRun()
   *  except that empty trees are not written to the root file if the flag 
@@ -126,4 +128,4 @@ ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::EndRun()
   }
   return kSuccess;
 }
-
+#endif

@@ -7,18 +7,21 @@
 
 //**************************************************************************************
 
-ORKatrinFLTWaveformDecoder::ORKatrinFLTWaveformDecoder() { fDataRecord = NULL; }
+ORKatrinFLTWaveformDecoder::ORKatrinFLTWaveformDecoder() { fDataRecord = NULL; fWaveformLength = -1; }
 
 bool ORKatrinFLTWaveformDecoder::SetDataRecord(UInt_t* dataRecord) 
 {
   fDataRecord = dataRecord;
+  fWaveformLength = (  LengthOf(fDataRecord) / (kWaveformLength/2)  )  * 1024;
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
-  if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + kWaveformLength/2) {
+  // remarks for Till: LengthOf(...) is from ORVDataDecoder and is the length extracted from data record -tb-
+  if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + GetWaveformLen()/2) {
     ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
     ORLog(kDebug) << "LengthOf(data record) : " << LengthOf(fDataRecord)
-      << " kBufHeadLen + kWaveformLength/2: " << kBufHeadLen + kWaveformLength/2 << std::endl;
+      << " kBufHeadLen + GetWaveformLen()/2: " << kBufHeadLen + GetWaveformLen()/2 << std::endl;
     fDataRecord = NULL;
+    fWaveformLength = -1;
     return false;
   }
   ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;

@@ -39,6 +39,9 @@
   #include "ORKatrinFLTEnergyDecoder.hh"
   #include "ORKatrinFLTEnergyTreeWriter.hh"
 
+  #include "ORKatrinFLTEnergyHistogramDecoder.hh"
+  #include "ORKatrinFLTEnergyHistogramTreeWriter.hh"
+
   #include "ORKatrinFLTWaveformDecoder.hh"
   #include "ORKatrinFLTWaveformDumper.hh"
   #include "ORKatrinFLTWaveformTreeWriter.hh"
@@ -208,12 +211,16 @@ int main(int argc, char** argv)
   
    ORKatrinFLTEnergyDecoder katrinFLTEnergyDecoder;
    ORKatrinFLTWaveformDecoder katrinFLTWaveformDecoder;
+   ORKatrinFLTEnergyDecoder katrinFLTEnergyHistogramDecoder;
 
    ORKatrinFLTEnergyTreeWriter katrinFLTEnergyTreeWriter("energyTree");
    dataProcManager.AddProcessor(&katrinFLTEnergyTreeWriter);
 
    ORKatrinFLTWaveformTreeWriter katrinFLTWaveformTreeWriter("waveformTree");
    dataProcManager.AddProcessor(&katrinFLTWaveformTreeWriter);
+
+   ORKatrinFLTEnergyHistogramTreeWriter katrinFLTEnergyHistogramTreeWriter("energyHistogramTree");
+   dataProcManager.AddProcessor(&katrinFLTEnergyHistogramTreeWriter);
   #endif
 // For debugging:
 //   ORKatrinFLTWaveformDumper katrinFLTWaveformDumper;
