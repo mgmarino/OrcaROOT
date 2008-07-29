@@ -27,6 +27,7 @@ dnl    ROOTGLIBS          ROOT basic + GUI libraries
 dnl    ROOTAUXLIBS        Auxilary libraries and linker flags for ROOT
 dnl    ROOTAUXCFLAGS      Auxilary compiler flags 
 dnl    ROOTRPATH          Same as ROOTLIBDIR
+dnl    ROOTLDFLAGS        Linking flags from ROOT 
 dnl
 dnl The macro will fail if root-config and rootcint isn't found.
 dnl
@@ -62,6 +63,7 @@ AC_DEFUN([ROOT_PATH],
     ROOTAUXCFLAGS=`$ROOTCONF --auxcflags`
     ROOTAUXLIBS=`$ROOTCONF --auxlibs`
     ROOTRPATH=$ROOTLIBDIR
+    ROOTLDFLAGS=`$ROOTCONF --ldflags`
 	
     if test $1 ; then 
       AC_MSG_CHECKING(whether ROOT version >= [$1])
@@ -87,6 +89,7 @@ AC_DEFUN([ROOT_PATH],
   AC_SUBST(ROOTAUXLIBS)
   AC_SUBST(ROOTAUXCFLAGS)
   AC_SUBST(ROOTRPATH)
+  AC_SUBST(ROOTLDFLAGS)
 
   if test "x$no_root" = "x" ; then 
     ifelse([$2], , :, [$2])     

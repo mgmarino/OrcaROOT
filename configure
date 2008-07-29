@@ -273,7 +273,7 @@ PACKAGE_BUGREPORT=
 
 ac_unique_file="OrcaROOT"
 ac_unique_file="Applications/orcaroot.cc"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT EXTRALIBFLAGS EXTRACPPFLAGS SOFLAGS ORLIBEXTSHARED ROOTCONF ROOTEXEC ROOTCINT ROOTLIBDIR ROOTINCDIR ROOTCFLAGS ROOTLIBS ROOTGLIBS ROOTAUXLIBS ROOTAUXCFLAGS ROOTRPATH ORROOT_HAS_FFTW ROOTFFTWLIB CC CFLAGS ac_ct_CC ORBIG_ENDIAN_MACHINE EXTRACXXFLAGS LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT EXTRALIBFLAGS EXTRACPPFLAGS SOFLAGS ORLIBEXTSHARED ROOTCONF ROOTEXEC ROOTCINT ROOTLIBDIR ROOTINCDIR ROOTCFLAGS ROOTLIBS ROOTGLIBS ROOTAUXLIBS ROOTAUXCFLAGS ROOTRPATH ROOTLDFLAGS ORROOT_HAS_FFTW ROOTFFTWLIB CC CFLAGS ac_ct_CC ORBIG_ENDIAN_MACHINE EXTRACXXFLAGS LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2104,6 +2104,7 @@ fi
     ROOTAUXCFLAGS=`$ROOTCONF --auxcflags`
     ROOTAUXLIBS=`$ROOTCONF --auxlibs`
     ROOTRPATH=$ROOTLIBDIR
+    ROOTLDFLAGS=`$ROOTCONF --ldflags`
 
     if test 5.04 ; then
       echo "$as_me:$LINENO: checking whether ROOT version >= 5.04" >&5
@@ -2123,6 +2124,7 @@ echo "${ECHO_T}yes" >&6
     # otherwise, we say no_root
     no_root="yes"
   fi
+
 
 
 
@@ -3897,6 +3899,7 @@ s,@ROOTGLIBS@,$ROOTGLIBS,;t t
 s,@ROOTAUXLIBS@,$ROOTAUXLIBS,;t t
 s,@ROOTAUXCFLAGS@,$ROOTAUXCFLAGS,;t t
 s,@ROOTRPATH@,$ROOTRPATH,;t t
+s,@ROOTLDFLAGS@,$ROOTLDFLAGS,;t t
 s,@ORROOT_HAS_FFTW@,$ORROOT_HAS_FFTW,;t t
 s,@ROOTFFTWLIB@,$ROOTFFTWLIB,;t t
 s,@CC@,$CC,;t t
