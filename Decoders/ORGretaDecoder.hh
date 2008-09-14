@@ -127,7 +127,7 @@ inline UShort_t ORGretaDecoder::GetChannelNum()
 
 inline UShort_t ORGretaDecoder::GetPacketLength()
 {
-  return (UShort_t) (fDataRecord[GetRecordOffset()]  >> 16);
+  return (UShort_t) (( fDataRecord[GetRecordOffset()] & 0x7FF0000 )  >> 16);
 }
 
 inline UShort_t ORGretaDecoder::GetLEDExtTimeStampLo()
