@@ -97,7 +97,7 @@ inline UShort_t ORGretaMarkIVDecoder::GetMasterBoardID()
 
 inline UShort_t ORGretaMarkIVDecoder::GetMasterHeaderLength() 
 {
-  return (UShort_t) (fDataRecord[kORCAHeadLen] >> 16);   
+  return (UShort_t) ((fDataRecord[kORCAHeadLen] & 0x7FF0000) >> 16);   
 }
 
 inline UShort_t ORGretaMarkIVDecoder::GetMasterTrigger_TSLow() 
