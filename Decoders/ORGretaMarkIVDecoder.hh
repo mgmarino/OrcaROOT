@@ -78,6 +78,8 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
 
     /* Functions satisfying the ORVDigitizerDecoder interface. */
     virtual inline UShort_t GetBitResolution() { return 14; }
+    virtual UInt_t GetEventWaveformPoint( size_t /*event*/, 
+                                          size_t waveformPoint );
       /* All other functions are correctly inherited from the parent class. */
 
    

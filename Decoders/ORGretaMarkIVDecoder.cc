@@ -35,5 +35,15 @@ bool ORGretaMarkIVDecoder::SetDataRecord(UInt_t* dataRecord)
   return ORGretaDecoder::SetDataRecord(dataRecord);
 }
 
-
+UInt_t ORGretaMarkIVDecoder::GetEventWaveformPoint( size_t /*event*/, 
+                                                     size_t waveformPoint )
+{
+  if ( waveformPoint % 2 == 0 ) {
+    return (GetWaveformDataPointer()[waveformPoint/2] & fBitMask) | 
+           ( ( (0x00002000 & GetWaveformDataPointer()[waveformPoint/2] ) > 0 )*0x0000D000 );
+  } else {
+    return ( ( GetWaveformDataPointer()[waveformPoint/2] & (fBitMask << 16) ) |  
+           ( ( (0x20000000 & GetWaveformDataPointer()[waveformPoint/2] ) > 0 )*0xD0000000 ) ) >> 16;
+  } 
+}
 
