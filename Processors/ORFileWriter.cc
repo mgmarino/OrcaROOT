@@ -10,13 +10,18 @@ using namespace std;
 
 ORFileWriter::ORFileWriter(string label)
 {
-  SetLabel(label);
+  fLabel = label;
+  fSavedName = "";
   fFile = NULL;
 }
 
 ORDataProcessor::EReturnCode ORFileWriter::StartRun()
 {
   if(fFile != NULL) {
+    if(UpdateFilePointer() == NULL) {
+      ORLog(kError) << "Lost track of fFile!" << endl;
+      return kFailure;
+    }
     fFile->Close();
     delete fFile;
   }
@@ -26,6 +31,7 @@ ORDataProcessor::EReturnCode ORFileWriter::StartRun()
   }
   string filename = fLabel + ::Form("_run%d.root", fRunContext->GetRunNumber());
   fFile = new TFile(filename.c_str(), "RECREATE");
+  fSavedName = fFile->GetName();
 
   TObjString headerXML(fRunContext->GetHeader()->GetRawXML().Data());
   headerXML.Write("headerXML");
@@ -40,6 +46,10 @@ ORDataProcessor::EReturnCode ORFileWriter::EndRun()
     return kBreak;
   }
 
+  if(UpdateFilePointer() == NULL) {
+    ORLog(kError) << "Lost track of fFile!" << endl;
+    return kFailure;
+  }
   fFile->cd();
   // other processors will write their data after this processor; close the file at
   // the beginning of the next run or at the end of processing.
@@ -51,8 +61,29 @@ ORDataProcessor::EReturnCode ORFileWriter::EndProcessing()
   if(fFile == NULL) {
     ORLog(kWarning) << "EndProcessing(): no file was open!" << endl;
     return kBreak;
+  } 
+  if(UpdateFilePointer() == NULL) {
+    ORLog(kError) << "Lost track of fFile!" << endl;
+    return kFailure;
   }
   fFile->Close();
   delete fFile;
   return kSuccess;
 }
+
+TFile* ORFileWriter::UpdateFilePointer()
+{
+  TSeqCollection* listOfFiles = gROOT->GetListOfFiles();
+  if(listOfFiles->IndexOf(fFile) == -1) {
+    // fFile has been deleted by stupid ROOT. Search for the updated pointer
+    fFile = NULL;
+    for(int i=0; fFile == NULL && i<=listOfFiles->LastIndex(); i++) {
+      TFile* file = (TFile*) listOfFiles->At(i);
+      if (fSavedName == file->GetName()) fFile = file;
+    }
+  }
+  // If the updated pointer is not found, fFile is NULL here. Could be a
+  // bug, let the calling function decide.
+  return fFile;
+}
+

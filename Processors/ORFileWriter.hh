@@ -22,7 +22,11 @@ class ORFileWriter : public ORUtilityProcessor
     virtual void SetLabel(std::string label) { fLabel = label; }
 
   protected:
+    virtual TFile* UpdateFilePointer();
+
+  protected:
     std::string fLabel;
+    std::string fSavedName;
     TFile* fFile;
 };
 
