@@ -32,6 +32,7 @@ ORDataProcessor::EReturnCode ORFileWriter::StartRun()
   string filename = fLabel + ::Form("_run%d.root", fRunContext->GetRunNumber());
   fFile = new TFile(filename.c_str(), "RECREATE");
   fSavedName = fFile->GetName();
+  fSavedName.erase( fSavedName.size() - 5, 5 ); // Removing .root from the end
 
   TObjString headerXML(fRunContext->GetHeader()->GetRawXML().Data());
   headerXML.Write("headerXML");
@@ -79,7 +80,11 @@ TFile* ORFileWriter::UpdateFilePointer()
     fFile = NULL;
     for(int i=0; fFile == NULL && i<=listOfFiles->LastIndex(); i++) {
       TFile* file = (TFile*) listOfFiles->At(i);
-      if (fSavedName == file->GetName()) fFile = file;
+      std::string nameOfFile = file->GetName();
+      if ( nameOfFile.find( fSavedName ) != string::npos ) {
+        fFile = file;
+        break;
+      }
     }
   }
   // If the updated pointer is not found, fFile is NULL here. Could be a
