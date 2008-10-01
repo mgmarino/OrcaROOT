@@ -17,10 +17,14 @@ ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runD
     fRunDataProcessor = new ORRunDataProcessor;
     fIOwnRunDataProcessor = true;
   }
- 
+
   SetReader(reader);
   SetRunContext(new ORRunContext);
   /* Sets fRunContext.  This class owns this object. */
+
+  if (dynamic_cast<ORSocketReader*>(fReader) != NULL) {
+    fRunDataProcessor->IncreaseHeartbeatVerbosity();
+  }
 }
 
 ORDataProcManager::~ORDataProcManager()

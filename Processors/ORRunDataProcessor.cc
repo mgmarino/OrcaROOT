@@ -2,8 +2,8 @@
 
 #include "ORRunDataProcessor.hh"
 
+#include <string>
 #include "TROOT.h"
-#include "ORLogger.hh"
 
 using namespace std;
 
@@ -11,6 +11,7 @@ ORRunDataProcessor::ORRunDataProcessor() : ORDataProcessor(new ORRunDecoder)
 {
   fRunDecoder = dynamic_cast<ORRunDecoder*>(fDataDecoder);
   fByteCount = 0;
+  fIncreaseHeartbeatVerbosity = false;
 }
 
 ORRunDataProcessor::~ORRunDataProcessor()
@@ -37,21 +38,14 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
     return kFailure;
   }
   if (fRunDecoder->IsHeartBeat(record)) {
-    if(fByteCount < 1024) {
-      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
-                      << ": " << fByteCount << " B have been processed since "
-		      << "last heartbeat." << endl;
-    }
-    else if(fByteCount < 1024*1024) {
-      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
-                      << ": " << ::Form("%.1f", float(fByteCount)/1024.0) 
-		      << " kB have been processed since last heartbeat." << endl;
-    }
-    else {
-      ORLog(kRoutine) << "Heartbeat for run " << fRunContext->GetRunNumber() 
-                      << ": " << ::Form("%.1f", float(fByteCount)/1024.0/1024.0) 
-		      << " MB have been processed since last heartbeat." << endl;
-    }
+    string message;
+    if(fByteCount < 1024) message = ::Form("%d B", fByteCount);
+    else if(fByteCount < 1024*1024) message = ::Form("%.1f kB", float(fByteCount)/1024.0);
+    else message = ::Form("%.1f MB", float(fByteCount)/1024.0/1024.0);
+    message = ::Form("Heartbeat for run %d: %s have been processed since last heartbeat.", 
+                     fRunContext->GetRunNumber(), message.c_str());
+    if(fIncreaseHeartbeatVerbosity) ORLog(kRoutine) << message << endl;
+    else ORLog(kTrace) << message << endl;
     fByteCount = 0;
     return ProcessRunHeartBeat(record);
   }
