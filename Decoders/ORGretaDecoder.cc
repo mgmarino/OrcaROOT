@@ -249,3 +249,11 @@ UInt_t ORGretaDecoder::GetEventWaveformPoint( size_t /*event*/,
     return ( GetWaveformDataPointer()[waveformPoint/2] & (fBitMask << 16) ) >> 16; 
   } 
 }
+
+UInt_t ORGretaDecoder::GetEventFlags( size_t /*event*/ ) 
+{
+  return ((UInt_t)IsLEDCrossingNeg())        |
+         ((UInt_t)IsExternalTrigFlag()) << 1 |
+         ((UInt_t)IsCFDCrossingFlag())  << 2 |
+         ((UInt_t)IsPileupFlag())       << 3;
+}

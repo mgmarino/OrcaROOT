@@ -90,6 +90,7 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     virtual UInt_t GetEventWaveformPoint( size_t /*event*/, 
                                           size_t waveformPoint );
     
+    virtual UInt_t GetEventFlags(size_t /*event*/);
     
 
     //Error checking:
@@ -167,22 +168,22 @@ inline UInt_t ORGretaDecoder::GetEnergy()
 
 inline Bool_t ORGretaDecoder::IsLEDCrossingNeg()
 {
-  return fDataRecord[GetRecordOffset()+3]  >> 12;
+  return ((fDataRecord[GetRecordOffset()+3]  >> 12) & 0x1) == 1;
 }
 
 inline Bool_t ORGretaDecoder::IsExternalTrigFlag()
 {
-  return fDataRecord[GetRecordOffset()+3]  >> 13;
+  return ((fDataRecord[GetRecordOffset()+3]  >> 13) & 0x1) == 1;
 }
 
 inline Bool_t ORGretaDecoder::IsCFDCrossingFlag()
 {
-  return fDataRecord[GetRecordOffset()+3] >> 14;
+  return ((fDataRecord[GetRecordOffset()+3] >> 14) & 0x1) == 1;
 }
 
 inline Bool_t ORGretaDecoder::IsPileupFlag()
 {
-  return fDataRecord[GetRecordOffset()+3]  >> 15;
+  return ((fDataRecord[GetRecordOffset()+3]  >> 15) & 0x1) == 1;
 }
 
 inline UShort_t ORGretaDecoder::GetCFDTimeStampLo()

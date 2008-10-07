@@ -27,6 +27,10 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     virtual ULong64_t GetEventTime(size_t event) = 0;
     virtual UInt_t GetEventEnergy(size_t event) = 0; 
     virtual UShort_t GetEventChannel(size_t event) = 0;
+
+    /* This is an optional overload that allows us to pass flags on to a root tree.*/
+    /* The actual decoding of this UInt_t is left up to the user. */
+    virtual UInt_t GetEventFlags(size_t /*event*/) { return 0; }
      
     /* Now waveforms */ 
 
