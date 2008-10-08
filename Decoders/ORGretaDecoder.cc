@@ -86,6 +86,21 @@ size_t ORGretaDecoder::CopyWaveformDataDouble(double* waveform, size_t len)
   return len;
 }
 
+size_t ORGretaDecoder::CopyWaveformDataShort(short* waveform, size_t len)
+{
+  size_t wflen = GetWaveformLen();
+  if (wflen == 0) return 0;
+  if ((len < wflen) || (len == 0)) {
+    ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len
+                    << "; waveform data length is " << GetWaveformLen() << std::endl;
+  }
+  else len = GetWaveformLen();
+ 
+  memcpy(waveform, GetWaveformDataPointer(), len*sizeof(short));
+  return len;
+}
+
+
 /* Card/Channel settings, parameters. */
 
 UInt_t ORGretaDecoder::GetBaseAddress()

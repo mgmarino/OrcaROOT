@@ -54,6 +54,7 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     virtual inline size_t GetWaveformLen(); 
     virtual size_t CopyWaveformData(UShort_t* waveform, size_t len);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
+    virtual size_t CopyWaveformDataShort(short* waveform, size_t len);
     virtual inline UInt_t* GetWaveformDataPointer();
  
     /* Functions that return information about card/channel settings. */
