@@ -1,6 +1,6 @@
 include ../buildTools/config.mk
 
-APPS = testUtil writeShaperTree orcaroot testStopper orcaroot_minesh getHeaderInRootFile testHeaderReadin orhexdump orcarootIgor
+APPS = testUtil writeShaperTree orcaroot testStopper orcaroot_minesh getHeaderInRootFile testHeaderReadin orhexdump orcarootIgor orcaroot_KATRIN_PS orcaroot_ipe_katrin
 
 ORFLAGS = -I../Util -I../Decoders -I../IO -I../Processors -I../Management
 ORLIBS = -L../lib -lORUtil -lORDecoders -lORIO -lORProcessors -lORManagement
