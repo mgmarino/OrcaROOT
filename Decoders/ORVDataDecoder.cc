@@ -53,7 +53,7 @@ std::string ORVDataDecoder::GetStringValueFromKey(std::string key, UInt_t crate,
   return val->GetS();
 }
 
-int ORVDataDecoder::GetIntValueFromKey(std::string key, UInt_t crate,
+Int_t ORVDataDecoder::GetIntValueFromKey(std::string key, UInt_t crate,
   UInt_t card)
 {
   const ORDictValueI* val = 
@@ -66,7 +66,7 @@ int ORVDataDecoder::GetIntValueFromKey(std::string key, UInt_t crate,
   return val->GetI();
 }
 
-double ORVDataDecoder::GetRealValueFromKey(std::string key, UInt_t crate,
+Double_t ORVDataDecoder::GetRealValueFromKey(std::string key, UInt_t crate,
   UInt_t card)
 {
   const ORDictValueR* val = 
@@ -79,7 +79,7 @@ double ORVDataDecoder::GetRealValueFromKey(std::string key, UInt_t crate,
   return val->GetR();
 }
 
-bool ORVDataDecoder::GetBoolValueFromKey(std::string key, UInt_t crate,
+Bool_t ORVDataDecoder::GetBoolValueFromKey(std::string key, UInt_t crate,
   UInt_t card)
 {
   const ORDictValueB* val = 
@@ -114,7 +114,7 @@ std::string ORVDataDecoder::GetStringValueFromKeyArray(std::string key,
   return val->GetS();
 }
 
-int ORVDataDecoder::GetIntValueFromKeyArray(std::string key, 
+Int_t ORVDataDecoder::GetIntValueFromKeyArray(std::string key, 
   UInt_t crate, UInt_t card, size_t index)
 {
   const ORDictValueA* array = GetArrayFromKey(key, crate, card);
@@ -136,7 +136,7 @@ int ORVDataDecoder::GetIntValueFromKeyArray(std::string key,
   return val->GetI();
 }
 
-double ORVDataDecoder::GetRealValueFromKeyArray(std::string key, 
+Double_t ORVDataDecoder::GetRealValueFromKeyArray(std::string key, 
   UInt_t crate, UInt_t card, size_t index)
 {
   const ORDictValueA* array = GetArrayFromKey(key, crate, card);
@@ -158,7 +158,7 @@ double ORVDataDecoder::GetRealValueFromKeyArray(std::string key,
   return val->GetR();
 }
 
-bool ORVDataDecoder::GetBoolValueFromKeyArray(std::string key, 
+Bool_t ORVDataDecoder::GetBoolValueFromKeyArray(std::string key, 
   UInt_t crate, UInt_t card, size_t index)
  {
   const ORDictValueA* array = GetArrayFromKey(key, crate, card);

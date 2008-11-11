@@ -157,20 +157,20 @@ class ORVDataDecoder
 
     virtual std::string GetStringValueFromKey(std::string key, 
       UInt_t crate, UInt_t card);
-    virtual int GetIntValueFromKey(std::string key, 
+    virtual Int_t GetIntValueFromKey(std::string key, 
       UInt_t crate, UInt_t card);
-    virtual double GetRealValueFromKey(std::string key, 
+    virtual Double_t GetRealValueFromKey(std::string key, 
       UInt_t crate, UInt_t card);
-    virtual bool GetBoolValueFromKey(std::string key, 
+    virtual Bool_t GetBoolValueFromKey(std::string key, 
       UInt_t crate, UInt_t card);
  
     virtual std::string GetStringValueFromKeyArray(std::string key, 
       UInt_t crate, UInt_t card, size_t index);
-    virtual int GetIntValueFromKeyArray(std::string key, 
+    virtual Int_t GetIntValueFromKeyArray(std::string key, 
       UInt_t crate, UInt_t card, size_t index);
-    virtual double GetRealValueFromKeyArray(std::string key, 
+    virtual Double_t GetRealValueFromKeyArray(std::string key, 
       UInt_t crate, UInt_t card, size_t index);
-    virtual bool GetBoolValueFromKeyArray(std::string key, 
+    virtual Bool_t GetBoolValueFromKeyArray(std::string key, 
       UInt_t crate, UInt_t card, size_t index);
     
 
