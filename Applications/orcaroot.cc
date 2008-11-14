@@ -8,39 +8,12 @@
 #include <sys/resource.h> 
 #include <set> 
 
-#include "ORBasicTreeWriter.hh"
 #include "ORDataProcManager.hh"
 #include "ORFileReader.hh"
 #include "ORFileWriter.hh"
-#include "ORHistWriter.hh"
 #include "ORLogger.hh"
-#include "ORShaperShaperTreeWriter.hh"
 #include "ORSocketReader.hh"
-#include "ORTek754DScopeDataTreeWriter.hh"
-#include "ORLC950ScopeDataTreeWriter.hh"
-#include "OR1DHistoHistogramsWriter.hh"
-#include "ORMultiEventCounter.hh"
-#include "ORDGF4cEnergyTreeWriter.hh"
-#include "ORDGF4cMCAWriter.hh"
-#include "ORGretaDecoder.hh"
-#include "ORGretaWaveformTreeWriter.hh"
-#include "ORLakeshore210TreeWriter.hh"
-#include "ORGretaDumper.hh"
-#include "ORLakeshore210Dumper.hh"
-#include "ORBocTIC3Dumper.hh"
-#include "ORBocTIC3TreeWriter.hh"
 
-#include "ORTDC3377tdcDecoder.hh"
-#include "ORADC2249ADCDecoder.hh"
-
-#include "ORAD3511ADCDecoder.hh"
-#include "ORTrigger32TreeWriter.hh"
-#include "ORTrigger32LiveTimeDecoder.hh"
-#include "ORRunDataTreeWriter.hh"
-#include "ORKatrinFLTEnergyDecoder.hh"
-#include "ORKatrinFLTWaveformDumper.hh"
-#include "ORKatrinFLTEnergyTreeWriter.hh"
-#include "ORKatrinFLTWaveformTreeWriter.hh"
 #include "OROrcaRequestProcessor.hh"
 #include "ORServer.hh"
 #include "ORHandlerThread.hh"
@@ -194,7 +167,6 @@ int main(int argc, char** argv)
        * by the server.  The kill signal will automatically propagate to the
        * children so we really don't have to worry about waiting for them to
        * die.  */
-      ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       while (childPIDRecord.size() >= maxConnections) { 
         /* We've reached our maximum number of child processes. */
         /* Wait for a process to end. */
@@ -204,7 +176,6 @@ int main(int argc, char** argv)
           ORLog(kError) << "Ended child process " << childpid 
             << " not recognized!" << endl;
         }
-        ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       }
       while((childpid = wait3(0,WNOHANG,0)) > 0) {
         /* Cleaning up any children that may have ended.                   * 
@@ -215,6 +186,7 @@ int main(int argc, char** argv)
             << " not recognized!" << endl;
         }
       } 
+      ORLog(kRoutine) << childPIDRecord.size()  << " connections running..." << endl;
       ORLog(kRoutine) << "Waiting for connection..." << endl;
       TSocket* sock = server->Accept(); 
       if (sock == (TSocket*) 0 || sock == (TSocket*) -1 ) {
