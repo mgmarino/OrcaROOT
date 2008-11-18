@@ -67,8 +67,9 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformData( UShort_t* waveform,
   UInt_t* waveformData = GetWaveformDataPointer();
   for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
-    waveform[i+1] = (waveformData[i/2] & 0xFFFF);  
+    //bin swapping handling changed 2008-11-18 (svn rev >=1354)  ml, -tb-
+    waveform[i] = (waveformData[i/2] & 0xFFFF);  
+    waveform[i+1] = ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
   }
   return len;
 }
@@ -87,8 +88,9 @@ size_t ORKatrinFLTWaveformDecoder::CopyWaveformDataDouble(double* waveform, size
   UInt_t* waveformData = GetWaveformDataPointer();
   for(size_t i=0;i<len;i+=2) 
   {
-    waveform[i] = (double) ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
-    waveform[i+1] = (double) (waveformData[i/2] & 0xFFFF);  
+    //bin swapping handling changed 2008-11-18 (svn rev >=1354)  ml, -tb-
+    waveform[i] = (double) (waveformData[i/2] & 0xFFFF);  
+    waveform[i+1] = (double) ((waveformData[i/2] & 0xFFFF0000) >> 16) ;  
   }
   return len;
 }
