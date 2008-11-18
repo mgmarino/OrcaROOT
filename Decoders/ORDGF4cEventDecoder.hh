@@ -103,6 +103,7 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
     virtual size_t GetEventWaveformLength(size_t event); 
     virtual UInt_t GetEventWaveformPoint( size_t event, 
                                           size_t waveformPoint );
+    virtual Bool_t WaveformDataIsSigned() { return false; }
     
 
 

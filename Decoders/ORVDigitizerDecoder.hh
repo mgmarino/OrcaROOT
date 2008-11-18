@@ -48,6 +48,9 @@ class ORVDigitizerDecoder: public ORVDataDecoder
        \endverbatim
     */
     virtual UInt_t GetEventWaveformPoint( size_t event, size_t waveformPoint ) = 0;
+    /* Overload the following function if the data coming from the waveform
+     * is actually unsigned.    */
+    virtual Bool_t WaveformDataIsSigned() { return true; }
 
   protected:
     UInt_t* fDataRecord;

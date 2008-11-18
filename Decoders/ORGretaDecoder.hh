@@ -83,7 +83,7 @@ class ORGretaDecoder: public ORVDigitizerDecoder
     virtual inline double GetSamplingFrequency() { return .1; }
     virtual inline UShort_t GetBitResolution() { return 12; }
     virtual inline size_t GetNumberOfEvents() { return 1; }
-    virtual inline ULong64_t GetEventTime(size_t /*event*/) {return GetCFDTimeStamp();}
+    virtual inline ULong64_t GetEventTime(size_t /*event*/) {return GetLEDExtTimeStamp();}
     virtual inline UInt_t GetEventEnergy(size_t /*event*/) {return GetEnergy();}
     virtual inline UShort_t GetEventChannel(size_t /*event*/) {return GetChannelNum();}
     virtual size_t GetEventWaveformLength(size_t /*event*/) 

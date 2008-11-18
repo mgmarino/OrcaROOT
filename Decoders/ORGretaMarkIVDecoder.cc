@@ -9,6 +9,7 @@ ORGretaMarkIVDecoder::ORGretaMarkIVDecoder()
   fHasMasterHeader = false;
   fHasSlaverHeader = false;
   fOffset = 0;
+  fBitMask = 0xFFFF;
 }
 
 //**************************************************************************************
