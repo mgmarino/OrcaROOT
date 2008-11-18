@@ -18,15 +18,13 @@ class ORIgorFileReader : public ORFileReader
     ORIgorFileReader(std::string filename = "");
     virtual ~ORIgorFileReader() {}
 
-    //! this doesn't mean anything for IGOR 
-    virtual int GetRunNumber() { return 0; } 
-
-    //! disabling this member function. 
+    virtual size_t Read(char* buffer, size_t nBytes);
     virtual size_t ReadPartialLineWithCR(char* , size_t ) { return 0;} 
     virtual bool ReadRecord(UInt_t*& buffer, size_t& nLongsMax);
 
   protected:
     virtual std::string ReadHeader();
+    Int_t fRunNumber;
 
 };
 

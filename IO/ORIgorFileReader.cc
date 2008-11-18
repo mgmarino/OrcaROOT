@@ -4,18 +4,31 @@
 
 #include <string>
 #include <cmath>
+#include <sstream>
 #include "ORLogger.hh"
 #include "ORUtils.hh"
 #include "ORBasicDataDecoder.hh"
+using namespace std;
 
-ORIgorFileReader::ORIgorFileReader(std::string filename) : ORFileReader(filename)
+ORIgorFileReader::ORIgorFileReader(std::string filename) : ORFileReader(filename),
+  fRunNumber(0)
 {
+}
+
+size_t ORIgorFileReader::Read(char* buffer, size_t nBytesMax)
+{
+  read(buffer, nBytesMax);
+  return gcount();
 }
 
 bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 {
   // First, read in the header if necessary.
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
+    /* We increment the run number to make sure that files don.t
+     * get overwritten.  This is because the file name is taken
+     * from the run number in the header. */
+    fRunNumber++;
     std::string header = ReadHeader();
     UInt_t nBytes = header.size() + 1;
     UInt_t recordLength = ((UInt_t) ceil(double(nBytes)/4.0)) + 2;
@@ -38,7 +51,7 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 
   ORBasicDataDecoder decoder;
   UInt_t theBuffSizeLong = 0;
-  Read(((char*) &theBuffSizeLong), 4); // XIA specific, we grab the first 32-bits
+  if(Read(((char*) &theBuffSizeLong), 4) != 4) return false; // XIA specific, we grab the first 32-bits
   if(MustSwap()) ORUtils::Swap(theBuffSizeLong);
   UShort_t theBuffSize = (theBuffSizeLong & 0x0000FFFF);
   
@@ -82,5 +95,244 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
 
 std::string ORIgorFileReader::ReadHeader()
 {
-  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>Document Info</key>\n\t<dict>\n\t\t<key>OrcaVersion</key>\n\t\t<string>5.9.6</string>\n\t\t<key>dataVersion</key>\n\t\t<integer>2</integer>\n\t\t<key>date</key>\n\t\t<string>2006-07-25 14:42:23 -0700</string>\n\t\t<key>documentName</key>\n\t\t<string>/Users/snodaq/Desktop/REU/REU.Orca</string>\n\t</dict>\n\t<key>Run Control</key>\n\t<dict>\n\t\t<key>Class Name</key>\n\t\t<string>ORRunModel</string>\n\t\t<key>RunNumber</key>\n\t\t<integer>1</integer>\n\t\t<key>quickStart</key>\n\t\t<false/>\n\t\t<key>refTime</key>\n\t\t<real>175556544</real>\n\t\t<key>remoteControl</key>\n\t\t<false/>\n\t\t<key>runType</key>\n\t\t<integer>0</integer>\n\t\t<key>startTime</key>\n\t\t<integer>1153892543</integer>\n\t</dict>\n\t<key>crate 0</key>\n\t<dict>\n\t\t<key>Class Name</key>\n\t\t<string>ORCamacCrateModel</string>\n\t\t<key>count</key>\n\t\t<integer>5</integer>\n\t\t<key>station 11</key>\n\t\t<dict>\n\t\t\t<key>Class Name</key>\n\t\t\t<string>ORADC2249Model</string>\n\t\t\t<key>onlineMask</key>\n\t\t\t<integer>1</integer>\n\t\t\t<key>station</key>\n\t\t\t<integer>11</integer>\n\t\t\t<key>suppressZeros</key>\n\t\t\t<false/>\n\t\t</dict>\n\t\t<key>station 12</key>\n\t\t<dict>\n\t\t\t<key>Class Name</key>\n\t\t\t<string>ORADC2249Model</string>\n\t\t\t<key>onlineMask</key>\n\t\t\t<integer>1</integer>\n\t\t\t<key>station</key>\n\t\t\t<integer>12</integer>\n\t\t\t<key>suppressZeros</key>\n\t\t\t<false/>\n\t\t</dict>\n\t\t<key>station 15</key>\n\t\t<dict>\n\t\t\t<key>Class Name</key>\n\t\t\t<string>ORDGF4cModel</string>\n\t\t\t<key>binFactor</key>\n\t\t\t<array>\n\t\t\t\t<integer>442192</integer>\n\t\t\t\t<integer>442192</integer>\n\t\t\t\t<integer>442192</integer>\n\t\t\t\t<integer>442192</integer>\n\t\t\t</array>\n\t\t\t<key>cutoffEmin</key>\n\t\t\t<array>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t</array>\n\t\t\t<key>energyFlatTop</key>\n\t\t\t<array>\n\t\t\t\t<real>0.15000000596046448</real>\n\t\t\t\t<real>0.15000000596046448</real>\n\t\t\t\t<real>0.15000000596046448</real>\n\t\t\t\t<real>0.15000000596046448</real>\n\t\t\t</array>\n\t\t\t<key>energyRiseTime</key>\n\t\t\t<array>\n\t\t\t\t<real>0.10000001639127731</real>\n\t\t\t\t<real>0.10000001639127731</real>\n\t\t\t\t<real>0.10000001639127731</real>\n\t\t\t\t<real>0.10000001639127731</real>\n\t\t\t</array>\n\t\t\t<key>inSync</key>\n\t\t\t<true/>\n\t\t\t<key>psaEnd</key>\n\t\t\t<array>\n\t\t\t\t<real>100</real>\n\t\t\t\t<real>100</real>\n\t\t\t\t<real>100</real>\n\t\t\t\t<real>100</real>\n\t\t\t</array>\n\t\t\t<key>psaStart</key>\n\t\t\t<array>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t</array>\n\t\t\t<key>runBehavior</key>\n\t\t\t<integer>2</integer>\n\t\t\t<key>station</key>\n\t\t\t<integer>15</integer>\n\t\t\t<key>syncWait</key>\n\t\t\t<false/>\n\t\t\t<key>tau</key>\n\t\t\t<array>\n\t\t\t\t<real>40</real>\n\t\t\t\t<real>40</real>\n\t\t\t\t<real>40</real>\n\t\t\t\t<real>40</real>\n\t\t\t</array>\n\t\t\t<key>tauSigma</key>\n\t\t\t<array>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t</array>\n\t\t\t<key>traceDelay</key>\n\t\t\t<array>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t</array>\n\t\t\t<key>traceLength</key>\n\t\t\t<array>\n\t\t\t\t<real>50</real>\n\t\t\t\t<real>50</real>\n\t\t\t\t<real>50</real>\n\t\t\t\t<real>50</real>\n\t\t\t</array>\n\t\t\t<key>triggerFlatTop</key>\n\t\t\t<array>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t\t<real>0.0</real>\n\t\t\t</array>\n\t\t\t<key>triggerRiseTime</key>\n\t\t\t<array>\n\t\t\t\t<real>0.02500000037252903</real>\n\t\t\t\t<real>0.02500000037252903</real>\n\t\t\t\t<real>0.02500000037252903</real>\n\t\t\t\t<real>0.02500000037252903</real>\n\t\t\t</array>\n\t\t\t<key>triggerThreshold</key>\n\t\t\t<array>\n\t\t\t\t<real>30</real>\n\t\t\t\t<real>30</real>\n\t\t\t\t<real>30</real>\n\t\t\t\t<real>30</real>\n\t\t\t</array>\n\t\t\t<key>vGain</key>\n\t\t\t<array>\n\t\t\t\t<real>9</real>\n\t\t\t\t<real>9</real>\n\t\t\t\t<real>9</real>\n\t\t\t\t<real>9</real>\n\t\t\t</array>\n\t\t\t<key>vOffset</key>\n\t\t\t<array>\n\t\t\t\t<real>-0.03369140625</real>\n\t\t\t\t<real>-0.03369140625</real>\n\t\t\t\t<real>-0.03369140625</real>\n\t\t\t\t<real>-0.03369140625</real>\n\t\t\t</array>\n\t\t\t<key>xwait</key>\n\t\t\t<array>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t\t<integer>48976</integer>\n\t\t\t</array>\n\t\t</dict>\n\t\t<key>station 18</key>\n\t\t<dict>\n\t\t\t<key>Class Name</key>\n\t\t\t<string>ORL2551Model</string>\n\t\t\t<key>onlineMask</key>\n\t\t\t<integer>7</integer>\n\t\t\t<key>station</key>\n\t\t\t<integer>18</integer>\n\t\t</dict>\n\t\t<key>station 24</key>\n\t\t<dict>\n\t\t\t<key>Class Name</key>\n\t\t\t<string>ORCC32Model</string>\n\t\t\t<key>station</key>\n\t\t\t<integer>24</integer>\n\t\t</dict>\n\t</dict>\n\t<key>dataDescription</key>\n\t<dict>\n\t\t<key>1DHisto</key>\n\t\t<dict>\n\t\t\t<key>Histograms</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>1048576</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>OR1DHistoDecoder</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>-1</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<true/>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>L2551</key>\n\t\t<dict>\n\t\t\t<key>Scalers</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>0</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>ORL2551DecoderForScalers</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>2</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<false/>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>ORDGF4cModel</key>\n\t\t<dict>\n\t\t\t<key>Event</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>262144</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>ORDGF4cDecoderForEvent</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>-1</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<true/>\n\t\t\t</dict>\n\t\t\t<key>LiveTime</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>524288</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>ORDGF4cDecoderForLiveTime</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>11</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<false/>\n\t\t\t</dict>\n\t\t\t<key>Waveform</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>786432</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>ORDGF4cDecoderForWaveform</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>-1</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<true/>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>ORRunModel</key>\n\t\t<dict>\n\t\t\t<key>Run</key>\n\t\t\t<dict>\n\t\t\t\t<key>dataId</key>\n\t\t\t\t<integer>1310720</integer>\n\t\t\t\t<key>decoder</key>\n\t\t\t\t<string>ORRunDecoderForRun</string>\n\t\t\t\t<key>length</key>\n\t\t\t\t<integer>4</integer>\n\t\t\t\t<key>variable</key>\n\t\t\t\t<false/>\n\t\t\t</dict>\n\t\t</dict>\n\t</dict>\n\t<key>eventDescription</key>\n\t<dict>\n\t\t<key>ORDGF4cModel</key>\n\t\t<dict>\n\t\t\t<key>dataId</key>\n\t\t\t<integer>262144</integer>\n\t\t\t<key>maxChannels</key>\n\t\t\t<integer>4</integer>\n\t\t\t<key>name</key>\n\t\t\t<string>Waveform</string>\n\t\t</dict>\n\t</dict>\n\t<key>slot 0</key>\n\t<dict>\n\t\t<key>Class Name</key>\n\t\t<string>ORPCICamacModel</string>\n\t\t<key>slot</key>\n\t\t<integer>0</integer>\n\t</dict>\n</dict>\n</plist>\n";
+  std::ostringstream os;
+  os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl
+     << "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">" << endl
+     << "<plist version=\"1.0\">" << endl
+     << "<dict>" << endl
+     << "	<key>Document Info</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>OrcaVersion</key>" << endl
+     << "		<string>5.9.6</string>" << endl
+     << "		<key>dataVersion</key>" << endl
+     << "		<integer>2</integer>" << endl
+     << "		<key>date</key>" << endl
+     << "		<string>2006-07-25 14:42:23 -0700</string>" << endl
+     << "		<key>documentName</key>" << endl
+     << "		<string>/Users/snodaq/Desktop/REU/REU.Orca</string>" << endl
+     << "	</dict>" << endl
+     << "	<key>Run Control</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>Class Name</key>" << endl
+     << "		<string>ORRunModel</string>" << endl
+     << "		<key>RunNumber</key>" << endl
+     << "		<integer>" << fRunNumber << "</integer>" << endl
+     << "		<key>quickStart</key>" << endl
+     << "		<false/>" << endl
+     << "		<key>refTime</key>" << endl
+     << "		<real>175556544</real>" << endl
+     << "		<key>remoteControl</key>" << endl
+     << "		<false/>" << endl
+     << "		<key>runType</key>" << endl
+     << "		<integer>0</integer>" << endl
+     << "		<key>startTime</key>" << endl
+     << "		<integer>1153892543</integer>" << endl
+     << "	</dict>" << endl
+     << "	<key>crate 0</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>Class Name</key>" << endl
+     << "		<string>ORCamacCrateModel</string>" << endl
+     << "		<key>count</key>" << endl
+     << "		<integer>1</integer>" << endl
+     << "		<key>station 15</key>" << endl
+     << "		<dict>" << endl
+     << "			<key>Class Name</key>" << endl
+     << "			<string>ORDGF4cModel</string>" << endl
+     << "			<key>binFactor</key>" << endl
+     << "			<array>" << endl
+     << "				<integer>442192</integer>" << endl
+     << "				<integer>442192</integer>" << endl
+     << "				<integer>442192</integer>" << endl
+     << "				<integer>442192</integer>" << endl
+     << "			</array>" << endl
+     << "			<key>cutoffEmin</key>" << endl
+     << "			<array>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "			</array>" << endl
+     << "			<key>energyFlatTop</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.15000000596046448</real>" << endl
+     << "				<real>0.15000000596046448</real>" << endl
+     << "				<real>0.15000000596046448</real>" << endl
+     << "				<real>0.15000000596046448</real>" << endl
+     << "			</array>" << endl
+     << "			<key>energyRiseTime</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.10000001639127731</real>" << endl
+     << "				<real>0.10000001639127731</real>" << endl
+     << "				<real>0.10000001639127731</real>" << endl
+     << "				<real>0.10000001639127731</real>" << endl
+     << "			</array>" << endl
+     << "			<key>inSync</key>" << endl
+     << "			<true/>" << endl
+     << "			<key>psaEnd</key>" << endl
+     << "			<array>" << endl
+     << "				<real>100</real>" << endl
+     << "				<real>100</real>" << endl
+     << "				<real>100</real>" << endl
+     << "				<real>100</real>" << endl
+     << "			</array>" << endl
+     << "			<key>psaStart</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "			</array>" << endl
+     << "			<key>runBehavior</key>" << endl
+     << "			<integer>2</integer>" << endl
+     << "			<key>station</key>" << endl
+     << "			<integer>15</integer>" << endl
+     << "			<key>syncWait</key>" << endl
+     << "			<false/>" << endl
+     << "			<key>tau</key>" << endl
+     << "			<array>" << endl
+     << "				<real>40</real>" << endl
+     << "				<real>40</real>" << endl
+     << "				<real>40</real>" << endl
+     << "				<real>40</real>" << endl
+     << "			</array>" << endl
+     << "			<key>tauSigma</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "			</array>" << endl
+     << "			<key>traceDelay</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "			</array>" << endl
+     << "			<key>traceLength</key>" << endl
+     << "			<array>" << endl
+     << "				<real>50</real>" << endl
+     << "				<real>50</real>" << endl
+     << "				<real>50</real>" << endl
+     << "				<real>50</real>" << endl
+     << "			</array>" << endl
+     << "			<key>triggerFlatTop</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "				<real>0.0</real>" << endl
+     << "			</array>" << endl
+     << "			<key>triggerRiseTime</key>" << endl
+     << "			<array>" << endl
+     << "				<real>0.02500000037252903</real>" << endl
+     << "				<real>0.02500000037252903</real>" << endl
+     << "				<real>0.02500000037252903</real>" << endl
+     << "				<real>0.02500000037252903</real>" << endl
+     << "			</array>" << endl
+     << "			<key>triggerThreshold</key>" << endl
+     << "			<array>" << endl
+     << "				<real>30</real>" << endl
+     << "				<real>30</real>" << endl
+     << "				<real>30</real>" << endl
+     << "				<real>30</real>" << endl
+     << "			</array>" << endl
+     << "			<key>vGain</key>" << endl
+     << "			<array>" << endl
+     << "				<real>9</real>" << endl
+     << "				<real>9</real>" << endl
+     << "				<real>9</real>" << endl
+     << "				<real>9</real>" << endl
+     << "			</array>" << endl
+     << "			<key>vOffset</key>" << endl
+     << "			<array>" << endl
+     << "				<real>-0.03369140625</real>" << endl
+     << "				<real>-0.03369140625</real>" << endl
+     << "				<real>-0.03369140625</real>" << endl
+     << "				<real>-0.03369140625</real>" << endl
+     << "			</array>" << endl
+     << "			<key>xwait</key>" << endl
+     << "			<array>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "				<integer>48976</integer>" << endl
+     << "			</array>" << endl
+     << "		</dict>" << endl
+     << "	</dict>" << endl
+     << "	<key>dataDescription</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>ORDGF4cModel</key>" << endl
+     << "		<dict>" << endl
+     << "			<key>Event</key>" << endl
+     << "			<dict>" << endl
+     << "				<key>dataId</key>" << endl
+     << "				<integer>262144</integer>" << endl
+     << "				<key>decoder</key>" << endl
+     << "				<string>ORDGF4cDecoderForEvent</string>" << endl
+     << "				<key>length</key>" << endl
+     << "				<integer>-1</integer>" << endl
+     << "				<key>variable</key>" << endl
+     << "				<true/>" << endl
+     << "			</dict>" << endl
+     << "			<key>LiveTime</key>" << endl
+     << "			<dict>" << endl
+     << "				<key>dataId</key>" << endl
+     << "				<integer>524288</integer>" << endl
+     << "				<key>decoder</key>" << endl
+     << "				<string>ORDGF4cDecoderForLiveTime</string>" << endl
+     << "				<key>length</key>" << endl
+     << "				<integer>11</integer>" << endl
+     << "				<key>variable</key>" << endl
+     << "				<false/>" << endl
+     << "			</dict>" << endl
+     << "			<key>Waveform</key>" << endl
+     << "			<dict>" << endl
+     << "				<key>dataId</key>" << endl
+     << "				<integer>786432</integer>" << endl
+     << "				<key>decoder</key>" << endl
+     << "				<string>ORDGF4cDecoderForWaveform</string>" << endl
+     << "				<key>length</key>" << endl
+     << "				<integer>-1</integer>" << endl
+     << "				<key>variable</key>" << endl
+     << "				<true/>" << endl
+     << "			</dict>" << endl
+     << "		</dict>" << endl
+     << "		<key>ORRunModel</key>" << endl
+     << "		<dict>" << endl
+     << "			<key>Run</key>" << endl
+     << "			<dict>" << endl
+     << "				<key>dataId</key>" << endl
+     << "				<integer>1310720</integer>" << endl
+     << "				<key>decoder</key>" << endl
+     << "				<string>ORRunDecoderForRun</string>" << endl
+     << "				<key>length</key>" << endl
+     << "				<integer>4</integer>" << endl
+     << "				<key>variable</key>" << endl
+     << "				<false/>" << endl
+     << "			</dict>" << endl
+     << "		</dict>" << endl
+     << "	</dict>" << endl
+     << "	<key>eventDescription</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>ORDGF4cModel</key>" << endl
+     << "		<dict>" << endl
+     << "			<key>dataId</key>" << endl
+     << "			<integer>262144</integer>" << endl
+     << "			<key>maxChannels</key>" << endl
+     << "			<integer>4</integer>" << endl
+     << "			<key>name</key>" << endl
+     << "			<string>Waveform</string>" << endl
+     << "		</dict>" << endl
+     << "	</dict>" << endl
+     << "	<key>slot 0</key>" << endl
+     << "	<dict>" << endl
+     << "		<key>Class Name</key>" << endl
+     << "		<string>ORPCICamacModel</string>" << endl
+     << "		<key>slot</key>" << endl
+     << "		<integer>0</integer>" << endl
+     << "	</dict>" << endl
+     << "</dict>" << endl
+     << "</plist>" << endl;
+  return os.str();
 }
