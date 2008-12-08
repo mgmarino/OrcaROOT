@@ -293,9 +293,8 @@ IV. ToDo:
 - ORUtils.hh contents into a namespace.
 - Re-scope ORProcessStopper into a UI class (one of whose commands is to
   stop processing)
-- ORSocketReader hangs waiting for a data packet, so can't quit nicely;
-  maybe have ORProcessStopper forcibly kill orcaroot after a time interval
-  has passed?
+- ORSocketReader reads into a buffer, but this isn't terrible efficient for 
+  a non-multi-core machine.  Fix? 
 
 
 Footnotes
