@@ -154,7 +154,7 @@ Util
 - ORLogger: utility for centralized info/error logging
 - ORVSigHandler: virtual base class for objects that need to perform
   special clean-up procedures on SIGINT (ctrl-c).
-- ORUtils: bit-swapping utilities for cross-platform endian issues
+- ORUtils: byte-swapping utilities for cross-platform endian issues
 
 Decoders 
 - ORVDataDecoder: virtual base classes for decoders. Derived classes
