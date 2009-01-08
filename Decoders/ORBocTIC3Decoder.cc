@@ -21,9 +21,38 @@ UInt_t ORBocTIC3Decoder::GetTimeOfChannel(UInt_t* record, UInt_t channel)
   return (record[2*channel + 3]);
 }
 
+
+std::string ORBocTIC3Decoder::GetParName(size_t iPar)
+{
+  switch(iPar) {
+    case 0:
+      return "Device ID";
+    case 1:
+      return "Pressure";
+    case 2:
+      return "Time";
+  }
+  ORLog(kError) << "Parameter number out of bounds" << std::endl;
+  return "";
+}
+
+UInt_t ORBocTIC3Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
+{
+  switch (iPar) {
+    case 0:
+      return GetDeviceID(record);
+    case 1:
+      return GetPressureOfChannel(record, iRow);
+    case 2:
+      return GetTimeOfChannel(record, iRow);
+  }
+  ORLog(kError) << "Parameter number out of bounds" << std::endl;
+  return 0;
+}
+
 void ORBocTIC3Decoder::Dump(UInt_t* record)
 {
-  ORLog(kDebug) << "*************** Dumping out BocTIC3 Data *************" << std::endl;
+  ORLog(kDebug) << "*************** Dumping out data *************" << std::endl;
   ORLog(kDebug) << "Number of Channels: " << GetNumberOfChannels() << std::endl;
   for (size_t i=0; i<GetNumberOfChannels();i++) {
     ORLog(kDebug) << "Channel: " << i << std::endl
