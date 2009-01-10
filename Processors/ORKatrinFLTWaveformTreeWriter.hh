@@ -28,10 +28,10 @@ class ORKatrinFLTWaveformTreeWriter : public ORVTreeWriter
   protected:
     ORKatrinFLTWaveformDecoder* fEventDecoder;
     UInt_t fSec, fSubSec, fResetSec, fResetSubSec;
-    UInt_t fEventID, fChannelMap;
+    UShort_t fEventID, fChannelMap;
     UShort_t fCrate, fCard, fChannel, fPageNumber;
     UShort_t fWaveform[kMaxWFLength];
-    Int_t fWaveformLength;
+    UInt_t fWaveformLength;
     UInt_t fEnergy;
     //Bool_t saveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-02-19 - MOVED TO BASE CLASS -tb-
 };
