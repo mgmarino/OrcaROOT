@@ -23,12 +23,12 @@ ORDataProcessor::EReturnCode ORKatrinFLTEnergyTreeWriter::InitializeBranches()
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
   fTree->Branch("resetSec", &fResetSec, "resetSec/i");
   fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");
-  fTree->Branch("eventID", &fEventID, "eventID/i");
+  fTree->Branch("eventID", &fEventID, "eventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
-  fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
+  fTree->Branch("channelMap", &fChannelMap, "channelMap/s");
   fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
   return kSuccess;
 }

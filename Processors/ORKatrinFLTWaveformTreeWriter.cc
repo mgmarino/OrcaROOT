@@ -24,14 +24,14 @@ ORKatrinFLTWaveformTreeWriter::~ORKatrinFLTWaveformTreeWriter()
   */ //-tb- 2008-02-12
 ORDataProcessor::EReturnCode ORKatrinFLTWaveformTreeWriter::InitializeBranches()
 {
-  fTree->Branch("wfLength", &fWaveformLength, "wfLength/I");
+  fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
   fTree->Branch("eventSec", &fSec, "eventSec/i");
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
   fTree->Branch("eventID", &fEventID, "eventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
-  fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
+  fTree->Branch("channelMap", &fChannelMap, "channelMap/s");
   fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
   fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
   fTree->Branch("resetSec", &fResetSec, "resetSec/i");
