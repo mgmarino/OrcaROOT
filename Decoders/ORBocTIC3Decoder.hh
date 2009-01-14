@@ -5,7 +5,6 @@
 #define _ORBocTIC3Decoder_hh_
 
 #include "ORVBasicTreeDecoder.hh"
-#include <string>
 
 class ORBocTIC3Decoder: public ORVBasicTreeDecoder
 {
@@ -33,7 +32,7 @@ class ORBocTIC3Decoder: public ORVBasicTreeDecoder
       { return "BocTIC3Model:Pressures"; }  
 
     /* Satisfying the ORVBasicTreeDecoder interface. */
-    virtual size_t GetNPars() { return 3; } 
+    virtual size_t GetNPars() { return 4; } 
     virtual size_t GetNRows(UInt_t* /*record*/) { return GetNumberOfChannels(); }
     virtual std::string GetParName(size_t iPar);
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t iRow);

@@ -4,10 +4,9 @@
 #ifndef _ORLakeshore210Decoder_hh_
 #define _ORLakeshore210Decoder_hh_
 
-#include "ORVDataDecoder.hh"
-#include <string>
+#include "ORVBasicTreeDecoder.hh"
 
-class ORLakeshore210Decoder: public ORVDataDecoder
+class ORLakeshore210Decoder: public ORVBasicTreeDecoder
 {
   public:
     ORLakeshore210Decoder() {}
@@ -31,6 +30,12 @@ class ORLakeshore210Decoder: public ORVDataDecoder
 
     virtual std::string GetDataObjectPath() 
       { return "LakeShore210Model:Temperatures"; }  
+ 
+    /* Satisfying the ORVBasicTreeDecoder interface. */
+    virtual size_t GetNPars() { return 4; } 
+    virtual size_t GetNRows(UInt_t* /*record*/) { return GetNumberOfChannels(); }
+    virtual std::string GetParName(size_t iPar);
+    virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t iRow);
     
 };
 

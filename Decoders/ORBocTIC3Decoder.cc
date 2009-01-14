@@ -28,8 +28,10 @@ std::string ORBocTIC3Decoder::GetParName(size_t iPar)
     case 0:
       return "Device ID";
     case 1:
-      return "Pressure";
+      return "Channel";
     case 2:
+      return "Pressure";
+    case 3:
       return "Time";
   }
   ORLog(kError) << "Parameter number out of bounds" << std::endl;
@@ -42,8 +44,10 @@ UInt_t ORBocTIC3Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 0:
       return GetDeviceID(record);
     case 1:
-      return GetPressureOfChannel(record, iRow);
+      return (UInt_t)iRow;
     case 2:
+      return GetPressureOfChannel(record, iRow);
+    case 3:
       return GetTimeOfChannel(record, iRow);
   }
   ORLog(kError) << "Parameter number out of bounds" << std::endl;

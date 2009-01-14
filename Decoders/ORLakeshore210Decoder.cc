@@ -35,3 +35,37 @@ void ORLakeshore210Decoder::Dump(UInt_t* record)
   }
   ORLog(kDebug) << "********************************************************" << std::endl;
 }
+
+std::string ORLakeshore210Decoder::GetParName(size_t iPar)
+{
+  switch(iPar) {
+    case 0:
+      return "Units";
+    case 1:
+      return "Channel";
+    case 2:
+      return "Temperature";
+    case 3:
+      return "Time";
+  }
+  ORLog(kError) << "Parameter number out of bounds" << std::endl;
+  return "";
+}
+
+UInt_t ORLakeshore210Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
+{
+  switch (iPar) {
+    case 0:
+      return (UInt_t) GetTemperatureUnits(record);
+    case 1:
+      return (UInt_t)iRow;
+    case 2:
+      return GetTempOfChannel(record, iRow);
+    case 3:
+      return GetTimeOfChannel(record, iRow);
+  }
+  ORLog(kError) << "Parameter number out of bounds" << std::endl;
+  return 0;
+}
+
+
