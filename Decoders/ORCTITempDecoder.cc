@@ -35,7 +35,7 @@ UInt_t ORCTITempDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     case 0:
       return GetDeviceID(record);
     case 1:
-      return GetTemperature(record);
+      return (UInt_t)GetTemperature(record);
     case 2:
       return GetTime(record);
   }

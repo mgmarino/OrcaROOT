@@ -51,7 +51,7 @@ UInt_t ORMksPdr2000Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 2:
       return (UInt_t)iRow;
     case 3:
-      return GetPressureOfChannel(record, iRow);
+      return (UInt_t)GetPressureOfChannel(record, iRow);
     case 4:
       return GetTimeOfChannel(record, iRow);
   }

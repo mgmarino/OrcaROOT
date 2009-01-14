@@ -60,7 +60,7 @@ UInt_t ORLakeshore210Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 1:
       return (UInt_t)iRow;
     case 2:
-      return GetTempOfChannel(record, iRow);
+      return (UInt_t)GetTempOfChannel(record, iRow);
     case 3:
       return GetTimeOfChannel(record, iRow);
   }

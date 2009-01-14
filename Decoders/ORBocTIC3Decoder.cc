@@ -46,7 +46,7 @@ UInt_t ORBocTIC3Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 1:
       return (UInt_t)iRow;
     case 2:
-      return GetPressureOfChannel(record, iRow);
+      return (UInt_t)GetPressureOfChannel(record, iRow);
     case 3:
       return GetTimeOfChannel(record, iRow);
   }
