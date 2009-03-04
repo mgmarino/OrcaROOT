@@ -52,6 +52,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
     virtual inline UShort_t GetEnergyNormalization();
     virtual inline UInt_t GetEnergy();
     virtual inline UShort_t GetEnergyHi();
+    virtual inline UShort_t GetChannelNum();
     // Functions that return data from Master Header
     virtual inline Bool_t HasMasterHeader() {return fHasMasterHeader;}
     virtual inline UShort_t GetMasterBoardID();
@@ -97,8 +98,7 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
 
 inline UShort_t ORGretaMarkIVDecoder::GetEnergyNormalization()
 {
-  return (UShort_t) GetIntValueFromKey("Integration Time", 
-                      CrateOf(), CardOf()); 
+  return (UShort_t) GetIntegrationTime(); 
 }
 
 inline UInt_t ORGretaMarkIVDecoder::GetEnergy()
@@ -112,6 +112,12 @@ inline UShort_t ORGretaMarkIVDecoder::GetEnergyHi()
 {
   return (UShort_t) (fDataRecord[GetRecordOffset()+3] & 0x1ff); 
 }
+
+inline UShort_t ORGretaMarkIVDecoder::GetChannelNum()
+{
+  return (UShort_t) (fDataRecord[GetRecordOffset()] & 0xF);
+}
+
 
 inline UShort_t ORGretaMarkIVDecoder::GetMasterBoardID() 
 {

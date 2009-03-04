@@ -27,7 +27,7 @@ bool ORGretaDecoder::SetDataRecord(UInt_t* dataRecord)
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   if (GetPacketLength() == GetBufHeadLen()) {
-    ORLog(kWarning) << "SetDataRecord(): There are 0 events in the record." << std::endl;
+    ORLog(kDebug) << "SetDataRecord(): There are 0 waveforms in the record." << std::endl;
     return true;
   }	
   if(!IsValid()) {
