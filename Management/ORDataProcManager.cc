@@ -4,6 +4,7 @@
 
 #include "ORLogger.hh"
 #include "ORSocketReader.hh"
+#include "ORVWriter.hh"
 
 ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runDataProc)
 { 
@@ -78,9 +79,9 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     }
     fRunContext->SetMustSwap(fReader->MustSwap());
 
-    /* Also check to see if we can write to the socket. */
-    if (ORSocketReader* theMonitor = dynamic_cast<ORSocketReader*>(fReader)) {
-      fRunContext->SetWritableSocket(theMonitor->GetSocketToWrite());
+    /* Also check to see if we can write to the reader. */
+    if (ORVWriter* theMonitor = dynamic_cast<ORVWriter*>(fReader)) {
+      fRunContext->SetWritableSocket(theMonitor);
     } else {
       fRunContext->SetWritableSocket(NULL);
     }

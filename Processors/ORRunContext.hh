@@ -7,10 +7,10 @@
 #include "ORHeader.hh"
 #include "ORHardwareDictionary.hh"
 
-class TSocket;
 
 class ORRunDataProcessor;
 class ORDataProcManager;
+class ORVWriter;
 
 class ORRunContext
 {
@@ -37,7 +37,7 @@ class ORRunContext
 
     virtual int* GetPointerToRunNumber() { return &fRunNumber; }
     virtual inline EState GetState() { return fState; }
-    virtual TSocket* GetWritableSocket() { return fWritableSocket; }
+    virtual Int_t WriteBackToSocket(const void* buffer, size_t nBytes);
 
     // for use by a managing process
     // FIXME: allow only ORRunDataProcessor to call this?
@@ -50,7 +50,7 @@ class ORRunContext
       const char* runCtrlPath = "ObjectInfo:DataChain");
       /* Returns true if success, false if not. */
     virtual void LoadRunStartRecord(UInt_t* record);
-    virtual void SetWritableSocket(TSocket* aSocket) { fWritableSocket = aSocket; }
+    virtual void SetWritableSocket(ORVWriter* aSocket) { fWritableSocket = aSocket; }
 
     /* To be called at the beginning of each record by a managing processor. */
     virtual void SetIdle();
@@ -69,7 +69,7 @@ class ORRunContext
     int fRunType;
     int fStartTime;
 
-    TSocket* fWritableSocket;
+    ORVWriter* fWritableSocket;
 
     EState fState;
 };

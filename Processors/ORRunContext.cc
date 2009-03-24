@@ -1,6 +1,7 @@
 // ORRunContext.cc
 
 #include "ORRunContext.hh"
+#include "ORVWriter.hh"
 #include "ORRunDecoder.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
@@ -117,3 +118,8 @@ void ORRunContext::SetStopping()
   fState = kStopping; 
 } 
 
+Int_t ORRunContext::WriteBackToSocket(const void* buffer, size_t nBytes)
+{
+  if(!fWritableSocket) return 0;
+  return fWritableSocket->WriteBuffer(buffer, nBytes);
+}

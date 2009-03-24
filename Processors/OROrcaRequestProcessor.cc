@@ -10,7 +10,6 @@
 #include "ORDictionary.hh"
 #include "ORXmlPlistString.hh"
 #include "ORUtils.hh"
-#include "TSocket.h"
 
 using namespace std;
 
@@ -203,30 +202,29 @@ bool OROrcaRequestProcessor::LoadOutputs()
  
   /* Now send along the xml list back to orca */ 
   if (!fRunContext) return false;
-  TSocket* lastSock = fRunContext->GetWritableSocket(); 
-  if(!lastSock) {
-    ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
-    ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
-    return false;
-  }
-
   /* The data id is gotten and or-ed with the length to resend 
    * as the first word.  Dataid's are only in the upper 16 bits
    * of the 32 bit word. The length is in number of 4-byte words.*/
-  while(xmlOutput.length() % 4 != 0) xmlOutput.append(" ");
+  while(xmlOutput.length() % sizeof(UInt_t) != 0) xmlOutput.append(" ");
   UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
-  dataIdToResend |= xmlOutput.length()/4 + 1;
+  dataIdToResend |= xmlOutput.length()/sizeof(UInt_t) + 1;
  
   if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
   /* We have to swap the binary, but not the char data*/
   
   ORLog(kDebug) << "Submitting outputs back to Orca..." << endl;
-  int nBytesRead = lastSock->SendRaw((char*)&dataIdToResend, 4);
-  if(nBytesRead==4) {
-    nBytesRead = lastSock->SendRaw(xmlOutput.c_str(), xmlOutput.length());
+
+  int nBytesRead = fRunContext->WriteBackToSocket(&dataIdToResend, sizeof(dataIdToResend));
+  if(nBytesRead==sizeof(dataIdToResend)) {
+    nBytesRead = fRunContext->WriteBackToSocket(xmlOutput.c_str(), xmlOutput.length());
     if(nBytesRead <= 0) return false;
     else return true;
-  } else return false;    
+  } else {    
+    ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
+    ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
+    return false;
+  }
+
 }
 
 void OROrcaRequestProcessor::SendErrorToOrca()
@@ -245,23 +243,22 @@ void OROrcaRequestProcessor::SendErrorToOrca()
   ORXmlPlistString xmlOutput; 
   xmlOutput.LoadDictionary(&rootErrorDict);
   if (!fRunContext) return;
-  TSocket* lastSock = fRunContext->GetWritableSocket(); 
-  if(!lastSock) {
+  /* The data id is gotten and or-ed with the length to resend 
+   * as the first word.  Dataid's are only in the upper 16 bits
+   * of the 32 bit word. The length is in number of 4-byte words.*/
+  while(xmlOutput.length() % sizeof(UInt_t) != 0) xmlOutput.append(" ");
+  UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
+  dataIdToResend |= xmlOutput.length()/sizeof(UInt_t) + 1;
+  if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
+  /* We have to swap the binary, but not the char data*/
+
+  int nBytesRead = fRunContext->WriteBackToSocket(&dataIdToResend, sizeof(dataIdToResend));
+  if (nBytesRead <= 0 ) { 
     ORLog(kError) << "No socket found to write back on.  Was this header read in as a file?" << endl; 
     ORLog(kDebug) << "Outputting xml: " << endl << xmlOutput << endl;
     return;
   }
-  /* The data id is gotten and or-ed with the length to resend 
-   * as the first word.  Dataid's are only in the upper 16 bits
-   * of the 32 bit word. The length is in number of 4-byte words.*/
-  while(xmlOutput.length() % 4 != 0) xmlOutput.append(" ");
-  UInt_t dataIdToResend = fOrcaRequestDecoder->GetDataId();
-  dataIdToResend |= xmlOutput.length()/4 + 1;
-  if(fRunContext->MustSwap()) ORUtils::Swap(dataIdToResend);
-  /* We have to swap the binary, but not the char data*/
-
-  lastSock->SendRaw((char*)&dataIdToResend, 4);
-  lastSock->SendRaw(xmlOutput.c_str(), xmlOutput.length());
+  fRunContext->WriteBackToSocket(xmlOutput.c_str(), xmlOutput.length());
 }
 
 bool OROrcaRequestProcessor::ExecuteAll(UInt_t* record)
