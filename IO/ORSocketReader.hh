@@ -4,6 +4,7 @@
 #define _ORSocketReader_hh_
 
 #include "ORVReader.hh"
+#include "ORVWriter.hh"
 #include "ORVSigHandler.hh"
 #include <pthread.h>
 #include "TSocket.h"
@@ -41,7 +42,7 @@ extern "C" void* SocketReadoutThread(void*);
     been canceled ( from ORVSigHandler ) and exits nicely
     if so.
  */
-class ORSocketReader : public ORVReader, public ORVSigHandler
+class ORSocketReader : public ORVReader, public ORVSigHandler, public ORVWriter
 {
   friend void* SocketReadoutThread(void*);  
  
@@ -72,14 +73,14 @@ class ORSocketReader : public ORVReader, public ORVSigHandler
       { fBufferLength = length; }
     enum ESocketReaderConsts {kDefaultBufferLength = 0xFFFFFF};
 
-    //! Returns a socket to which a processor can write.
+    //! Writes onto the socket.
     /*!
         This functionality is used with regards to requests from 
         Orca which require a response from OrcaROOT.  OrcaROOT
         responds on the socket if the opened socket has
-        been flagged as writable.
+        been flagged as writable.  Returns number of bytes written.
      */
-    TSocket* GetSocketToWrite() { return fSocketToWrite; } 
+    virtual Int_t WriteBuffer(const void* buffer, size_t nBytes);
 
   protected:
     ORSocketReader() {} //<disallows calling this

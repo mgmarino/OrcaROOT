@@ -3,6 +3,10 @@
 #include "ORSocketReader.hh"
 #include "ORLogger.hh"
 #include "ORUtils.hh"
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <sys/errno.h>
+
 
 ORSocketReader::ORSocketReader(const char* host, int port, bool writable) 
 {
@@ -112,6 +116,17 @@ void ORSocketReader::ResetCircularBuffer()
   fLocalBuffer.readIndex = 0;
 }
 
+Int_t ORSocketReader::WriteBuffer(const void* buffer, size_t nBytes)
+{
+  if (!fSocketToWrite) return 0;
+  fSocketToWrite->Select(TSocket::kWrite); 
+  Int_t numBytes;
+  do { 
+    numBytes = fSocketToWrite->SendRaw(buffer, nBytes);
+  } while (numBytes == -4);
+  return numBytes;
+}
+
 size_t ORSocketReader::ReadFromCircularBuffer(UInt_t* buffer, size_t numLongWords, size_t minimumWords)
 {
   size_t firstRead = 0, secondRead = 0;
@@ -219,6 +234,81 @@ size_t ORSocketReader::Read(char* buffer, size_t nBytes)
   return (nBytes - 4*numLongsToRead);
 }
 
+/* These are private functions designed to be used by SocketReadoutThread and the class */
+Int_t WriteToRootSocket(TSocket* sock, void* buffer, Int_t length)
+{
+    Int_t socketDescriptor = sock->GetDescriptor();
+    Int_t numBytesWritten;
+    Int_t totalBytesWritten = 0;
+    char* charBuffer = (char*) buffer;
+    while (length > 0) {
+      // This cycles around a would block status
+      fd_set fileDescSet;
+      struct timeval timeout;
+      timeout.tv_sec = 1;
+      timeout.tv_usec = 0;
+      FD_ZERO(&fileDescSet);
+      FD_SET(socketDescriptor, &fileDescSet);
+
+      numBytesWritten = select(socketDescriptor+1, 0, &fileDescSet, 0, &timeout);
+      if (numBytesWritten == 0) continue; // timeout
+      if (numBytesWritten < 0) { 
+        if (errno == EAGAIN) continue;
+        numBytesWritten = 0;
+        break;
+      }
+      /* We get here, it means data can be sent. */
+      numBytesWritten = send(socketDescriptor, charBuffer, length, 0);
+      if (numBytesWritten > 0) {
+        length -= numBytesWritten;
+        charBuffer += numBytesWritten;
+        totalBytesWritten += numBytesWritten;
+      } else if (numBytesWritten == 0) break;
+      // Cycle around.  If there's another problem, it should be caught by select
+    } 
+    return totalBytesWritten;
+
+
+}
+Int_t ReadoutRootSocket(TSocket* sock, void* buffer, Int_t length, ESendRecvOptions opt = kDefault)
+{
+    Int_t socketDescriptor = sock->GetDescriptor();
+    Int_t numBytesRead;
+    Int_t totalBytesRead = 0;
+    char* charBuffer = (char*) buffer;
+    while (length > 0) {
+      // This cycles around a would block status
+      fd_set fileDescSet;
+      struct timeval timeout;
+      timeout.tv_sec = 1;
+      timeout.tv_usec = 0;
+      FD_ZERO(&fileDescSet);
+      FD_SET(socketDescriptor, &fileDescSet);
+
+      numBytesRead = select(socketDescriptor+1, &fileDescSet, 0, 0, &timeout);
+      if (numBytesRead == 0) continue; // timeout
+      if (numBytesRead < 0) { 
+        if (errno == EAGAIN) continue;
+        numBytesRead = 0;
+        break;
+      }
+      /* We get here, it means data is available. */
+      if (opt == kPeek) {
+        numBytesRead = recv(socketDescriptor, charBuffer, length, MSG_PEEK);
+      } else {
+        numBytesRead = recv(socketDescriptor, charBuffer, length, MSG_WAITALL);
+      }
+      if (numBytesRead > 0) {
+        length -= numBytesRead;
+        charBuffer += numBytesRead;
+        totalBytesRead += numBytesRead;
+      } else if (numBytesRead == 0) break;
+      // Cycle around.  If there's another problem, it should be caught by select
+    } 
+    return totalBytesRead;
+
+}
+
 void* SocketReadoutThread(void* input)
 {
   /* Readout Thread which sucks info out of socket as fast as it can. */
@@ -226,7 +316,7 @@ void* SocketReadoutThread(void* input)
   
   bool firstWordRead = false;
   bool mustSwap = false;
-  Int_t numRead = 0, numLongsToRead = 0, amountAbleToRead = 0, firstRead = 0,
+  Int_t numBytesRead = 0, numLongsToRead = 0, amountAbleToRead = 0, firstRead = 0,
     secondRead = 0;
   const size_t sizeOfScratchBuffer = 0xFFFF;
   UInt_t scratchBuffer[sizeOfScratchBuffer];
@@ -239,31 +329,22 @@ void* SocketReadoutThread(void* input)
 
   TSocket* sock = socketReader->fSocket;
   //fd_set fileDescriptors; 
-  Int_t testValue;
 
   while (socketReader->fSocketIsOK) {
     /* In this thread, we readout the socket into the circular buffer. */
     pthread_testcancel(); // When we are here, it is safe to cancel the thread.
-    //FD_ZERO(&fileDescriptors);
-    //FD_SET(sock->GetDescriptor(), &fileDescriptors);
-    //timeval timeout;
-    //timeout.tv_sec = 1;
-    //timeout.tv_usec = 0;
-    //testValue = select(sock->GetDescriptor()+1,
-    //                   &fileDescriptors, 0, 0, &timeout);
-    testValue = sock->Select(TSocket::kRead, 1000);
-    if (testValue == 0) continue; // timeout
-    if (testValue < 0) {
+
+    numBytesRead = ReadoutRootSocket(sock, scratchBuffer, 
+                                sizeof(UInt_t), kPeek);
+    if (numBytesRead <= 0) {
+      // Something is wrong with the socket
       socketReader->fSocketIsOK = false;
       break;
     }
-    numRead = sock->RecvRaw(scratchBuffer, 4, kPeek);
-    if (numRead <= 0) {
-      socketReader->fSocketIsOK = false;
-      break;
-    }
+
+    // Only do the following once:
+    /* Check the first word to determine if we must swap. */
     if (!firstWordRead) {
-      /* Check the first word to determine if we must swap. */
       ORHeaderDecoder headerDec;
       ORHeaderDecoder::EOrcaStreamVersion version = 
         headerDec.GetStreamVersion(scratchBuffer[0]);
@@ -283,6 +364,8 @@ void* SocketReadoutThread(void* input)
       }
       firstWordRead = true;
     }
+
+    // Check to see the number of words to read out for this record
     if (mustSwap) ORUtils::Swap(scratchBuffer[0]);
     numLongsToRead = socketReader->fBasicDecoder.LengthOf(scratchBuffer);
     
@@ -292,28 +375,37 @@ void* SocketReadoutThread(void* input)
     amountAbleToRead = socketReader->fCircularBuffer.bufferLength 
       - socketReader->fCircularBuffer.amountInBuffer; 
 
+    /*************************************************************/
     /* Dealing with a record if we don't have room for it. */
+    /*************************************************************/
     if (amountAbleToRead < numLongsToRead) {
       /* Do we wait, or throw away data? */
       /* Throw away data now. */
+      // fixME, this needs to be set in an option
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
       pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
       socketReader->fCircularBuffer.lostLongCount += numLongsToRead;
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
+
       while (numLongsToRead > 0) {
-        numRead = sock->RecvRaw(scratchBuffer, 
+        numBytesRead = ReadoutRootSocket(sock, scratchBuffer, 
           (((size_t)numLongsToRead > sizeOfScratchBuffer) ? 
-            sizeOfScratchBuffer : numLongsToRead)*4);
-        if (numRead <=0 || numRead % 4 != 0) break;
-        numLongsToRead -= numRead/4;
+            sizeOfScratchBuffer : numLongsToRead)*sizeof(UInt_t));
+        if (numBytesRead <=0 || numBytesRead % sizeof(UInt_t) != 0) break;
+        numLongsToRead -= numBytesRead/sizeof(UInt_t);
       }
-      if (numRead <= 0 || numRead % 4 != 0) {
+      if (numBytesRead <= 0 || numBytesRead % sizeof(UInt_t) != 0) {
         socketReader->fSocketIsOK = false;
       }
       continue;
     }
+    /*************************************************************/
+    /*************************************************************/
 
+    /*************************************************************/
     /* We have room for it, so now figure out how to read it out.*/
+    /*************************************************************/
+
     firstRead = (socketReader->fCircularBuffer.writeIndex >= 
                  socketReader->fCircularBuffer.readIndex) ?
       socketReader->fCircularBuffer.bufferLength 
@@ -323,23 +415,29 @@ void* SocketReadoutThread(void* input)
 
     
     pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
-    if (firstRead > numLongsToRead) firstRead = numLongsToRead;
 
+    /* First and second reads are set to make sure the wrapping works 
+       correctly. */
+    if (firstRead > numLongsToRead) firstRead = numLongsToRead;
     secondRead = (firstRead < numLongsToRead) ? numLongsToRead - firstRead : 0;
 
     pthread_rwlock_wrlock(&socketReader->fCircularBuffer.cbMutex);
 
-    numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer 
-      + socketReader->fCircularBuffer.writeIndex, firstRead*4); 
-
-    if (numRead <= 0 || numRead != firstRead*4) {
+    /* ROOT automatically calls the receive function so that we
+       don't have to cycle through the calls. That is, it *will*
+       get all the bytes requested or error. */
+    numBytesRead = ReadoutRootSocket(sock, 
+              socketReader->fCircularBuffer.buffer 
+              + socketReader->fCircularBuffer.writeIndex, 
+              firstRead*sizeof(UInt_t)); 
+    if (numBytesRead <= 0 || numBytesRead != (Int_t)(firstRead*sizeof(UInt_t))) {
+      // Problem in the socket, or closed connection. 
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
       socketReader->fSocketIsOK = false;
       break;
     } 
-
-    socketReader->fCircularBuffer.writeIndex += firstRead;
-    socketReader->fCircularBuffer.amountInBuffer += firstRead;
+    socketReader->fCircularBuffer.writeIndex += numBytesRead/sizeof(UInt_t);
+    socketReader->fCircularBuffer.amountInBuffer += numBytesRead/sizeof(UInt_t);
 
     if (socketReader->fCircularBuffer.writeIndex 
         == socketReader->fCircularBuffer.bufferLength) {
@@ -347,18 +445,21 @@ void* SocketReadoutThread(void* input)
     }
 
     if (secondRead != 0) {
-      numRead = sock->RecvRaw(socketReader->fCircularBuffer.buffer 
-                              + socketReader->fCircularBuffer.writeIndex,
-                              secondRead*4); 
-      if (numRead <= 0 || numRead != secondRead*4) {
+      numBytesRead = ReadoutRootSocket(sock, 
+                socketReader->fCircularBuffer.buffer 
+                + socketReader->fCircularBuffer.writeIndex,
+                secondRead*sizeof(UInt_t)); 
+      if (numBytesRead <= 0 || numBytesRead != (Int_t)(secondRead*sizeof(UInt_t))) {
+        // Problem in the socket, or closed connection. 
         pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
         socketReader->fSocketIsOK = false;
         break;
       } 
-      socketReader->fCircularBuffer.writeIndex += secondRead;
-      socketReader->fCircularBuffer.amountInBuffer += secondRead;
+      socketReader->fCircularBuffer.writeIndex += numBytesRead/sizeof(UInt_t);
+      socketReader->fCircularBuffer.amountInBuffer += numBytesRead/sizeof(UInt_t);
       socketReader->fCircularBuffer.wrapArounds++;
     }
+
     /* OK, we're done reading into the circular buffer, unlock it. */
     pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
      
