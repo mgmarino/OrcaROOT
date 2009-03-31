@@ -19,10 +19,6 @@ class ORIP320ADCDecoder: public ORVBasicTreeDecoder, public ORVIndustryPakDecode
       { return ( LengthOf( record ) - kBufferHeaderLength <= 0 ) 
                  ? 0 : (size_t) ( LengthOf( record ) - kBufferHeaderLength ); } 
 
-    //! Returns time since 1 Jan 1970
-    virtual UInt_t TimeOf( UInt_t* record )
-      { return record[2]; } 
-    
     //! Returns channel number at the offset.
     /*!
         \param offset ranges from 0 to TotalADCValuesOf() - 1
