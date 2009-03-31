@@ -51,7 +51,7 @@ class ORIP408DigitalIODecoder: public ORVBasicTreeDecoder, public ORVIndustryPak
     virtual std::string GetParName( size_t iPar );
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/);
     virtual std::string GetDataObjectPath() 
-      { return "ORIP408DecoderForValues:IP480Values"; }  
+      { return "ORIP408DecoderForValues:IP408Values"; }  
     
 };
 
