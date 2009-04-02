@@ -8,12 +8,12 @@ std::string ORIP408DigitalIODecoder::GetParName( size_t iPar )
   switch(iPar) {
     case 0: return "Crate";
     case 1: return "Card";
-    case 2: return "IP Slot";
+    case 2: return "IPSlot";
     case 3: return "Time";
-    case 4: return "Write Mask";
-    case 5: return "Read Mask";
-    case 6: return "Write Value";
-    case 7: return "Read Value";
+    case 4: return "WriteMask";
+    case 5: return "ReadMask";
+    case 6: return "WriteValue";
+    case 7: return "ReadValue";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
                       << ") out of range." << std::endl;
