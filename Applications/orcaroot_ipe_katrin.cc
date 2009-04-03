@@ -250,21 +250,25 @@ int main(int argc, char** argv)
     dataProcManager.AddProcessor(&triggerShaperTreeWriter);
   }
   
-
   //ADDITION FOR KATRIN - Stop
+
+
 
 
   //ADDITION FOR Klaus Schloesser - Start - -tb- 2009-04-03
   // siehe auch: 2009/03/DataKlausSchloesser1DHisto:Histograms
   // missing data object path was "1DHisto:Histograms", the trigger info already was in ... -tb-
+  
   //the decoder
   //OR1DHistoHistogramsDecoder oneDHistoHistogramsDecoder; not necessary ... -tb-
   
   //the writer
   OR1DHistoHistogramsWriter oneDHistoHistogramsWriter("ORCA1DHisto");//ORCA1DHisto is the default -tb-
   dataProcManager.AddProcessor(&oneDHistoHistogramsWriter);
-
   //ADDITION FOR Klaus Schloesser - Stop - -tb- 2009-04-03
+
+
+
 
   ORLog(kRoutine) << "Start processing..." << endl;
   //if(stopper != NULL) stopper->ExecuteStopperThread(); // removed -tb-
