@@ -27,6 +27,7 @@
   *
   *
   * History:
+  *   - 2009-04-03 Added a 1DHistoHistograms decoder and writer (Klaus Schloesser from IK needed it). -tb-
   *   - 2008-02-19 If input is EXACTLY ONE file and if it is a IPE Crate file shaper tree is omitted.
   *   - 2008-02-19 The IPE Katrin Crate files omit empty trees.
   *   - 2008-02-12 Version from Michelle.
@@ -53,6 +54,13 @@
   #include "ORTrig4ChanDecoder.hh"
   #include "ORTrig4ChanShaperCompoundProcessor.hh"
   #include "ORTrig4ChanShaperFilter.hh"
+
+
+  //this part is for the UW crate / Klaus Schloesser -tb- 2009-04-03
+  #include "OR1DHistoHistogramsDecoder.hh"
+  #include "OR1DHistoHistogramsWriter.hh"
+
+
 
   //ADDITION FOR KATRIN - Stop
 
@@ -244,6 +252,19 @@ int main(int argc, char** argv)
   
 
   //ADDITION FOR KATRIN - Stop
+
+
+  //ADDITION FOR Klaus Schloesser - Start - -tb- 2009-04-03
+  // siehe auch: 2009/03/DataKlausSchloesser1DHisto:Histograms
+  // missing data object path was "1DHisto:Histograms", the trigger info already was in ... -tb-
+  //the decoder
+  //OR1DHistoHistogramsDecoder oneDHistoHistogramsDecoder; not necessary ... -tb-
+  
+  //the writer
+  OR1DHistoHistogramsWriter oneDHistoHistogramsWriter("ORCA1DHisto");//ORCA1DHisto is the default -tb-
+  dataProcManager.AddProcessor(&oneDHistoHistogramsWriter);
+
+  //ADDITION FOR Klaus Schloesser - Stop - -tb- 2009-04-03
 
   ORLog(kRoutine) << "Start processing..." << endl;
   //if(stopper != NULL) stopper->ExecuteStopperThread(); // removed -tb-
