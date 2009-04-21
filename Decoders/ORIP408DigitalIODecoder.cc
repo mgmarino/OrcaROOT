@@ -23,7 +23,7 @@ std::string ORIP408DigitalIODecoder::GetParName( size_t iPar )
 
 UInt_t ORIP408DigitalIODecoder::GetPar( UInt_t* record, 
                                   size_t iPar, 
-                                  size_t iRow )
+                                  size_t /*iRow*/ )
 {
   switch(iPar) {
     case 0: return CrateOf( record );
