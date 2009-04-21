@@ -47,6 +47,7 @@ class ORRunContext
   protected:
     virtual void ResetRecordFlags() { fIsRecordSwapped = false; }
     virtual bool LoadHeader(ORHeader* header, 
+      bool ignoreRunControl = false,
       const char* runCtrlPath = "ObjectInfo:DataChain");
       /* Returns true if success, false if not. */
     virtual void LoadRunStartRecord(UInt_t* record);

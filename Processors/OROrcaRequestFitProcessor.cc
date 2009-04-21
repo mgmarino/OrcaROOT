@@ -5,7 +5,7 @@
 #include "TROOT.h"
 #include "ORLogger.hh"
 #include "TF1.h"
-#include "TH1D.h"
+#include "TGraph.h"
 
 
 using namespace std;
@@ -50,13 +50,13 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     return false;
   }
   std::string histName = "temp";
-  TH1D* hist = new TH1D(histName.c_str(), histName.c_str(), fYVector.size(), 0.,fYVector.size()-1.);
-  if (!hist) {
-    ORLog(kError) << "Error allocating histogram." <<  endl;
+  TGraph* graph = new TGraph(fYVector.size());
+  if (!graph) {
+    ORLog(kError) << "Error allocating graph." <<  endl;
     return false;
   }
   for (size_t i=0;i<fYVector.size();i++) {
-    hist->SetBinContent(i+1, fYVector[i]);
+    graph->SetPoint(i, i, fYVector[i]);
   }
 
   /***************************************************/
@@ -72,7 +72,9 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     fInputParameters.clear();
     fInputParameters.resize(f1->GetNpar(), 0.);
   } 
-  f1->SetParameters((&fInputParameters[0]));
+  for (size_t i=0;i<fInputParameters.size();i++) {
+    f1->SetParameter(i, fInputParameters[i]);
+  }
   /***************************************************/
   /***************************************************/
   
@@ -83,12 +85,11 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     fIntUpper = fIntLower;
     fIntLower = temp;
   }
-  if (fYVector.size() < (size_t)fIntUpper) fIntUpper = fYVector.size();
+  if (fYVector.size() < (size_t)fIntUpper) fIntUpper = fYVector.size()-1;
 
-  fFitOptions+="FN"; // Switch to Minuit and don't store.
-  hist->Fit(f1, fFitOptions.c_str(), "", fIntLower+1, fIntUpper+1);
+  fFitOptions+="NQ"; // don't store, be quiet
+  graph->Fit(f1, fFitOptions.c_str(), "", fIntLower, fIntUpper);
   /* Actually performing the fit.  (All this for one line of code!!!) */
-  /* The bin conventions are shifted by 1, so we add 1 to the bounds. */
 
   /* Now sorting out output parameters and loading them with correct
    * data.  */
@@ -106,7 +107,6 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
   fOutputYVector.resize(((size_t)fIntUpper<=fYVector.size()) ? fIntUpper : fYVector.size());
   for (size_t i=0;i<fOutputYVector.size();i++) {
     fOutputYVector[i] = (i<(size_t)fIntLower) ? 0. : f1->Eval(i);
-    /* Again the bin convenction is slightly different. */
   }
   fOutputEquation = f1->GetExpFormula();
   /* This is useful if a user-defined equation was input. */
@@ -114,7 +114,7 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
   fOutputChiSquare = (f1->GetNDF()==0) ? 0 : f1->GetChisquare()/f1->GetNDF(); 
   
   fInputParameters.clear();
-  delete hist; 
+  delete graph; 
   delete f1;
 
   return true;

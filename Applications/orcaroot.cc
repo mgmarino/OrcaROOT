@@ -258,6 +258,7 @@ int main(int argc, char** argv)
   OROrcaRequestProcessor orcaReq;
   if (runAsDaemon) {
     /* Add them here if you wish to run them in daemon mode ( not likely ).*/
+    dataProcManager.SetRunAsDaemon();
     dataProcManager.AddProcessor(&orcaReq);
   } else {
     /* Add the processors here to run them in normal mode. */

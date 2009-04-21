@@ -29,17 +29,24 @@ ORRunContext::~ORRunContext()
   if (fHardwareDict) delete fHardwareDict;
 }
 
-bool ORRunContext::LoadHeader(ORHeader* header, const char* runCtrlPath)
+bool ORRunContext::LoadHeader(ORHeader* header, bool ignoreRunControl, const char* runCtrlPath)
 {
+
+  fClassName = "";
+  fRunNumber = -1;
+  fRunType = -1;
+  fStartTime = -1;
+  fIsQuickStartRun = false;
   if (!header) {
     ORLog(kError) << "Header is NULL!" << std::endl;
     return false;
   }
   fHeader = header;
+  if (ignoreRunControl) return true;
   if (fHardwareDict) delete fHardwareDict;
   fHardwareDict = new ORHardwareDictionary();
   if(!fHardwareDict->LoadHardwareDictFromDict(fHeader->GetDictionary())) {
-    ORLog(kError) << "Error loading hardware dictionary!" << std::endl;
+    ORLog(kWarning) << "Error loading hardware dictionary!" << std::endl;
     delete fHardwareDict;
     fHardwareDict = NULL;
   }

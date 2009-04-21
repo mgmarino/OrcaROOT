@@ -26,6 +26,7 @@ ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runD
   if (dynamic_cast<ORSocketReader*>(fReader) != NULL) {
     fRunDataProcessor->IncreaseHeartbeatVerbosity();
   }
+  fRunAsDaemon = false;
 }
 
 ORDataProcManager::~ORDataProcManager()
@@ -89,7 +90,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
   
   if(continueProcessing) {
     ORLog(kDebug) << "ProcessRun(): loading dictionary..." << std::endl;
-    if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader())) {
+    if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader(), fRunAsDaemon)) {
       /* We have encountered a problem loading the header file. */
       /* Kill Run, try going to the next run. */
       ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << std::endl;
@@ -101,13 +102,17 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       ORLog(kDebug) << "ProcessRun(): start reading records..." << std::endl;
       while (fReader->ReadRecord(buffer, nLongsMax) && fDoProcess) {
         fRunContext->ResetRecordFlags();
-        fRunDataProcessor->ProcessDataRecord(buffer);
+        if (!fRunAsDaemon) {
+          fRunDataProcessor->ProcessDataRecord(buffer);
+        }
       
         if (fRunContext->GetState() <= ORRunContext::kStarting) {
           retCode = StartRun();
           if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
           if (retCode >= kAlarm) return kAlarm;
-          fRunDataProcessor->OnStartRunComplete(); 
+          if (!fRunAsDaemon) {
+            fRunDataProcessor->OnStartRunComplete(); 
+          }
         }
       
         // let all processors process the data record
@@ -131,7 +136,9 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       retCode = EndRun();
       if (retCode >= kAlarm) return kAlarm;
-      fRunDataProcessor->OnEndRunComplete();
+      if (!fRunAsDaemon) {
+        fRunDataProcessor->OnEndRunComplete();
+      }
     }
   }
 
@@ -167,6 +174,8 @@ void ORDataProcManager::SetRunContext(ORRunContext* aContext)
 void ORDataProcManager::SetDataId()
 {
   // Not necessary to SetDataId of fHeaderProcessor -- it is always 0x0!
-  fRunDataProcessor->SetDataId();
+  if (!fRunAsDaemon) {
+    fRunDataProcessor->SetDataId();
+  }
   ORCompoundDataProcessor::SetDataId();
 }

@@ -24,12 +24,15 @@ class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
     virtual inline void ValidateHeaderXML(bool doValidate = true)
       { fHeaderProcessor.GetHeader()->ValidateXML(doValidate); }
 
+    /*! Tells the manager to run as daemon and ignore warning messages related to Run Context, etc. */
+    virtual void SetRunAsDaemon(bool runAsDaemon = true) { fRunAsDaemon = runAsDaemon; }
   protected:
     virtual void SetRunContext(ORRunContext* aContext);
     ORVReader* fReader;
     ORHeaderProcessor fHeaderProcessor;
     ORRunDataProcessor* fRunDataProcessor;
     bool fIOwnRunDataProcessor;
+    bool fRunAsDaemon;
 };
 
 #endif
