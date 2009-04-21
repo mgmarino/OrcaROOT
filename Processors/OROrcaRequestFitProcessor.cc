@@ -85,7 +85,7 @@ bool OROrcaRequestFitProcessor::ExecuteProcess()
     fIntUpper = fIntLower;
     fIntLower = temp;
   }
-  if (fYVector.size() < (size_t)fIntUpper) fIntUpper = fYVector.size()-1;
+  if (fYVector.size() < (size_t)fIntUpper) fIntUpper = fYVector.size();
 
   fFitOptions+="NQ"; // don't store, be quiet
   graph->Fit(f1, fFitOptions.c_str(), "", fIntLower, fIntUpper);
