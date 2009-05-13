@@ -14,7 +14,7 @@ class ORMCA927TreeWriter : public ORVTreeWriter
     enum ORMCA927TreeWriterConsts{kMaxWFLength = 0x3fff};
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
-	{ fDevice = 0;  fType = 0; fChannel = 0; 
+	{ fDevice = 0;  fType = 0; fZDTMode = 0; fChannel = 0; 
         fWaveformLength = 0;}
   protected:
     virtual EReturnCode InitializeBranches();
@@ -23,8 +23,8 @@ class ORMCA927TreeWriter : public ORVTreeWriter
     ORMCA927Decoder* fEventDecoder;
     UShort_t fDevice, fChannel, fType;
 	Double_t fLiveTime,fRealTime;
+	UInt_t fZDTMode;
     UInt_t fWaveform[kMaxWFLength];
-    UInt_t fZDT[kMaxWFLength];
     size_t fWaveformLength;
 };
 
