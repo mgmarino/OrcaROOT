@@ -1,8 +1,6 @@
 
 #include "ORScriptDecoderForRecord.hh"
 #include "ORScriptRecordTreeWriter.hh"
-#include "TString.h"
-#include <iostream>
 using namespace std;
 
 ORScriptRecordTreeWriter::ORScriptRecordTreeWriter(string treeName) : 
@@ -35,6 +33,5 @@ ORDataProcessor::EReturnCode ORScriptRecordTreeWriter::ProcessMyDataRecord(UInt_
 ORDataProcessor::EReturnCode ORScriptRecordTreeWriter::ProcessMyScriptRecord(UInt_t* record)
 { 
   *fXMLCharString = fRecordDecoder->XMLPlistOf(record).GetRawXML();
-  cout << *fXMLCharString << endl;
   return kSuccess;
 }
