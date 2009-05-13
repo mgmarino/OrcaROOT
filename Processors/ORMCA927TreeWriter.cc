@@ -28,13 +28,13 @@ ORMCA927TreeWriter::~ORMCA927TreeWriter()
 ORDataProcessor::EReturnCode ORMCA927TreeWriter::InitializeBranches()
 {
 	fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
-	fTree->Branch("device", &fDevice,			"device/s");
-	fTree->Branch("type", &fType,				"type/s");
-	fTree->Branch("channel", &fChannel,			"channel/s");
-	fTree->Branch("spectrum", fWaveform,		"spectrum[wfLength]/i");
-	fTree->Branch("zdt", fZDT,					"zdt[wfLength]/i");
+	fTree->Branch("device",   &fDevice,			"device/s");
+	fTree->Branch("type",     &fType,			"type/s");
+	fTree->Branch("channel",  &fChannel,		"channel/s");
+	fTree->Branch("waveform", fWaveform,		"waveform[wfLength]/i");
 	fTree->Branch("liveTime", &fLiveTime,		"liveTime/D");
 	fTree->Branch("realTime", &fRealTime,		"realTime/D");
+	fTree->Branch("zdtMode",  &fZDTMode,		"zdtMode/D");
 	return kSuccess;
 }
 
@@ -46,15 +46,17 @@ ORDataProcessor::EReturnCode ORMCA927TreeWriter::ProcessMyDataRecord(UInt_t* rec
 	fDevice			= fEventDecoder->GetDevice();
 	fChannel		= fEventDecoder->GetChannelNum();
 	fType			= fEventDecoder->GetType();
+	fZDTMode		= fEventDecoder->GetZDTMode();
 	fLiveTime		= fEventDecoder->GetLiveTime();
 	fRealTime		= fEventDecoder->GetRealTime();
 	fWaveformLength = fEventDecoder->GetWaveformLen();
 	if (ORLogger::GetSeverity() >= ORLogger::kDebug) { 
 		ORLog(kDebug) << "ProcessMyDataRecord(): "
-			<< "time-device-channel-type-liveTime-realTime-length- = "
+			<< "device-channel-type-zdtMode-liveTime-realTime-length- = "
 			<< fDevice << "-"
 			<< fChannel << "-"
 			<< fType << "-"
+			<< fZDTMode << "-"
 			<< fLiveTime << "-"
 			<< fRealTime << "-"
 			<< fWaveformLength << "-"
@@ -65,8 +67,7 @@ ORDataProcessor::EReturnCode ORMCA927TreeWriter::ProcessMyDataRecord(UInt_t* rec
 		ORLog(kError) << "Waveform too long for kMaxWFLength!" << endl;
 		return kFailure;
 	}
-	if(fType == 0)fEventDecoder->CopyWaveformData(fWaveform, fWaveformLength);
-	else		  fEventDecoder->CopyWaveformData(fZDT, fWaveformLength);
+	fEventDecoder->CopyWaveformData(fWaveform, fWaveformLength);
 	fTree->Fill();
 	return kSuccess;
 }
