@@ -9,8 +9,8 @@ ORScriptRecordTreeWriter::ORScriptRecordTreeWriter(string treeName) :
   ORVTreeWriter(new ORScriptDecoderForRecord, treeName)
 {
   fRecordDecoder = dynamic_cast<ORScriptDecoderForRecord*>(fDataDecoder); 
-  Clear();
   fXMLCharString = new TString;
+  Clear();
 }
 
 ORScriptRecordTreeWriter::~ORScriptRecordTreeWriter()

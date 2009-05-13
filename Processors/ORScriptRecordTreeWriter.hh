@@ -22,7 +22,7 @@ class ORScriptRecordTreeWriter : public ORVTreeWriter
     virtual ~ORScriptRecordTreeWriter();
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
-      {  fXMLCharString = NULL; }
+      {  fXMLCharString->Clear(); }
 
     //! Inheriting classes should overload this if they 
     //! wish to limit their processing by script ID. 
