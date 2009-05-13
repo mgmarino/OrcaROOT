@@ -74,8 +74,7 @@ void ORMCA927Decoder::DumpBufferHeader()
   {
     ORLog(kDebug) << "Dumping Data Buffer Header (Raw Data): " << std::endl;
     ORLog(kDebug) << "**************************************************" << std::endl;
-    for(size_t i=1;i<kBufHeadLen; i++)
-    {
+    for(size_t i=1;i<kBufHeadLen; i++) {
       ORLog(kDebug) << fDataRecord[i] << std::endl;
     }
     ORLog(kDebug) << "**************************************************" << std::endl;
@@ -92,6 +91,7 @@ void ORMCA927Decoder::Dump(UInt_t* dataRecord) //debugging
     << "    The header is " << kBufHeadLen << " (32-bit) words long" << std::endl
     << "    The channel is " << GetChannelNum() << std::endl
     << "    The type is " << GetType() << std::endl
+    << "    The zdtMode is " << GetZDTMode() << std::endl
     << "    LiveTime: " << GetLiveTime() << std::endl
     << "    RealTime: " << GetRealTime() << std::endl
     << "    The waveform data has " << GetWaveformLen() << " (32-bit) words" << std::endl;
