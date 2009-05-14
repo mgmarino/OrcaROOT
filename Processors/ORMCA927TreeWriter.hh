@@ -11,11 +11,16 @@ class ORMCA927TreeWriter : public ORVTreeWriter
   public:
     ORMCA927TreeWriter(std::string treeName = "");
     virtual ~ORMCA927TreeWriter();
-    enum ORMCA927TreeWriterConsts{kMaxWFLength = 0x3fff};
+    enum ORMCA927TreeWriterConsts{kMaxSpLength = 0x3fff};
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
-	{ fDevice = 0;  fType = 0; fZDTMode = 0; fChannel = 0; 
-        fWaveformLength = 0;}
+		{	
+			fDevice			= 0;  
+			fType			= 0; 
+			fZDTMode		= 0; 
+			fChannel		= 0; 
+			fSpectrumLength = 0;
+		}
   protected:
     virtual EReturnCode InitializeBranches();
 
@@ -24,8 +29,8 @@ class ORMCA927TreeWriter : public ORVTreeWriter
     UShort_t fDevice, fChannel, fType;
 	Double_t fLiveTime,fRealTime;
 	UInt_t fZDTMode;
-    UInt_t fWaveform[kMaxWFLength];
-    size_t fWaveformLength;
+    UInt_t fSpectrum[kMaxSpLength];
+    size_t fSpectrumLength;
 };
 
 #endif
