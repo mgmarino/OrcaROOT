@@ -7,7 +7,7 @@ ORScriptRecordTreeWriter::ORScriptRecordTreeWriter(string treeName) :
   ORVTreeWriter(new ORScriptDecoderForRecord, treeName)
 {
   fRecordDecoder = dynamic_cast<ORScriptDecoderForRecord*>(fDataDecoder); 
-  fXMLCharString = new TString;
+  fXMLCharString = new TObjString;
   Clear();
 }
 
@@ -18,7 +18,7 @@ ORScriptRecordTreeWriter::~ORScriptRecordTreeWriter()
 
 ORDataProcessor::EReturnCode ORScriptRecordTreeWriter::InitializeBranches()
 {
-  fTree->Branch("xmlRecord", "TString", &fXMLCharString); 
+  fTree->Branch("xmlRecord", "TObjString", &fXMLCharString); 
   return kSuccess;
 }
 
@@ -32,6 +32,6 @@ ORDataProcessor::EReturnCode ORScriptRecordTreeWriter::ProcessMyDataRecord(UInt_
 
 ORDataProcessor::EReturnCode ORScriptRecordTreeWriter::ProcessMyScriptRecord(UInt_t* record)
 { 
-  *fXMLCharString = fRecordDecoder->XMLPlistOf(record).GetRawXML();
+  fXMLCharString->SetString(fRecordDecoder->XMLPlistOf(record).GetRawXML());
   return kSuccess;
 }

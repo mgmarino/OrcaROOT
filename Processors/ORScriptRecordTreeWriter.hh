@@ -4,7 +4,8 @@
 #define _ORScriptRecordTreeWriter_hh_
 
 #include "ORVTreeWriter.hh"
-#include "TString.h"
+#include "TObjString.h"
+
 /*! Base class handling a script record.  Derived classes should
     overload ProcessMyScriptRecord and GetScriptID (if they want 
     to limit  which scripts to process) 
@@ -22,7 +23,7 @@ class ORScriptRecordTreeWriter : public ORVTreeWriter
     virtual ~ORScriptRecordTreeWriter();
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
-      {  fXMLCharString->Resize(0); }
+      {  fXMLCharString->SetString(""); }
 
     //! Inheriting classes should overload this if they 
     //! wish to limit their processing by script ID. 
@@ -36,7 +37,7 @@ class ORScriptRecordTreeWriter : public ORVTreeWriter
 
   protected:
     ORScriptDecoderForRecord* fRecordDecoder;
-    TString* fXMLCharString;
+    TObjString* fXMLCharString;
 };
 
 #endif
