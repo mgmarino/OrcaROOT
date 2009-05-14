@@ -18,44 +18,23 @@ bool ORMCA927Decoder::SetDataRecord(UInt_t* dataRecord)
   return true;
 }
 
-size_t ORMCA927Decoder::CopyWaveformData(UInt_t* waveform, size_t len)
-//copies the waveform data to the array pointed to by
-//waveform, which is of length len
+size_t ORMCA927Decoder::CopySpectrumData(UInt_t* spectrum, size_t len)
+//copies the spectrum data to the array pointed to by
+//spectrum, which is of length len
 {
-  size_t wflen = GetWaveformLen();
-  if (wflen == 0) return 0;
-  if ((len < wflen) || (len == 0)) {
-    ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << std::endl;
+  size_t splen = GetSpectrumLength();
+  if (splen == 0) return 0;
+  if ((len < splen) || (len == 0)) {
+    ORLog(kWarning) << "CopySpectrumData(): destination array length is " << len 
+	  << "; spectrum data length is " << GetSpectrumLength() << std::endl;
   }
   else {
-    len = GetWaveformLen(); 
+    len = GetSpectrumLength(); 
   }
-  UInt_t* waveformData = GetWaveformDataPointer();
-  memcpy(waveform, waveformData, sizeof(UInt_t)*len);
+  UInt_t* spectrumData = GetSpectrumDataPointer();
+  memcpy(spectrum, spectrumData, sizeof(UInt_t)*len);
   return len;
 }
-
-size_t ORMCA927Decoder::CopyWaveformDataDouble(double* waveform, size_t len)
-//copies the waveform data to the array pointed to by
-//waveform, which is of length len
-{
-  size_t wflen = GetWaveformLen();
-  if (wflen == 0) return 0;
-  if ((len < wflen) || (len == 0)) {
-    ORLog(kWarning) << "CopyWaveformData(): destination array length is " << len 
-                    << "; waveform data length is " << GetWaveformLen() << std::endl;
-  }
-  else {
-    len = GetWaveformLen(); 
-  }
-  UInt_t* waveformData = GetWaveformDataPointer();
-  for(size_t i=0;i<len;i++) {
-    waveform[i] = (Double_t) waveformData[i];  
-  }
-  return len;
-}
-
 
 //Error checking: **********************************************************************
 bool ORMCA927Decoder::IsValid() 
@@ -94,11 +73,17 @@ void ORMCA927Decoder::Dump(UInt_t* dataRecord) //debugging
     << "    The zdtMode is " << GetZDTMode() << std::endl
     << "    LiveTime: " << GetLiveTime() << std::endl
     << "    RealTime: " << GetRealTime() << std::endl
-    << "    The waveform data has " << GetWaveformLen() << " (32-bit) words" << std::endl;
+    << "    The spectrum data has " << GetSpectrumLength() << " (32-bit) words" << std::endl;
 }
 
-UInt_t ORMCA927Decoder::GetEventWaveformPoint( size_t /*event*/, 
-											   size_t waveformPoint )
+size_t  ORMCA927Decoder::GetSpectrumLength()		
+{ 
+	return (LengthOf(fDataRecord) - kBufHeadLen);
+}
+
+
+UInt_t ORMCA927Decoder::GetEventSpectrumPoint( size_t /*event*/, 
+											   size_t spectrumPoint )
 {
-  return (UInt_t)GetWaveformDataPointer()[waveformPoint]; 
+  return (UInt_t)GetSpectrumDataPointer()[spectrumPoint]; 
 }
