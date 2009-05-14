@@ -68,6 +68,14 @@ class ORScriptDecoderForRecord : public ORVDataDecoder
     virtual inline UInt_t LengthOfXMLInBytesOf(UInt_t* record) 
       { return record[kXMLLength]; }
 
+    /*! This will yield the base dictionary referred to by
+        GetKeyOfValueInRecord().  The returned ORVDictValue
+        can be used to access the xml data, see its documentation.
+        This class doesn't know what type of dictionary value this 
+        is, so a processor must either determine this through a
+        dynamic_cast downcast or by using the querying functions
+        of ORVDictValue.
+     */ 
     virtual const ORVDictValue* XMLDataOf(UInt_t* record); 
     virtual const ORXmlPlist& XMLPlistOf(UInt_t* record);
 
