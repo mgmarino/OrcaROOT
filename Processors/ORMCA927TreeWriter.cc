@@ -16,7 +16,7 @@ ORVTreeWriter(new ORMCA927Decoder, treeName)
 	fChannel		= 0;
 	fLiveTime		= 0;
 	fRealTime		= 0;
-	fWaveformLength = 0;
+	fSpectrumLength = 0;
 	SetDoNotAutoFillTree();
 }
 
@@ -27,11 +27,11 @@ ORMCA927TreeWriter::~ORMCA927TreeWriter()
 
 ORDataProcessor::EReturnCode ORMCA927TreeWriter::InitializeBranches()
 {
-	fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
+	fTree->Branch("spLength", &fSpectrumLength, "spLength/i");
 	fTree->Branch("device",   &fDevice,			"device/s");
 	fTree->Branch("type",     &fType,			"type/s");
 	fTree->Branch("channel",  &fChannel,		"channel/s");
-	fTree->Branch("waveform", fWaveform,		"waveform[wfLength]/i");
+	fTree->Branch("spectrum", fSpectrum,		"spectrum[spLength]/i");
 	fTree->Branch("liveTime", &fLiveTime,		"liveTime/D");
 	fTree->Branch("realTime", &fRealTime,		"realTime/D");
 	fTree->Branch("zdtMode",  &fZDTMode,		"zdtMode/D");
@@ -49,7 +49,7 @@ ORDataProcessor::EReturnCode ORMCA927TreeWriter::ProcessMyDataRecord(UInt_t* rec
 	fZDTMode		= fEventDecoder->GetZDTMode();
 	fLiveTime		= fEventDecoder->GetLiveTime();
 	fRealTime		= fEventDecoder->GetRealTime();
-	fWaveformLength = fEventDecoder->GetWaveformLen();
+	fSpectrumLength = fEventDecoder->GetSpectrumLength();
 	if (ORLogger::GetSeverity() >= ORLogger::kDebug) { 
 		ORLog(kDebug) << "ProcessMyDataRecord(): "
 			<< "device-channel-type-zdtMode-liveTime-realTime-length- = "
@@ -59,15 +59,15 @@ ORDataProcessor::EReturnCode ORMCA927TreeWriter::ProcessMyDataRecord(UInt_t* rec
 			<< fZDTMode << "-"
 			<< fLiveTime << "-"
 			<< fRealTime << "-"
-			<< fWaveformLength << "-"
+			<< fSpectrumLength << "-"
 			<< endl;
 	}
 
-	if (fWaveformLength > kMaxWFLength) {
-		ORLog(kError) << "Waveform too long for kMaxWFLength!" << endl;
+	if (fSpectrumLength > kMaxSpLength) {
+		ORLog(kError) << "Spectrum too long for kMaxSpLength!" << endl;
 		return kFailure;
 	}
-	fEventDecoder->CopyWaveformData(fWaveform, fWaveformLength);
+	fEventDecoder->CopySpectrumData(fSpectrum, fSpectrumLength);
 	fTree->Fill();
 	return kSuccess;
 }
