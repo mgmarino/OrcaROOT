@@ -3,7 +3,7 @@
 #ifndef _ORMCA927Decoder_hh_
 #define _ORMCA927Decoder_hh_
 
-#include "ORVDigitizerDecoder.hh"
+#include "ORVMCADecoder.hh"
 /*----------------------------------------------
  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  ^^^^ ^^^^ ^^^^ ^^-----------------------data id
@@ -23,9 +23,9 @@
  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx spare
  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx spare
  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx spare
- the waveform follows and fills out the record 
+ the spectrum follows and fills out the record (one spectrum/record)
  ------------------------------------------------*/
-class ORMCA927Decoder: public ORVDigitizerDecoder
+class ORMCA927Decoder: public ORVMCADecoder
 {
   public:
     ORMCA927Decoder();
@@ -43,30 +43,18 @@ class ORMCA927Decoder: public ORVDigitizerDecoder
 	inline Double_t GetLiveTime()			{ return (fDataRecord[2] * 0.020);}
 	inline Double_t GetRealTime()			{ return (fDataRecord[3] * 0.020);}
 	inline Int_t    GetZDTMode()			{ return (fDataRecord[4]);}
-	inline size_t   GetWaveformLen()		{ return (LengthOf(fDataRecord) - kBufHeadLen);}
-	inline UInt_t*  GetWaveformDataPointer(){ return (UInt_t*)(fDataRecord + kBufHeadLen);}
+	inline UInt_t*  GetSpectrumDataPointer(){ return (UInt_t*)(fDataRecord + kBufHeadLen);}
 	
-    // Waveform Functions
-    virtual size_t CopyWaveformData(UInt_t* waveform, size_t len);
-    virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
- 	
+	virtual size_t  GetSpectrumLength();	
+    virtual size_t	CopySpectrumData(UInt_t* spectrum, size_t len);
+ 	virtual UInt_t	GetEventSpectrumPoint( size_t /*event*/, size_t spectrumPoint );
+	
     //Error checking:
     virtual bool IsValid();
     virtual void DumpBufferHeader();
    
     //debugging:
     void Dump(UInt_t* dataRecord);
-    
-    /* Adhering to ORVDigitizerDecoder interface. This device doesn't use most of these*/
-    virtual double GetSamplingFrequency()					{ return 1;}
-    virtual UShort_t GetBitResolution()						{ return 12;}
-    virtual size_t GetNumberOfEvents()						{ return 1;}
-    virtual ULong64_t GetEventTime(size_t /*event*/)		{ return 0; }
-    virtual UInt_t GetEventEnergy(size_t /*event*/)			{ return 0; }
-    virtual UShort_t GetEventChannel(size_t /*event*/)		{ return GetChannelNum();}
-    virtual size_t GetEventWaveformLength(size_t /*event*/) { return GetWaveformLen(); }
-    virtual UInt_t GetEventWaveformPoint( size_t /*event*/, size_t waveformPoint );
-
 };
 
 #endif
