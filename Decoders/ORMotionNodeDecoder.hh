@@ -4,6 +4,16 @@
 #define _ORMotionNodeDecoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
+/*----------------------------------------------
+ xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+ ^^^^ ^^^^ ^^^^ ^^-----------------------data id
+                  ^^ ^^^^ ^^^^ ^^^^ ^^^^-length in longs
+ xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+                  ^^---------------------traceid (0=x,1=y,2=z)
+					 ^^^^ ^^^^ ^^^^-device
+ xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx Unix Time
+ the  trace follows and fills out the record length (floats encoded as longs)
+ ------------------------------------------------*/
 
 class ORMotionNodeDecoder: public ORVDigitizerDecoder
 {
