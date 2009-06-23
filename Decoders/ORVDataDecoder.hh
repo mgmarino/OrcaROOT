@@ -149,6 +149,8 @@ class ORVDataDecoder
      *                                         CrateOf(record), 0)
      *
      * Other access functions work similarly.
+     * The failure modes of the functions are to return 0 (or false for bool)
+     * and to output an error to ORLog.
      */
     virtual const ORVDictValue* GetValueFromKey(std::string key, 
       UInt_t crate, UInt_t card);
