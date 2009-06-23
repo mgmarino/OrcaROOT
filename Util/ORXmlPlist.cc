@@ -105,13 +105,13 @@ bool ORXmlPlist::LoadXmlPlist(const char* fullHeaderAsString, size_t lengthOfBuf
   return LoadDictionary(rootDict, fDictionary); 
 }
 
-const ORVDictValue* ORXmlPlist::LookUp(std::string key) const 
+const ORVDictValue* ORXmlPlist::LookUp(std::string key, char delimiter) const 
 { 
   if(fDictionary == NULL) {
     ORLog(kError) << "LookUp(): dictionary not loaded" << std::endl;
     return 0;
   }
-  return fDictionary->LookUp(key); 
+  return fDictionary->LookUp(key, delimiter); 
 }
 
 bool ORXmlPlist::LoadDictionary(TXMLNode* dictNode, ORDictionary* dictionary)

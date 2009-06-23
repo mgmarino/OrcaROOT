@@ -29,7 +29,7 @@ class ORXmlPlist
     //! Load a plist from a file* 
     virtual bool LoadXmlPlistFromFile(const char* fileName);
     virtual ORDictionary* GetDictionary() { return fDictionary; }
-    virtual const ORVDictValue* LookUp(std::string key) const;
+    virtual const ORVDictValue* LookUp(std::string key, char delimiter = ':') const;
     virtual TString& GetRawXML() { return fRawXML; }
     virtual const TString& GetRawXML() const { return fRawXML; }
 
