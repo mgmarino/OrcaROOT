@@ -53,6 +53,8 @@ class ORGretaMarkIVDecoder: public ORGretaDecoder
     virtual inline UInt_t GetEnergy();
     virtual inline UShort_t GetEnergyHi();
     virtual inline UShort_t GetChannelNum();
+    virtual inline Bool_t EnergyIsNegative();
+    virtual inline Int_t GetSignedEnergy();
     // Functions that return data from Master Header
     virtual inline Bool_t HasMasterHeader() {return fHasMasterHeader;}
     virtual inline UShort_t GetMasterBoardID();
@@ -112,6 +114,18 @@ inline UShort_t ORGretaMarkIVDecoder::GetEnergyHi()
 {
   return (UShort_t) (fDataRecord[GetRecordOffset()+3] & 0x1ff); 
 }
+
+inline Bool_t ORGretaMarkIVDecoder::EnergyIsNegative()
+{
+  return (Bool_t) (GetEnergyHi() & 0x100); 
+}
+
+inline Int_t ORGretaMarkIVDecoder::GetSignedEnergy()
+{
+  if(EnergyIsNegative()) return -1 * (Int_t) GetEnergy();
+  else return GetEnergy();
+}
+
 
 inline UShort_t ORGretaMarkIVDecoder::GetChannelNum()
 {
