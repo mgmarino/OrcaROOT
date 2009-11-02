@@ -4,6 +4,7 @@
 
 #include "OREventCounter.hh"
 #include "ORLogger.hh"
+#include "ORRunContext.hh"
 
 using namespace std;
 

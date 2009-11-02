@@ -10,6 +10,7 @@
 #include "ORDictionary.hh"
 #include "ORXmlPlistString.hh"
 #include "ORUtils.hh"
+#include "ORRunContext.hh"
 
 using namespace std;
 
