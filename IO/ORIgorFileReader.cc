@@ -21,7 +21,7 @@ size_t ORIgorFileReader::Read(char* buffer, size_t nBytesMax)
   return gcount();
 }
 
-bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
+bool ORIgorFileReader::ReadRecord(std::vector<UInt_t>& buffer)
 {
   // First, read in the header if necessary.
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
@@ -32,12 +32,12 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
     std::string header = ReadHeader();
     UInt_t nBytes = header.size() + 1;
     UInt_t recordLength = ((UInt_t) ceil(double(nBytes)/4.0)) + 2;
-    if(nLongsMax < recordLength) {
-      nLongsMax = DeleteAndResizeBuffer(buffer, recordLength);
+    if(buffer.size() < recordLength) {
+      DeleteAndResizeBuffer(buffer, recordLength);
     }
     buffer[0] = recordLength;
     buffer[1] = nBytes;
-    memcpy(buffer+2, header.c_str(), nBytes);
+    memcpy((&buffer[0])+2, header.c_str(), nBytes);
     /* Here we assume that the igor files come from a little endian (PC) 
        machine. */
     fStreamVersion = ORHeaderDecoder::kOld;
@@ -72,21 +72,21 @@ bool ORIgorFileReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
   if (!OKToRead()) return false;
   size_t longRecordLength = theBuffSize/2 + 2 + theBuffSize % 2;  
   // we're adding 2 longs to the buffer
-  if (longRecordLength > nLongsMax) {
+  if (longRecordLength > buffer.size()) {
     UInt_t tmp = buffer[0];
     UInt_t tmp1 = buffer[1];
     UInt_t tmp2 = buffer[2];
-    nLongsMax = DeleteAndResizeBuffer(buffer, longRecordLength);
+    DeleteAndResizeBuffer(buffer, longRecordLength);
     buffer[0] = tmp;
     buffer[1] = tmp1;
     buffer[2] = tmp2;
   }
   size_t nBytesToRead = (theBuffSize-2)*2;  // XIA is 16 bit.
-  size_t nBytesRead = Read(((char*) buffer)+12, nBytesToRead);
+  size_t nBytesRead = Read(((char*) &buffer[0])+12, nBytesToRead);
   if (nBytesRead != nBytesToRead) {
     ORLog(kWarning) << "ReadRecord(): attempt to read " << nBytesToRead
                     << " B only returned " << nBytesRead << "B "
-      	      << "(id = " << decoder.DataIdOf(buffer) << ", "
+      	      << "(id = " << decoder.DataIdOf(&buffer[0]) << ", "
       	      << "len = " << longRecordLength << ")" << std::endl;
     return false;
   }

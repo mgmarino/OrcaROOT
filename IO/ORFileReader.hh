@@ -11,7 +11,7 @@
 //! Class to read in files
 /*!
    This class reads in Orca files that have been
-   saved to disk. 
+   saved to disk.  This class can not exist across threads. 
  */
 class ORFileReader : public std::ifstream, public ORVReader
 {
@@ -20,7 +20,9 @@ class ORFileReader : public std::ifstream, public ORVReader
     virtual ~ORFileReader() {}
 
     virtual size_t Read(char* buffer, size_t nBytesMax);
-    virtual bool OKToRead() { return !bad() && !eof() && good(); }
+    virtual bool OKToRead() { return (fFileList.size() > 0) || 
+                                     (peek() && !bad() && 
+                                      !eof() && good()); }
 
     //! Open the next file in the file list.
     virtual bool OpenDataStream();

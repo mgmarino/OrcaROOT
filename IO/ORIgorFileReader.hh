@@ -20,7 +20,7 @@ class ORIgorFileReader : public ORFileReader
 
     virtual size_t Read(char* buffer, size_t nBytes);
     virtual size_t ReadPartialLineWithCR(char* , size_t ) { return 0;} 
-    virtual bool ReadRecord(UInt_t*& buffer, size_t& nLongsMax);
+    virtual bool ReadRecord(std::vector<UInt_t>& buffer);
 
   protected:
     virtual std::string ReadHeader();

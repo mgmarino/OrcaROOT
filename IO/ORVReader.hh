@@ -33,10 +33,15 @@ class ORVReader
        The function allows buffer to be reallocated hence requires "*&".
        Returns true if successful.
      */
-    virtual bool ReadRecord(UInt_t*& buffer, size_t& nLongsMax); 
+    virtual bool ReadRecord(std::vector<UInt_t>& buffer); 
 
     virtual bool Open() { fStreamVersion = ORHeaderDecoder::kUnknownVersion; 
                           return OpenDataStream(); }
+
+    /*!
+       OKToRead returns true if the object can return
+       more data, false if not.
+     */
     virtual bool OKToRead() = 0;
     virtual bool OpenDataStream() = 0;
     virtual void Close() = 0;
@@ -50,11 +55,11 @@ class ORVReader
     inline bool MustSwap() { return fMustSwap; }
 
   protected:
-    virtual size_t DeleteAndResizeBuffer(UInt_t*& buffer, size_t newNLongsMax); 
+    virtual size_t DeleteAndResizeBuffer(std::vector<UInt_t>& buffer, size_t newNLongsMax); 
     virtual void DetermineFileTypeAndSetupSwap(char* buffer);
-    virtual bool ReadFirstWord(UInt_t*& buffer, size_t& nLongsMax);
-    virtual bool ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax);
-    virtual bool ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax);
+    virtual bool ReadFirstWord(std::vector<UInt_t>& buffer);
+    virtual bool ReadRestOfHeader(std::vector<UInt_t>& buffer);
+    virtual bool ReadRestOfLongRecord(std::vector<UInt_t>& buffer);
 
   protected:
     ORHeaderDecoder::EOrcaStreamVersion fStreamVersion;

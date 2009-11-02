@@ -32,44 +32,38 @@ size_t ORVReader::ReadPartialLineWithCR(char* buffer, size_t nBytesMax)
   return strlen(buffer);
 }
 
-bool ORVReader::ReadRecord(UInt_t*& buffer, size_t& nLongsMax)
+bool ORVReader::ReadRecord(std::vector<UInt_t>& buffer)
 {
   bool stillOpen = true;
 
-  stillOpen = ReadFirstWord(buffer, nLongsMax);
+  stillOpen = ReadFirstWord(buffer);
   if (!stillOpen) return false;
 
   // Handle header packets special-like for backwards compatibility
   if (fHeaderDecoder.IsHeader(buffer[0])) {
     ORLog(kDebug) << "Reading rest of header..." << std::endl;
-    stillOpen = ReadRestOfHeader(buffer, nLongsMax);
+    stillOpen = ReadRestOfHeader(buffer);
     if (!stillOpen) return false;
-  } else if (fBasicDecoder.IsLong(buffer)) {
-    stillOpen = ReadRestOfLongRecord(buffer, nLongsMax);
+  } else if (fBasicDecoder.IsLong(&buffer[0])) {
+    stillOpen = ReadRestOfLongRecord(buffer);
     if (!stillOpen) return false;
   }
 
   if (ORLogger::GetSeverity() <= ORLogger::kDebug) { // check severity; improves speed
     char type = 'l';
     if (fHeaderDecoder.IsHeader(buffer[0])) type = 'h';
-    else if (fBasicDecoder.IsShort(buffer)) type = 's';
+    else if (fBasicDecoder.IsShort(&buffer[0])) type = 's';
     ORLog(kDebug) << "ReadRecord(): " << type << ": id = " 
-                  << std::setw(11) << fBasicDecoder.DataIdOf(buffer) 
-		  << "\tlen = " << fBasicDecoder.LengthOf(buffer) << std::endl;
+                  << std::setw(11) << fBasicDecoder.DataIdOf(&buffer[0]) 
+		  << "\tlen = " << fBasicDecoder.LengthOf(&buffer[0]) << std::endl;
   }
 
-  return OKToRead();
+  return true;
 }
 
-size_t ORVReader::DeleteAndResizeBuffer(UInt_t*& buffer, size_t newNLongsMax)
+size_t ORVReader::DeleteAndResizeBuffer(std::vector<UInt_t>& buffer, size_t newNLongsMax)
 {
-  delete [] buffer;
-  buffer = new (std::nothrow) UInt_t[newNLongsMax]; // reallocation; deletion of buffer must be handled by calling procedure
-  if(buffer == NULL) {
-    ORLog(kFatal) << "Ran out of memory attempting to allocate buffer of length " 
-                  << newNLongsMax << ". " << std::endl;
-    exit(0);
-  }
+  buffer.resize(newNLongsMax);
   return newNLongsMax;
 }
 
@@ -94,15 +88,14 @@ void ORVReader::DetermineFileTypeAndSetupSwap(char* buffer)
   }
 }
 
-bool ORVReader::ReadFirstWord(UInt_t*& buffer, size_t& nLongsMax)
+bool ORVReader::ReadFirstWord(std::vector<UInt_t>& buffer)
 {
-  if(nLongsMax < 4) {
-    nLongsMax = DeleteAndResizeBuffer(buffer, 4);
+  if(buffer.size() < 4) {
+    DeleteAndResizeBuffer(buffer, 4);
   }
-  if (Read((char*) buffer, 4) != 4) return false;
-  if (!OKToRead()) return false;
+  if (Read((char*) &buffer[0], 4) != 4) return false;
   if(fStreamVersion == ORHeaderDecoder::kUnknownVersion) {
-    DetermineFileTypeAndSetupSwap((char*) buffer);
+    DetermineFileTypeAndSetupSwap((char*) &buffer[0]);
   }
   if (MustSwap()) {
     /* We always swap the first word for records except those of old headers,
@@ -118,13 +111,13 @@ bool ORVReader::ReadFirstWord(UInt_t*& buffer, size_t& nLongsMax)
 
 
 
-bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
+bool ORVReader::ReadRestOfHeader(std::vector<UInt_t>& buffer)
 {
   if(fStreamVersion == ORHeaderDecoder::kOld) {
     size_t lineBufferSize = 1024; // max Bytes for a single line
     char* lineBuffer = new char[lineBufferSize];
     memset(lineBuffer, 0, lineBufferSize);
-    memcpy(lineBuffer, buffer, 4);
+    memcpy(lineBuffer, &buffer[0], 4);
     ReadPartialLineWithCR(lineBuffer+4, lineBufferSize);
     std::string header = lineBuffer;
     while (std::string(lineBuffer) != "</plist>\n") {
@@ -136,17 +129,17 @@ bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
     delete [] lineBuffer;
     UInt_t nBytes = header.size() + 1;
     UInt_t recordLength = ((UInt_t) ceil(double(nBytes)/4.0)) + 2;
-    if(nLongsMax < recordLength) {
-      nLongsMax = DeleteAndResizeBuffer(buffer, recordLength);
+    if(buffer.size() < recordLength) {
+      DeleteAndResizeBuffer(buffer, recordLength);
     }
     ORLog(kDebug) << "ReadRestOfHeader(): rec len = " << recordLength 
                   << ", nBytes = " << nBytes << std::endl;
     buffer[0] = recordLength;
     buffer[1] = nBytes;
-    memcpy(buffer+2, header.c_str(), nBytes);
+    memcpy(&(buffer[0])+2, header.c_str(), nBytes);
   }
   else {
-    if(!ReadRestOfLongRecord(buffer, nLongsMax)) return false;
+    if(!ReadRestOfLongRecord(buffer)) return false;
     // char strings don't end up swapped. 
     // we have to swap the second word since Header records have
     // 2 *header* words.  Most records have only one header word. 
@@ -157,14 +150,14 @@ bool ORVReader::ReadRestOfHeader(UInt_t*& buffer, size_t& nLongsMax)
 
 
 
-bool ORVReader::ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax)
+bool ORVReader::ReadRestOfLongRecord(std::vector<UInt_t>& buffer)
 {
   /* No swapping happens here.  This *must* be done in the decoder. 
    * ORVReader takes care of first long word. */
-  size_t longRecordLength = fBasicDecoder.LengthOf(buffer);
-  if (longRecordLength > nLongsMax) {
+  size_t longRecordLength = fBasicDecoder.LengthOf(&buffer[0]);
+  if (longRecordLength > buffer.size()) {
     UInt_t tmp = buffer[0];
-    nLongsMax = DeleteAndResizeBuffer(buffer, longRecordLength*2); // factor of 2 for margin 
+    DeleteAndResizeBuffer(buffer, longRecordLength*2); // factor of 2 for margin 
     buffer[0] = tmp;
   }
   if (longRecordLength < 1) { 
@@ -172,11 +165,11 @@ bool ORVReader::ReadRestOfLongRecord(UInt_t*& buffer, size_t& nLongsMax)
     return false; // We will have a problem here.
   }
   size_t nBytesToRead = (longRecordLength-1)*4;
-  size_t nBytesRead = Read(((char*) buffer)+4, nBytesToRead);
+  size_t nBytesRead = Read(((char*) &buffer[0])+4, nBytesToRead);
   if (nBytesRead != nBytesToRead) {
     ORLog(kWarning) << "ReadRecord(): attempt to read " << nBytesToRead
                     << " B only returned " << nBytesRead << "B "
-      	      << "(id = " << fBasicDecoder.DataIdOf(buffer) << ", "
+      	      << "(id = " << fBasicDecoder.DataIdOf(&buffer[0]) << ", "
       	      << "len = " << longRecordLength << ")" << std::endl;
     return false;
   }
