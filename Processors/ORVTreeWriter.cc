@@ -4,6 +4,7 @@
 
 #include "TROOT.h"
 #include "ORLogger.hh"
+#include "ORRunContext.hh"
 
 using namespace std;
 
@@ -150,6 +151,8 @@ ORDataProcessor::EReturnCode ORVTreeWriter::InitializeTree()
       return kFailure;
     }
     fTree->Branch("runNumber", fRunContext->GetPointerToRunNumber(), "runNumber/I");
+    fTree->Branch("subRunNumber", fRunContext->GetPointerToSubRunNumber(), "subRunNumber/I");
+    fTree->Branch("runningState", fRunContext->GetPointerToStringOfState());
   }
 
   return InitializeBranches();

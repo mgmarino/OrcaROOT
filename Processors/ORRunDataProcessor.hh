@@ -6,6 +6,7 @@
 #include "ORDataProcessor.hh"
 #include "ORRunDecoder.hh"
 #include "ORLogger.hh"
+#include "ORRunContext.hh"
 
 
 class ORDataProcManager;
@@ -23,6 +24,7 @@ class ORRunDataProcessor : public ORDataProcessor
     virtual inline EReturnCode ProcessRunHeartBeat(UInt_t* /*record*/) { return kSuccess; } 
     virtual inline EReturnCode ProcessRunStart(UInt_t* /*record*/) { return kSuccess; } 
     virtual inline EReturnCode ProcessRunStop(UInt_t* /*record*/) { return kSuccess; }
+    virtual inline EReturnCode ProcessPrepareForSubRun(UInt_t* /*record*/) { return kSuccess; }
 
     virtual inline void IncreaseHeartbeatVerbosity(bool doIncrease = true)
       { fIncreaseHeartbeatVerbosity = doIncrease; }

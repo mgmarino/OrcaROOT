@@ -5,6 +5,7 @@
 #include "TROOT.h"
 #include "TObjString.h"
 #include "ORLogger.hh"
+#include "ORRunContext.hh"
 
 using namespace std;
 

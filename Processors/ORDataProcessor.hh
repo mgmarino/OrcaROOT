@@ -3,11 +3,11 @@
 #ifndef _ORDataProcessor_hh_
 #define _ORDataProcessor_hh_
 
-#include "ORRunContext.hh"
 #include "ORVDataDecoder.hh"
 
 class ORCompoundDataProcessor;
 class ORDataProcManager;
+class ORRunContext;
 
 class ORDataProcessor
 {

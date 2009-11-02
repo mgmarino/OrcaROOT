@@ -14,6 +14,7 @@ ORRunContext::ORRunContext(ORHeader* header, const char* runCtrlPath)
   fHeader = NULL;
   fClassName = "";
   fRunNumber = 0;
+  fSubRunNumber = 0;
   fIsQuickStartRun = false;
   fIsRecordSwapped = false;
   fRunType = 0;
@@ -78,55 +79,80 @@ bool ORRunContext::LoadHeader(ORHeader* header, bool ignoreRunControl, const cha
   return true;
 }
 
+std::string ORRunContext::GetStateName(EState aState) const
+{
+  if (aState >= GetNumberOfStates()) return "";
+  switch(aState) {
+    case kIdle: return "Idle";
+    case kStarting: return "Starting";
+    case kRunning: return "Running";
+    case kPreparingForSubRun: return "PreparingForSubRun";
+    case kStopping: return "Stopping";
+    default: return "";
+  }
+}
+
 void ORRunContext::LoadRunStartRecord(UInt_t* record)
 {
   ORRunDecoder runDecoder;
   fRunNumber = runDecoder.RunNumberOf(record);
   fIsQuickStartRun = runDecoder.IsQuickStartRun(record);
+  fSubRunNumber = runDecoder.SubRunNumberOf(record);
   //fRunType = ?? FIXME
   fStartTime = runDecoder.UtimeOf(record);
 }
 
 void ORRunContext::SetIdle()
 { 
-  if(fState == kRunning) {
+  if(GetState() == kRunning) {
     ORLog(kWarning) << "Never got a run-stop packet..." << endl;
-  } else if(fState != kStopping) {
+  } else if(GetState() != kStopping) {
     ORLog(kError) << "Switching to idle from non-stopping state " 
-                  << fState << endl;
+                  << GetState() << endl;
   } 
-  fState = kIdle; 
+  SetState(kIdle); 
 } 
 
 void ORRunContext::SetStarting()
 { 
-  if(fState != kIdle) {
-    ORLog(kError) << "Starting from non-idle state " << fState << endl;
+  if(GetState() != kIdle) {
+    ORLog(kError) << "Starting from non-idle state " << GetState() << endl;
   } 
-  fState = kStarting; 
+  SetState(kStarting); 
 } 
 
 void ORRunContext::SetRunning() 
 { 
-  if(fState == kIdle) {
+  if(GetState() == kIdle) {
     ORLog(kWarning) << "Never got a run-start packet..." << endl;
-  } else if(fState != kStarting) {
+  } else if(GetState() != kStarting && GetState() != kPreparingForSubRun) {
     ORLog(kError) << "Switching to running state from non-starting state " 
-                  << fState << endl;
+                  << GetState() << endl;
   }
-  fState = kRunning; 
+  SetState(kRunning); 
+}
+
+void ORRunContext::SetPreparingForSubRun() 
+{ 
+  if(GetState() != kRunning) {
+    ORLog(kWarning) << "Preparing for a sub run from a non-running state " 
+                    << GetState() << endl;
+  } 
+  SetState(kPreparingForSubRun); 
 }
 
 void ORRunContext::SetStopping()
 { 
-  if(fState != kRunning) {
-    ORLog(kError) << "Stopping from non-idle state " << fState << endl;
+  if(GetState() != kRunning && GetState() != kPreparingForSubRun) {
+    ORLog(kError) << "Stopping from an incorrect state " << GetState() << endl;
   } 
-  fState = kStopping; 
+  SetState(kStopping); 
 } 
+
 
 Int_t ORRunContext::WriteBackToSocket(const void* buffer, size_t nBytes)
 {
   if(!fWritableSocket) return 0;
   return fWritableSocket->WriteBuffer(buffer, nBytes);
 }
+

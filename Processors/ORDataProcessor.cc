@@ -2,6 +2,7 @@
 
 #include "ORDataProcessor.hh"
 #include "ORLogger.hh"
+#include "ORRunContext.hh"
 
 using namespace std;
 
@@ -28,11 +29,18 @@ void ORDataProcessor::SetDataId()
                   << ": header was NULL!" << endl;
     return;
   }
-  fDataId = header->GetDataId(fDataDecoder->GetDataObjectPath());
-  if (fDataId == ORVDataDecoder::GetIllegalDataId()) {
+  UInt_t tempID = header->GetDataId(fDataDecoder->GetDataObjectPath());
+  // check to see if this has been set already.
+  if (tempID == ORVDataDecoder::GetIllegalDataId()) {
     ORLog(kWarning) << "SetDataId(): Couldn't get a valid data id for data "
                   << "object path " << fDataDecoder->GetDataObjectPath()
 		  << endl;
+    if (fDataId != ORVDataDecoder::GetIllegalDataId()) {
+      ORLog(kWarning) << "SetDataId(): Data id previously set, trying to use old version."
+                      << endl << "  This is likely a problem in ORCA, please update your ORCA version." << endl;
+    }
+  } else {
+    fDataId = tempID;
   }
 }
 

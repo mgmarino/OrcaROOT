@@ -38,6 +38,7 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
     return kFailure;
   }
   if (fRunDecoder->IsHeartBeat(record)) {
+
     string message;
     if(fByteCount < 1024) message = ::Form("%d B", fByteCount);
     else if(fByteCount < 1024*1024) message = ::Form("%.1f kB", float(fByteCount)/1024.0);
@@ -48,26 +49,50 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
     else ORLog(kTrace) << message << endl;
     fByteCount = 0;
     return ProcessRunHeartBeat(record);
-  }
-  else if (fRunDecoder->IsRunStart(record)) {
+
+  } else if (fRunDecoder->IsRunStart(record)) {
+
     if (fRunContext->GetRunNumber() != fRunDecoder->RunNumberOf(record)) {
       ORLog(kWarning) << "ProcessMyDataRecord(): "
                       << "run number in run-start record doesn't match "
 		      << "that loaded from the header. Switching to new "
 		      << "run number" << endl;
-      fRunContext->LoadRunStartRecord(record);
     }
+    // Always update the run numbers using this record.  
+    // This also updates the sub-run number
+    fRunContext->LoadRunStartRecord(record);
     fRunContext->SetStarting();
-    ORLog(kRoutine) << "Start processing run " << fRunContext->GetRunNumber() << endl;
+    ORLog(kRoutine) << "Start processing (run) (" << fRunContext->GetRunNumber()
+                    << ")" << endl;
     return ProcessRunStart(record);
+
+  } else if (fRunDecoder->IsPrepareForSubRun(record)) {
+
+    ORLog(kRoutine) << "Stop processing (run:subrun) (" << fRunContext->GetRunNumber()
+                    << ":" << fRunContext->GetSubRunNumber() << ")" << endl;
+    ORLog(kRoutine) << "Preparing for new sub run." << endl;
+    fRunContext->SetPreparingForSubRun();
+    return ProcessPrepareForSubRun(record);
+
+  } else if (fRunDecoder->IsSubRunStart(record)) {
+    // We load the run start record to reset the sub-run number
+    fRunContext->LoadRunStartRecord(record);
+    ORLog(kRoutine) << "Start processing (run:subrun) (" << fRunContext->GetRunNumber()
+                    << ":" << fRunContext->GetSubRunNumber() << ")" << endl;
+    // Sub Run is starting, we skip right to the running state, skipping kStarting
+    OnStartRunComplete();
+    return kSuccess;
+
   } else if (fRunDecoder->IsRunStop(record)) {
+
     fRunContext->SetStopping();
     ORLog(kRoutine) << "Stop processing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStop(record);
+
   } else {
     ORLog(kWarning) << "ProcessMyDataRecord(): "
-                    << "got run data that wasn't a heartbeat, a start, "
-		    << "or a stop" << endl;
+                    << "got run data that wasn't a heartbeat, a (sub) run start, "
+		    << "or a (sub) run stop" << endl;
     return kFailure;
   }
 }
