@@ -14,6 +14,8 @@ std::string ORRunDecoder::GetParName(size_t iPar)
     case 4: return "runStop";
     case 5: return "utime";
     case 6: return "timeToNextHeartBeat";
+    case 7: return "prepareForSubRun";
+    case 8: return "subRunNumber";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
                       << ") out of range." << std::endl;
@@ -31,6 +33,8 @@ UInt_t ORRunDecoder::GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/)
     case 4: return IsRunStop(record);
     case 5: return UtimeOf(record);
     case 6: return TimeToNextHeartBeat(record);
+    case 7: return IsPrepareForSubRun(record);
+    case 8: return SubRunNumberOf(record);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
                       << ") out of range." << std::endl;
