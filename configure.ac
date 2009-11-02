@@ -52,8 +52,8 @@ AC_SUBST(ORLIBEXTSHARED)
 echo ""
 echo "${BOLD}Checking for ROOT: ${OFFBOLD} "
 m4_include(root.m4)
-ROOT_PATH(5.04,AC_DEFUN(HAVE_ROOT), AC_MSG_ERROR([
-  ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS 
+ROOT_PATH(5.22,AC_DEFUN(HAVE_ROOT), AC_MSG_ERROR([
+  The correct version of ROOT cannot be found. Please ensure that it is installed and that either \$ROOTSYS 
   is defined corectly or root-config is in the path.  
   One can pass --with-rootsys=/path/to/rootsys to configure to specify the correct path.]))
 
