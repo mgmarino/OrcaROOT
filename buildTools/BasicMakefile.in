@@ -1,0 +1,32 @@
+include @INSTALLDIR@/buildTools/config.mk
+
+    
+SOURCESSCRATCH = $(wildcard *.cc)
+SOURCES = $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH))
+#SOURCES = $(wildcard OR*.cc)
+HEADERS = $(wildcard OR*.hh)
+OBJECTS = $(SOURCES:.cc=.o)
+
+all: depend $(SHLIB) $(APPS)
+
+.depend depend:
+	@echo Checking dependencies...
+	@$(CXX) -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) *.cc > .depend
+
+$(SHLIB): $(OBJECTS) 
+	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
+
+.cc.o: 
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -c $<
+
+%: %.o $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -o $@ $< $(OBJECTS) $(LDFLAGS) $(ORLIBS) $(ROOTLIBS) 
+
+clean:
+	@echo "Cleaning for: $(SHLIB) $(APPS)"
+	@rm -f $(SHLIB) $(APPS) *.o *~ .depend
+
+ifneq ($(MAKECMDGOALS), clean)
+-include .depend
+endif
+

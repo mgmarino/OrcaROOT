@@ -141,18 +141,19 @@ else
   echo "${BOLD}Configuring with debug flags OFF. ${OFFBOLD}"
   echo "Debug flags enabled by passing --enable-debug to configure."
 fi
+INSTALLDIR=`pwd`
+
+echo "Installing OrcaROOT in: $INSTALLDIR"
+
 AC_SUBST(EXTRACXXFLAGS)
+AC_SUBST(INSTALLDIR)
 
 
 AC_CONFIG_FILES([
                  buildTools/config.mk
-                 Applications/Makefile
-                 Decoders/Makefile
-                 IO/Makefile
-                 Makefile
-                 Management/Makefile
-                 Processors/Makefile
-                 Util/Makefile])
+                 buildTools/BasicMakefile
+                 buildTools/BasicAppMakefile
+                 Makefile])
 AC_OUTPUT
 echo 
 echo "**********************************************************************************"
