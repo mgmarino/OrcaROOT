@@ -41,6 +41,8 @@ class ORIpeV4FLTEnergyHistogramDecoder : public ORVBasicTreeDecoder
     virtual inline UInt_t  MaxHistogramLengthOf(UInt_t* record) { return record[7]; }
     virtual inline UInt_t  BinSizeOf(UInt_t* record)     { return record[8]; }
     virtual inline UInt_t  OffsetEMinOf(UInt_t* record)  { return record[9]; }
+    virtual inline UInt_t  HistogramIDOf(UInt_t* record)  { return record[10]; }
+    virtual inline UInt_t  HistogramInfoOf(UInt_t* record)  { return record[11]; }
 
     // Histogram Functions
     inline UInt_t* GetHistogramDataPointer();

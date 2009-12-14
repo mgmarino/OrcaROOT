@@ -67,6 +67,8 @@ std::string ORIpeV4FLTEnergyHistogramDecoder::GetParName(size_t iPar)
     case 8: return "maxHistogramLength";
     case 9: return "binSize";
     case 10:return "offsetEMin";
+    case 11:return "ID";
+    case 12:return "Info";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
                       << ") out of range." << std::endl;

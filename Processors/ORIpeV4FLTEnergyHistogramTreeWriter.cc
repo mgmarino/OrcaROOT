@@ -31,6 +31,8 @@ ORDataProcessor::EReturnCode ORIpeV4FLTEnergyHistogramTreeWriter::InitializeBran
   fTree->Branch("maxHistogramLength", &fMaxHistogramLength, "maxHistogramLength/i");
   fTree->Branch("binSize", &fBinSize, "binSize/i");
   fTree->Branch("offsetEMin", &fOffsetEMin, "offsetEMin/i");
+  fTree->Branch("histogramID", &fHistID, "histogramID/i");
+  fTree->Branch("histogramInfo", &fHistInfo, "histogramInfo/i");
   fTree->Branch("histogram", fHistogram, "histogram[histogramLength]/i");
   return kSuccess;
 }
@@ -53,13 +55,16 @@ ORDataProcessor::EReturnCode ORIpeV4FLTEnergyHistogramTreeWriter::ProcessMyDataR
   fMaxHistogramLength = fEventDecoder->MaxHistogramLengthOf(record);
   fBinSize = fEventDecoder->BinSizeOf(record);
   fOffsetEMin = fEventDecoder->OffsetEMinOf(record);
+  fHistID =  fEventDecoder->HistogramIDOf(record);
+  fHistInfo =  fEventDecoder->HistogramInfoOf(record);
 
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
-      << "crate-card-channel-fReadoutSec-fRefreshTime-fFirstBin-fLastBin-fHistogramLength-fMaxHistogramLength-fBinSize-fOffsetEMin: "
+      << "crate-card-channel-fReadoutSec-fRefreshTime-fFirstBin-fLastBin-fHistogramLength-fMaxHistogramLength-fBinSize-fOffsetEMin-fID-fInfo: "
       << fCrate << "-" << fCard << "-" << fChannel  << "-"
       << fReadoutSec << "-" << fRefreshTime << "-" << fFirstBin << "-" << fLastBin << "-" << fHistogramLength << "-" << fMaxHistogramLength << "-" << fBinSize << "-" << fOffsetEMin
+      << "-" << fHistID << "-" <<  fHistInfo
       << endl;
   }
   if(fHistogramLength > kMaxHistoLength) {

@@ -16,9 +16,10 @@ class ORIpeV4FLTEnergyHistogramTreeWriter : public ORVTreeWriter
       {  fCrate = 0; fCard = 0; fChannel = 0;
          fReadoutSec = 0; fRefreshTime = 0; fFirstBin = 0; fLastBin = 0; fHistogramLength = 0; 
          fMaxHistogramLength = 0; fBinSize = 0; fOffsetEMin = 0;
+         fHistID = 0;  fHistInfo= 0; 
          fSaveOnlyNonemptyTrees=true; }
     enum EIpeV4FLTEHistTreeWriter{
-      kMaxHistoLength = 512
+      kMaxHistoLength = 2048
       };
   protected:
     virtual EReturnCode InitializeBranches();
@@ -33,7 +34,9 @@ class ORIpeV4FLTEnergyHistogramTreeWriter : public ORVTreeWriter
     fHistogramLength,
     fMaxHistogramLength,
     fBinSize,
-    fOffsetEMin;
+    fOffsetEMin,
+    fHistID,
+    fHistInfo;
     UInt_t fHistogram[kMaxHistoLength];
 
 };
