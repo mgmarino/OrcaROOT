@@ -109,7 +109,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       // Read the next record
       continue; 
-    }
+    } // End checking if it is a header
     if (!headerIsReadIn) break;
 
     fRunContext->ResetRecordFlags();

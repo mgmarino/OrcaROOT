@@ -20,6 +20,6 @@ all:
 	@for i in $(SRCDIRS); do (echo Entering directory $$i; $(MAKE) -C $$i) || exit $$?; done
 
 clean: 
-	rm -rf lib 
+	@rm -rf lib 
 	@for i in $(SRCDIRS); do $(MAKE) -C $$i clean || exit $$?; done
 
