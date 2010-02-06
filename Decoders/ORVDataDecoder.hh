@@ -6,6 +6,8 @@
 #include <string>
 #include "TROOT.h"
 #include "ORDecoderDictionary.hh"
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 
 //! Base Class for all data decoders
 /** 

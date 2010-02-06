@@ -40,7 +40,6 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
     virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
-    virtual inline ULong64_t BitConcat(UInt_t lo, UInt_t hi);
        
     //Functions that return data from buffer header:
     virtual inline UShort_t GetChannelNum();
@@ -94,13 +93,6 @@ class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
 };
 
 //inline functions: ************************************************************************
-
-inline ULong64_t ORAcqirisDC440Decoder::BitConcat(UInt_t lo, UInt_t hi)
-//Concatenates 32 bit high and low words to form a ULong64_t
-{ 
-  return ((ULong64_t)(lo) + (((ULong64_t)(hi)) << 32));  
-}
-
 
 inline UShort_t ORAcqirisDC440Decoder::GetChannelNum()
 {

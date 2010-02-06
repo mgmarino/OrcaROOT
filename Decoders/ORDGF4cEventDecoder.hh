@@ -21,7 +21,6 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
     virtual void Swap(UInt_t* dataRecord);
     /* Overloading swap, this is a 16-bit style record. */
     virtual bool SetDataRecord(UInt_t* record);
-    virtual inline ULong64_t BitConcat(UShort_t lo, UShort_t mid, UShort_t hi = 0x0);
        
     //Functions that return data from buffer header:
     virtual inline size_t GetBufNData();
@@ -127,13 +126,6 @@ class ORDGF4cEventDecoder: public ORVDigitizerDecoder
 
 
 //inline functions: ************************************************************************
-
-
-inline ULong64_t ORDGF4cEventDecoder::BitConcat(UShort_t lo, UShort_t mid, UShort_t hi)
-//Concatenates 16 bit high, middle, and low words to form a ULong64_t
-{ 
-  return ((ULong64_t)(lo) +  (((ULong64_t)(mid)) << 16) + (((ULong64_t)(hi)) << 32));  
-}
 
 
 //functions that return data from buffer header: *********************************************

@@ -37,6 +37,20 @@ namespace ORUtils
                   ((x & 0x00000000000000ffLL) << 56));
     }
 
+    //Concatenates 32 bit high and low words to form a ULong64_t
+    inline ULong64_t BitConcat(UInt_t lo, UInt_t hi)
+    { 
+      return ((ULong64_t)(lo) + (((ULong64_t)(hi)) << 32));  
+    }
+
+    //Concatenates 16 bit high, middle, and low words to form a ULong64_t
+    inline ULong64_t BitConcat(UShort_t lo, UShort_t mid, UShort_t hi = 0x0)
+    { 
+      return ((ULong64_t)(lo) +  (((ULong64_t)(mid)) << 16) + 
+               (((ULong64_t)(hi)) << 32));  
+    }
+
+
 };
 
 #endif
