@@ -101,7 +101,7 @@ bool ORSIS3302Decoder::IsValid()
     ORLog(kError) << "Data record lengths are inconsistent" << std::endl; 
     return false;
   }
-  if(GetChannelNum() != ((fDataRecord[1] & 0xFF00) >> 16)) {
+  if(GetChannelNum() != ((fDataRecord[1] & 0xFF00) >> 8)) {
     ORLog(kError) << "Channel numbers are inconsistent" << std::endl; 
     return false;
   }

@@ -18,13 +18,13 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
                              kExternal,
                              kValidation };
     
-    virtual std::string GetDataObjectPath() { return "ORGretinaModel:Gretina"; }  
-    virtual std::string GetDictionaryObjectPath() { return "ORGretinaModel"; }  
+    virtual std::string GetDataObjectPath() { return "ORSIS3302:Energy"; }  
+    virtual std::string GetDictionaryObjectPath() { return "ORSIS3302Model"; }  
     virtual bool SetDataRecord(UInt_t* record);
        
     //Functions that return data from buffer header:
     virtual inline size_t GetBufHeadLen() 
-      { return (size_t) (kBufferHeaderLen + kOrcaHeaderLen);}
+      { return (size_t) (kBufferHeaderLen);}
     virtual inline size_t GetTrailerLen() 
       { return (size_t) (kBufferTrailerLen);}
     virtual inline UShort_t GetBoardId();
@@ -64,7 +64,7 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
     virtual inline UInt_t* GetWaveformDataPointer();
  
     // Energy Waveform length in number of 32-bit words
-    virtual inline size_t GetEnergyWaveformLen() {return fDataRecord[2]; } 
+    virtual inline size_t GetEnergyWaveformLen() {return fDataRecord[3]; } 
     virtual size_t CopyEnergyWaveformDataDouble(double* waveform, size_t len);
     virtual inline UInt_t* GetEnergyWaveformDataPointer();
 
@@ -102,7 +102,8 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
        beginning.  This is useful when additional headers are added. */
     virtual inline size_t GetRecordOffset() {return kOrcaHeaderLen;}
     virtual inline size_t GetTrailerOffset() 
-      { return GetBufHeadLen() + GetWaveformLen()/2 + GetEnergyWaveformLen(); }
+      { return GetRecordOffset() + GetBufHeadLen() 
+        + GetWaveformLen()/2 + GetEnergyWaveformLen(); }
 };
 
 //inline functions: ************************************************************************
