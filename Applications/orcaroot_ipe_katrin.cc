@@ -27,6 +27,7 @@
   *
   *
   * History:
+  *   - 2010-01-27 Added all IPE V4 Electronics decoders/writers. -tb-
   *   - 2009-04-03 Added a 1DHistoHistograms decoder and writer (Klaus Schloesser from IK needed it). -tb-
   *   - 2008-02-19 If input is EXACTLY ONE file and if it is a IPE Crate file shaper tree is omitted.
   *   - 2008-02-19 The IPE Katrin Crate files omit empty trees.
@@ -60,6 +61,18 @@
   #include "OR1DHistoHistogramsDecoder.hh"
   #include "OR1DHistoHistogramsWriter.hh"
 
+  //this part is for the IPE V4 Electronics -tb- 2010-01-27
+  #include "ORIpeV4FLTEnergyDecoder.hh"
+  #include "ORIpeV4FLTEnergyTreeWriter.hh"
+
+  #include "ORIpeV4FLTWaveformDecoder.hh"
+  #include "ORIpeV4FLTWaveformTreeWriter.hh"
+
+  #include "ORIpeV4FLTEnergyHistogramDecoder.hh"
+  #include "ORIpeV4FLTEnergyHistogramTreeWriter.hh"
+
+//TODO: -tb-  #include "ORIpeV4FLTHitrateDecoder.hh"
+//TODO: -tb-  #include "ORIpeV4FLTHitrateTreeWriter.hh"
 
 
   //ADDITION FOR KATRIN - Stop
@@ -75,6 +88,8 @@ static const char Usage[] =
 "a host and port of a socket from which to read data. For a file, you may\n"
 "enter a series of files to be processed, or use a wildcard like \"file*.dat\"\n"
 "For a socket, the argument should be formatted as host:port.\n"
+"\n"
+"Note: All record types taken with IPE V3 or V4 electronics can be processed and converted to root. -tb-\n"
 "\n"
 "Available options:\n"
 "  --help : print this message and exit\n"
@@ -219,7 +234,7 @@ int main(int argc, char** argv)
   
    ORKatrinFLTEnergyDecoder katrinFLTEnergyDecoder;
    ORKatrinFLTWaveformDecoder katrinFLTWaveformDecoder;
-   ORKatrinFLTEnergyDecoder katrinFLTEnergyHistogramDecoder;
+   ORKatrinFLTEnergyHistogramDecoder katrinFLTEnergyHistogramDecoder;
 
    ORKatrinFLTEnergyTreeWriter katrinFLTEnergyTreeWriter("energyTree");
    dataProcManager.AddProcessor(&katrinFLTEnergyTreeWriter);
@@ -233,8 +248,26 @@ int main(int argc, char** argv)
 // For debugging:
 //   ORKatrinFLTWaveformDumper katrinFLTWaveformDumper;
 //   dataProcManager.AddProcessor(&katrinFLTWaveformDumper);
+	
+	
+	//this part is for the IPE V4 Electronics -tb- 2010-01-27
+	#if 1  //TODO: is this block necessary? -tb- 2010-02-xx
+	ORIpeV4FLTEnergyDecoder ipeV4FLTEnergyDecoder;
+	ORIpeV4FLTWaveformDecoder ipeV4FLTWaveformDecoder;
+	ORIpeV4FLTEnergyHistogramDecoder ipeV4FLTEnergyHistogramDecoder;
+    #endif
+	
+	ORIpeV4FLTEnergyTreeWriter ipeV4FLTEnergyTreeWriter("ipeV4EnergyTree");
+	dataProcManager.AddProcessor(&ipeV4FLTEnergyTreeWriter);
+	
+	ORIpeV4FLTWaveformTreeWriter ipeV4FLTWaveformTreeWriter("ipeV4WaveformTree");
+	dataProcManager.AddProcessor(&ipeV4FLTWaveformTreeWriter);
+	
+	ORIpeV4FLTEnergyHistogramTreeWriter ipeV4FLTEnergyHistogramTreeWriter("ipeV4EnergyHistogramTree");
+	dataProcManager.AddProcessor(&ipeV4FLTEnergyHistogramTreeWriter);
+	
   
-  
+	
   //this part is for the UW crate
   //ORShaperShaperDecoder shaperShaperDecoder;
   //ORTrig4ChanDecoder trig4ChanDecoder; 
@@ -267,6 +300,8 @@ int main(int argc, char** argv)
   dataProcManager.AddProcessor(&oneDHistoHistogramsWriter);
   //ADDITION FOR Klaus Schloesser - Stop - -tb- 2009-04-03
 
+  //ADDITION FOR IPE V4 Electronics -tb- 2010-01-27 - Start - 
+  //ADDITION FOR IPE V4 Electronics -tb- 2010-01-27 - Stop - 
 
 
 
