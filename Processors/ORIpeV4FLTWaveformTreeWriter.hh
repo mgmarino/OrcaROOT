@@ -16,7 +16,8 @@ class ORIpeV4FLTWaveformTreeWriter : public ORVTreeWriter
       { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; 
         fChannel = 0; fEnergy = 0; fWaveformLength = 0;
         fResetSec=0; fResetSubSec=0;   //-tb- 2008-02-12
-        fChannelMap=0; fPageNumber=0; //-tb- 2008-02-12
+		fChannelMap=0;  //-tb- 2010-02-17
+		fEventID=0; fEventFlags=0; fEventInfo=0;  //-tb- 2010-02-17
         fSaveOnlyNonemptyTrees=true; }
     enum EIpeV4FLTWFTreeWriter{
       //kMaxWFLength = ORIpeV4FLTWaveformDecoder::kWaveformLength -tb- this was too small
@@ -28,11 +29,12 @@ class ORIpeV4FLTWaveformTreeWriter : public ORVTreeWriter
   protected:
     ORIpeV4FLTWaveformDecoder* fEventDecoder;
     UInt_t fSec, fSubSec, fResetSec, fResetSubSec;
-    UShort_t fEventID, fChannelMap;
-    UShort_t fCrate, fCard, fChannel, fPageNumber;
+    UInt_t fChannelMap;
+    UShort_t fCrate, fCard, fChannel;
     UShort_t fWaveform[kMaxWFLength];
     UInt_t fWaveformLength;
     UInt_t fEnergy;
+    UInt_t fEventID, fEventFlags, fEventInfo;
     //Bool_t saveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-02-19 - MOVED TO BASE CLASS -tb-
 };
 

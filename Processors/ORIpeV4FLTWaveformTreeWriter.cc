@@ -27,15 +27,14 @@ ORDataProcessor::EReturnCode ORIpeV4FLTWaveformTreeWriter::InitializeBranches()
   fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
   fTree->Branch("eventSec", &fSec, "eventSec/i");
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
-  fTree->Branch("eventID", &fEventID, "eventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
-  fTree->Branch("channelMap", &fChannelMap, "channelMap/s");
-  fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
+  fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
+  fTree->Branch("eventID", &fEventID, "eventID/i");
   fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
-  fTree->Branch("resetSec", &fResetSec, "resetSec/i");
-  fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");
+  fTree->Branch("eventFlags", &fEventFlags, "eventFlags/i");
+  fTree->Branch("eventInfo", &fEventInfo, "eventInfo/i");
   fTree->Branch("waveform", fWaveform, "waveform[wfLength]/s");
   return kSuccess;
 }
@@ -51,27 +50,27 @@ ORDataProcessor::EReturnCode ORIpeV4FLTWaveformTreeWriter::ProcessMyDataRecord(U
   // ruin the rest of the run.
   if(!fEventDecoder->SetDataRecord(record)) return kFailure;
       // check severity to improve speed:
-  fSec = fEventDecoder->GetSec();
-  fSubSec = fEventDecoder->GetSubSec();
-  fEventID = fEventDecoder->GetEventID();
-  fEnergy = fEventDecoder->GetEnergy();
   fCrate = fEventDecoder->CrateOf();
   fCard = fEventDecoder->CardOf();
   fChannel = fEventDecoder->GetChannel();
   fChannelMap = fEventDecoder->GetChannelMap();
-  fPageNumber = fEventDecoder->GetPageNumber();
+  fSec = fEventDecoder->GetSec();
+  fSubSec = fEventDecoder->GetSubSec();
+  fEventID = fEventDecoder->GetEventID();
+  fEnergy = fEventDecoder->GetEnergy();
   fWaveformLength = fEventDecoder->GetWaveformLen();
-  fResetSec = fEventDecoder->GetResetSec();
-  fResetSubSec = fEventDecoder->GetResetSubSec();
+  fEventFlags = fEventDecoder->GetEventFlags();
+  fEventInfo = fEventDecoder->GetEventInfo();
    
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
-      << "event-sec-subsec-crate-card-channel-energy_adc-resetsec-resetsubsec-chmap-pagenum = "
-      << fEventID << "-" << fSec << "-" << fSubSec << "-" << fCrate << "-"
-      << fCard << "-" << fChannel << "-" << fEnergy 
-      << "-" << fResetSec << "-" << fResetSubSec   //-tb- 2008-02-12
-      << "-" << fChannelMap << "-" << fPageNumber  //-tb- 2008-02-12
+      << "crate-card-channel-sec-subsec-energy_adc-chmap-eventID-eventFlags-eventInfo = "
+	  << fCrate << "-"  << fCard << "-" << fChannel << "-" 
+	  << fSec << "-" << fSubSec << "-" << fEnergy 
+	  << "-" << fChannelMap 
+      << "-" << fEventID << "-" <<  fEventFlags  //-tb- 2010-02-16
+      << "-" << fEventInfo  //-tb- 2010-02-16
       << endl;
   }
   if(fWaveformLength > kMaxWFLength) {

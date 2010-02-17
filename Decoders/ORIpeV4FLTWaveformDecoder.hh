@@ -38,11 +38,10 @@ class ORIpeV4FLTWaveformDecoder: public ORVDigitizerDecoder
     virtual inline UInt_t GetSubSec();
     virtual inline UInt_t GetChannelMap();
     virtual inline UShort_t GetChannel();
-    virtual inline UShort_t GetEventID();
-    virtual inline UShort_t GetPageNumber();
+    virtual inline UInt_t GetEventID();
     virtual inline UInt_t GetEnergy();
-    virtual inline UInt_t GetResetSec();
-    virtual inline UInt_t GetResetSubSec();
+    virtual inline UInt_t GetEventFlags();
+    virtual inline UInt_t GetEventInfo();
 
     // Waveform Functions
     virtual inline size_t GetWaveformLen(); 
@@ -94,17 +93,12 @@ inline UInt_t ORIpeV4FLTWaveformDecoder::GetSubSec()
 
 inline UInt_t ORIpeV4FLTWaveformDecoder::GetChannelMap()
 {
-  return (fDataRecord[4] & 0x3FFFFF);
+  return (fDataRecord[4]);
 }
 
-inline UShort_t ORIpeV4FLTWaveformDecoder::GetEventID()
+inline UInt_t ORIpeV4FLTWaveformDecoder::GetEventID() //this holds now more info than only the page #, see ORIpeV4FLTDecoder -tb-
 {
-  return ( fDataRecord[5] & 0x3FF );
-}
-
-inline UShort_t ORIpeV4FLTWaveformDecoder::GetPageNumber()
-{
-  return ( fDataRecord[5] & 0x1FF0000 ) >> 16;
+  return ( fDataRecord[5] );
 }
 
 inline UInt_t ORIpeV4FLTWaveformDecoder::GetEnergy()
@@ -112,19 +106,19 @@ inline UInt_t ORIpeV4FLTWaveformDecoder::GetEnergy()
   return (fDataRecord[6]);
 }
 
-inline UInt_t ORIpeV4FLTWaveformDecoder::GetResetSec()
+inline UInt_t ORIpeV4FLTWaveformDecoder::GetEventFlags()
 {
   return (fDataRecord[7]);
 }
 
-inline UInt_t ORIpeV4FLTWaveformDecoder::GetResetSubSec()
+inline UInt_t ORIpeV4FLTWaveformDecoder::GetEventInfo()
 {
   return (fDataRecord[8]);
 }
 
 inline UShort_t ORIpeV4FLTWaveformDecoder::GetChannel()
 {
-  return ( fDataRecord[4] & 0xFF000000 ) >> 24;
+  return ( fDataRecord[0] & 0xFF00 ) >> 8;
 }
 
 inline UInt_t* ORIpeV4FLTWaveformDecoder::GetWaveformDataPointer()

@@ -109,9 +109,10 @@ void ORIpeV4FLTWaveformDecoder::Dump(UInt_t* dataRecord) //debugging
     << "    The SubSec is " << GetSubSec() << std::endl
     << "    The channel is " << GetChannel() << std::endl
     << "    The channel map is " << GetChannelMap() << std::endl
+    << "    EventID: " << GetEventID() << std::endl  
     << "    Energy: " << GetEnergy() << std::endl  
-    << "    The ResetSec is " << GetResetSec() << std::endl        // -tb- 2008-02-12
-    << "    The ResetSubSec is " << GetResetSubSec() << std::endl  // -tb- 2008-02-12
+    << "    EventFlags: " << GetEventFlags() << std::endl        // -tb- 2010-02-16
+    << "    EventInfo: " << GetEventInfo() << std::endl  // -tb- 2010-02-16
     << "    The waveform data has " << GetWaveformLen() 
       << " (32-bit) words" << std::endl;
 }
