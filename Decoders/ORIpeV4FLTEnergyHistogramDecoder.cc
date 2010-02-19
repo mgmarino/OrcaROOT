@@ -34,7 +34,10 @@ size_t ORIpeV4FLTEnergyHistogramDecoder::CopyHistogramData(UInt_t* histogram,
   //ORLog(kDebug) << "Entered CopyHistogramData  ... fDataRecord="  << fDataRecord << std::endl;
 
   size_t wflen = HistogramLengthOf(fDataRecord);
-  if (wflen == 0) return 0;
+  if (wflen == 0){
+    ORLog(kDebug) << "CopyHistogramData(): histogram is empty" << std::endl;
+    return 0;
+  }
   if ((len < wflen) || (len == 0)) {
     ORLog(kWarning) << "CopyHistogramData(): destination array length is " << len 
                     << "; histogram data length is " << HistogramLengthOf(fDataRecord) << std::endl;

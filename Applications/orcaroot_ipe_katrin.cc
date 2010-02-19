@@ -122,6 +122,12 @@ int main(int argc, char** argv)
     return 1;
   }
 
+  {
+    int i;
+	for(i=0;i<argc;i++){
+	  fprintf(stdout,"Arg %i: %s\n",i,argv[i]);
+	}
+  }
 
   static struct option longOptions[] = {
     {"help", no_argument, 0, 'h'},

@@ -23,7 +23,7 @@ class ORIpeV4FLTEnergyHistogramDecoder : public ORVBasicTreeDecoder
     ORIpeV4FLTEnergyHistogramDecoder() {fDataRecord = NULL; fHistogramLength = -1;}
     virtual ~ORIpeV4FLTEnergyHistogramDecoder() {}
 
-    enum EIpeV4FLTEnergyConsts {kBufHeadLen = 10,
+    enum EIpeV4FLTEnergyHistogramConsts {kBufHeadLen = 12,
                                  kNumFLTChannels = 22};
     size_t fHistogramLength;
     
