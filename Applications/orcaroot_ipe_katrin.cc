@@ -20,13 +20,19 @@
 
 /** \page orcarootipekatrin OrcaRoot IPE Katrin Decoder
   * This  is the OrcaRoot IPE Katrin Decoder (file orcaroot_ipe_katrin.cc)
+  *
+  * This is my (Till Bergmann) OrcaRoot test application and may be changed without notification! -tb-
+  * 
+  *
   * New classes:
   * ORKatrinFLTWaveformDecoder and ORKatrinFLTWaveformTreeWriter
   * ORKatrinFLTEnergyDecoder and ORKatrinFLTEnergyTreeWriter
   * ORKatrinFLTHitrateDecoder and ORKatrinFLTHitrateTreeWriter
+  * and more for V4 -tb-
   *
   *
   * History:
+  *   - 2010-02-24 Cloned all IPE V4 Electronics decoders/writers (IpeV4FLT to KatrinV4FLT). -tb-
   *   - 2010-01-27 Added all IPE V4 Electronics decoders/writers. -tb-
   *   - 2009-04-03 Added a 1DHistoHistograms decoder and writer (Klaus Schloesser from IK needed it). -tb-
   *   - 2008-02-19 If input is EXACTLY ONE file and if it is a IPE Crate file shaper tree is omitted.
@@ -64,12 +70,17 @@
   //this part is for the IPE V4 Electronics -tb- 2010-01-27
   #include "ORIpeV4FLTEnergyDecoder.hh"
   #include "ORIpeV4FLTEnergyTreeWriter.hh"
-
   #include "ORIpeV4FLTWaveformDecoder.hh"
   #include "ORIpeV4FLTWaveformTreeWriter.hh"
-
   #include "ORIpeV4FLTEnergyHistogramDecoder.hh"
   #include "ORIpeV4FLTEnergyHistogramTreeWriter.hh"
+
+  #include "ORKatrinV4FLTEnergyDecoder.hh"
+  #include "ORKatrinV4FLTEnergyTreeWriter.hh"
+  #include "ORKatrinV4FLTWaveformDecoder.hh"
+  #include "ORKatrinV4FLTWaveformTreeWriter.hh"
+  #include "ORKatrinV4FLTEnergyHistogramDecoder.hh"
+  #include "ORKatrinV4FLTEnergyHistogramTreeWriter.hh"
 
 //TODO: -tb-  #include "ORIpeV4FLTHitrateDecoder.hh"
 //TODO: -tb-  #include "ORIpeV4FLTHitrateTreeWriter.hh"
@@ -273,6 +284,15 @@ int main(int argc, char** argv)
 	dataProcManager.AddProcessor(&ipeV4FLTEnergyHistogramTreeWriter);
 	
   
+	ORKatrinV4FLTEnergyTreeWriter katrinV4FLTEnergyTreeWriter("katrinV4EnergyTree");
+	dataProcManager.AddProcessor(&katrinV4FLTEnergyTreeWriter);
+	
+	ORKatrinV4FLTWaveformTreeWriter katrinV4FLTWaveformTreeWriter("katrinV4WaveformTree");
+	dataProcManager.AddProcessor(&katrinV4FLTWaveformTreeWriter);
+	
+	ORKatrinV4FLTEnergyHistogramTreeWriter katrinV4FLTEnergyHistogramTreeWriter("katrinV4EnergyHistogramTree");
+	dataProcManager.AddProcessor(&katrinV4FLTEnergyHistogramTreeWriter);
+	
 	
   //this part is for the UW crate
   //ORShaperShaperDecoder shaperShaperDecoder;
