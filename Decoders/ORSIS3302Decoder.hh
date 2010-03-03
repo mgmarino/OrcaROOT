@@ -116,7 +116,7 @@ inline UShort_t ORSIS3302Decoder::GetBoardId()
 
 inline UShort_t ORSIS3302Decoder::GetChannelNum()
 {
-  return (UShort_t) (fDataRecord[GetRecordOffset()] & 0x3);
+  return (UShort_t) (fDataRecord[GetRecordOffset()] & 0x7);
 }
 
 
