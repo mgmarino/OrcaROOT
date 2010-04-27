@@ -25,12 +25,12 @@ I. Installation
   3) set env vars:
      On Mac OS X:
      setenv ORDIR [path to OrcaRoot directory, e.g. /home/OrcaRoot]
-     setenv PATH $ORDIR/bin:$PATH
+     setenv PATH $ORDIR/Applications:$PATH
      setenv DYLD_LIBRARY_PATH $ORDIR/lib:$DYLD_LIBRARY_PATH
 
      On Linux:
      setenv ORDIR [path to OrcaRoot directory, e.g. /home/OrcaRoot]
-     setenv PATH $ORDIR/bin:$PATH
+     setenv PATH $ORDIR/Applications:$PATH
      setenv LD_LIBRARY_PATH $ORDIR/lib:$LD_LIBRARY_PATH
 
   4) Set up a directory for your own work. Use the files
@@ -47,7 +47,7 @@ I. Installation
   orcaroot Run[#]
            ^^^^^^ raw data file output by ORCA 
   ^^^^^^^^ executable; may be named something else (like
-  orcaroot_[project]). Should be in the $ORDIR/bin directory.
+  orcaroot_[project]). Should be in the $ORDIR/Applications directory.
   There are additionally several options to the provided examples
   executables. Entering just the executable (with no arguments or data
   files) will typically list the usage information and available options.
