@@ -68,6 +68,9 @@
   #include "OR1DHistoHistogramsWriter.hh"
 
   //this part is for the IPE V4 Electronics -tb- 2010-01-27
+  #include "ORIpeV4SLTEventDecoder.hh"
+  #include "ORIpeV4SLTEventTreeWriter.hh"
+  
   #include "ORIpeV4FLTEnergyDecoder.hh"
   #include "ORIpeV4FLTEnergyTreeWriter.hh"
   #include "ORIpeV4FLTWaveformDecoder.hh"
@@ -273,6 +276,9 @@ int main(int argc, char** argv)
 	ORIpeV4FLTWaveformDecoder ipeV4FLTWaveformDecoder;
 	ORIpeV4FLTEnergyHistogramDecoder ipeV4FLTEnergyHistogramDecoder;
     #endif
+	
+	ORIpeV4SLTEventTreeWriter ipeV4SLTEventTreeWriter("ipeV4SLTEventTree");
+	dataProcManager.AddProcessor(&ipeV4SLTEventTreeWriter);
 	
 	ORIpeV4FLTEnergyTreeWriter ipeV4FLTEnergyTreeWriter("ipeV4EnergyTree");
 	dataProcManager.AddProcessor(&ipeV4FLTEnergyTreeWriter);
