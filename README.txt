@@ -228,7 +228,8 @@ Processors
   ORVDataDecoder pointer is NULL, see below). 
 - ORVTreeWriter: virtual base class for processors that write data
   to TTrees -- automates the TTree building, filling (if desired), and
-  writing.
+  writing.  In addition, it automatically adds 'default' branches, including
+  run number, sub-run number and run-state description.
 - ORBasicTreeWriter: processor that uses an ORVBasicTreeDecoder to write
   simple data (a list of UInt_t's) to a TTree.
 - ORHistWriter: processor that uses an ORVHistDecoder to fill a histogram.

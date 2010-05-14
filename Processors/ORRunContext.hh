@@ -12,6 +12,32 @@ class ORRunDataProcessor;
 class ORDataProcManager;
 class ORVWriter;
 
+
+/*!
+ *  ORRunContext provides an object for encapsulating the
+ *  information surrounding an ORCA data run.  It provides an
+ *  access point for the following information:
+ *  Run Number - number of the run
+ *  Run State - Particular state of the run (see ORRunContext::EState)
+ *  Sub Run Number - number of the sub run
+ *  Header - provides direct access to the header information via ORHeader
+ *  Hardware Dictionary - provides access to the hardware dictionary,
+ *    a dictionary encapsulating information on cards/crates and keyed
+ *    according to crate, card number.
+ *  Run start time - actual start time of the run
+ *  Run Type - ORCA run type
+
+ *  ORRunContext handles several other 'global' aspects of a run, including
+ *  determining if the current record is already swapped, and providing
+ *  pointer access to a writable socket to return data across a socket.
+ *  This latter functionality is used by ORVOrcaRequestProcessor to 
+ *  handle communication back to a running ORCA program.
+ *  
+ *  In general, a global ORRunContext is held by ORDataProcManager
+ *  which then passes the context onto the other processors.  Thus,
+ *  all ORDataProcessors can access the ORRunContext via the member
+ *  function ORDataProcessor::GetRunContext()
+ */
 class ORRunContext
 {
 
@@ -20,6 +46,10 @@ class ORRunContext
   /* These classes are managers and so they have access to the protected 
    * members of ORRunContext.  This is to improve data hiding. */
   public:
+    /*!
+     * A list of available states that the ORCA file can be 
+     * in during processing.  
+     */
     enum EState { kIdle=0, 
                   kStarting, 
                   kRunning, 
@@ -41,9 +71,25 @@ class ORRunContext
     virtual inline Bool_t MustSwap() const { return fMustSwap; }
     virtual inline Bool_t IsRecordSwapped() const { return fIsRecordSwapped; }
 
+    //! Pointer access function for Run number
+    /*!
+        This is useful when needed to, for example, initialize
+        the branch of a TTree with the pointer of this variable
+     */
     virtual Int_t* GetPointerToRunNumber() { return &fRunNumber; }
+    //! Pointer access function for Sub Run number
+    /*!
+        This is useful when needed to, for example, initialize
+        the branch of a TTree with the pointer of this variable
+     */
     virtual Int_t* GetPointerToSubRunNumber() { return &fSubRunNumber; }
+    //! Pointer access function for string of state 
+    /*!
+        This is useful when needed to, for example, initialize
+        the branch of a TTree with the pointer of this variable
+     */
     virtual std::string* GetPointerToStringOfState() { return &fStringOfState; }
+
     virtual inline EState GetState() const { return fState; }
     virtual void SetState(EState aState) 
       { fState = aState; fStringOfState = GetStateName(fState); }

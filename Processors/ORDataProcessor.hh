@@ -44,6 +44,15 @@ class ORDataProcessor
 
     virtual UInt_t GetDataId() { return fDataId; } 
     virtual ORVDataDecoder* GetDecoder() { return fDataDecoder; } 
+
+    /*!
+     * Gives access to ORRunContext, which allows one to access global
+     * parameters associated with a run: run number, sub-run number, etc.
+     * This can be useful if a processor needs this information directly. 
+     * For example, to access the run number, one could do:
+     * GetRunContext()->GetRunNumber();
+     * For more information, see the ORRunContext header.
+     */
     virtual const ORRunContext* GetRunContext() { return fRunContext; }
     virtual void KillProcessor() { fDoProcess = false; }
     virtual void KillRun() { fDoProcessRun = false; }
@@ -61,7 +70,7 @@ class ORDataProcessor
        remain protected. 
      */
     friend class ORCompoundDataProcessor;
-    friend class ORDataProcManager;;
+    friend class ORDataProcManager;
 
   protected:
     virtual void SetRunContext(ORRunContext* aContext) { fRunContext = aContext; }

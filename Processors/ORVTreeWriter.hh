@@ -76,6 +76,16 @@ class ORVTreeWriter : public ORDataProcessor
     virtual void SetDoNotAutoFillTree();
 
   protected:
+    /*! InitializeTree initializes a tree to use, calling the derived classes
+     *  InitializeBranches.  In particular, it adds several 'default' branches,
+     *  run number (int), sub-run number (int), and running state (string)
+     *  as branches to the tree:
+     *
+     *  runNumber - Integer, number of the current run
+     *  subRunNumber - Integer, number of the current sub run
+     *  runningState - string, string representation of the current running
+     *  state.  See ORRunContext::EState for a listing of states in the run
+     */
     virtual EReturnCode InitializeTree();
     virtual EReturnCode InitializeBranches() = 0;
 

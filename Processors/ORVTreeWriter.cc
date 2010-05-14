@@ -115,7 +115,7 @@ ORDataProcessor::EReturnCode ORVTreeWriter::EndRun()
 
 ORDataProcessor::EReturnCode ORVTreeWriter::InitializeTree()
 {
-  // check if the tree alread exists -- this way, several processors can
+  // check if the tree already exists -- this way, several processors can
   // write to the same tree. 
   fTree = (TTree*) gDirectory->FindObject(fTreeName.c_str()); 
 
@@ -145,11 +145,12 @@ ORDataProcessor::EReturnCode ORVTreeWriter::InitializeTree()
     // So there is no delete associated with this call to new.
     fTree = new TTree(fTreeName.c_str(), fTreeName.c_str()); 
 
-    // always save the run number
     if (!fRunContext) {
       ORLog(kError) << "fRunContext is NULL!" << endl;
       return kFailure;
     }
+    // always save the run number, the sub-run number, 
+    // and the state of the run
     fTree->Branch("runNumber", fRunContext->GetPointerToRunNumber(), "runNumber/I");
     fTree->Branch("subRunNumber", fRunContext->GetPointerToSubRunNumber(), "subRunNumber/I");
     fTree->Branch("runningState", fRunContext->GetPointerToStringOfState());
