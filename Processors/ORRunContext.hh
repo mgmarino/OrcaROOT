@@ -49,7 +49,14 @@ class ORRunContext
     /*!
      * A list of available states that the ORCA file can be 
      * in during processing.  
+     * The following states are possible:
+     *   Idle
+     *   Starting
+     *   Running
+     *   PreparingForSubRun
+     *   Stopping
      */
+
     enum EState { kIdle=0, 
                   kStarting, 
                   kRunning, 
@@ -93,6 +100,15 @@ class ORRunContext
     virtual inline EState GetState() const { return fState; }
     virtual void SetState(EState aState) 
       { fState = aState; fStringOfState = GetStateName(fState); }
+
+    /*!
+     * The following (string) states are possible:
+     *   Idle
+     *   Starting
+     *   Running
+     *   PreparingForSubRun
+     *   Stopping
+     */
     virtual std::string GetStateName(EState aState) const;
     virtual inline Int_t GetNumberOfStates() const {return (Int_t)kNumberOfStates;}
 
