@@ -1,0 +1,114 @@
+
+README for OrcaRootHeader Version 1.2.0
+
+Sanshiro Enomoto <sanshiro@u.washington.edu>
+1 April 2010
+
+
+OVERVIEW
+========
+
+OrcaRootHeader is a tool to read ORCA header values stored in a ORCA-ROOT output file. This tool is intended to be used by end-users for their analysis programs that read ORCA-ROOT output files, thus this is not a part of ORCA-ROOT. The tool runs within the ROOT framework, and requires no external libraries. Users need to link their code against only the ROOT libraries (including -lXMLParser) and the OrcaRootHeader object files. Users might want to look at just an example program, orcaroot-header-sample.cc, and probably the Makefile.
+
+
+RUNNING THE EXAMPLE
+===================
+
+% tar xvzf OrcaRootHeader.tgz
+this will create a new directory "OrcaRootHeader"
+% cd OrcaRootHeader
+% make
+% ./orcaroot-header-sample OR_testdata.root
+
+There are few more executables:
+orcaroot-header-error-sample: shows how to handle errors.
+orcaroot-header-dump: shows how to dump the whole header contents.
+orcaroot-header-xml-dump: shows how to extract header TObjString from TFile.
+
+
+USAGE
+=====
+
+Although the syntax is somewhat tricky, usage is straight-forward and the sample program (orcaroot-header-sample.cc) will be self-explanatory. By default OrcaRootHeader is very silent and does not print any error or warning messages. If a referenced value is invalid, zero or empty value is returned. Validity of the value can be checked with the IsNull() method. See the orcaroot-header-error-sample.cc file and the Trouble Shooting section below for more details.
+
+
+HOW-TO
+======
+
+How to save header object in my TFile?
+---------------------------------------
+Use TOrcaRootHeader::GetHeaderObjStringFromFile(TFile& OrcaRootFile) to extract the header as an TObjString, and save it as usual. This is a static method so you do not have to make an instance of TOrcaRootHeader. Do just like:
+TObjString* HeaderObjString = TOrcaRootHeader::GetHeaderObjStringFromFile(File);
+
+To reconstruct the OrcaRootHeader object from an ObjString, use the constructor of TOrcaRootHeader::TOrcaRootHeader(TObjString& HeaderObjString).
+
+Note that the header ObjString is stored in the original OrcaRoot file as "headerXML", so you can extract the ObjString from the OrcaRoot file and use the constructor above insted of the constructor with TFile. Conversely, if you store the header ObjString as "headerXML", you can use your TFile object in the same way as the original OrcaRoot file (i.e., you can use the constructor with TFile).
+
+
+TROUBLE SHOOTING
+================
+
+Returned value is incorrectly zero (or empty)
+---------------------------------------------
+Suggestion: 
+Check the header path name. Test whether the path name is correct or not with the IsNull(). Enable error message printing by TOrcaRootHeader::SetGlobalLogStream(cerr).
+
+Explaination: 
+If a non-existing path is specified, OrcaRootHeader returns a Null node, which will be translated to a zero or empty value. Distinction between null and really-zero value can be done by using the IsNull() method, as follows:
++---
+|  int MustBeNonZeroButGotZero = Header["my/path/to/value"]; // original code //
+|  // insert the following line to debug //
+|  cout << (Header["my/path/to/value"].IsNull() ? "ERROR" : "OK") << endl;
++---
+If the result is Null, the path is likely incorrect.
+
+By defaut, OrcaRootHeader is set to be silent; no error and warning messages will be written. It is expected by the default that users check errors with the IsNull() method, or the ValidateOrThrow() explained below. This default setting can be changed by using SetGlobalLogStream() to the header class, or SetLogStream() to a header object. Error and/or warning messages will be written to an user-specified ostream at user-specified severity level (default is warning-level).
++---
+|  TOrcaRootHeader::SetGlobalLogStream(cerr);
+|  TOrcaRootHeader(File);
++---
+
+Null value checks can be embedded by using the ValidateOrThrow() method. If the value IsNull(), an exception object of user choice will be thrown. The exception object can be of any type, as long as copying is defined. In the following example, a string value is used as an exception object.
++---
+|  try {
+|      string Path = "my/wrong/path/to/value";
+|      int MustBeNonZeroButGotZero = Header[Path].ValidateOrThrow(Path + " not found");
+|      DoMyVeryImportantJob(MustBeNonZeroButGotZero);
+|  }
+|  catch (string Message) {
+|      cerr << "*** ERROR: " << Message << endl;
+|      cerr << "MyVeryImportantJob is skipped" << endl;
+|  }
++---
+
+If the root node is Null, i.e., if Header.IsNull() is true, the entire header tree is invalid. This will be likely caused by invalid header string. Get the header as a TObjString object using the GetHeaderObjStringFromFile() method and examine the content. Most of modern Web browsers can be used to check validity of XML files.
+
+
+Compiling fails with long unreadable error messages
+---------------------------------------------------
+Solution: assign the header value to a variable, and use the variable.
+
+Explaination: 
+OrcaRootHeader uses some template tricks that enable automatic conversion from a header value (i.e., header itself) to a primitive value (i.e., int, float, string, etc). Compiling fails when the compiler cannot determine which type to convert for the specific context; e.g., when used in an expression where the value can be either int or long. The error message tends to be very messy because typical compilers show all possible conversions with all possible template instanciations. By explicitly assigning to a variable, this kind of ambiguity can be avoided.
+
+
+INTERNAL DESIGN
+===============
+
+OrcaRootHeader is basically a ROOT iterface to Mac's plist XML file. The 20-line code in OrcaRootHeader.cc is the only part that is specific to ORCA-ROOT. Therefore all other class names and file names start with "Plist", instead of "ORCA", "ROOT" or such. OrcaRootHeader uses the ROOT's SAX parser interface in TPlistParser, and this is the only part dependent to ROOT. Replacing this part to a standard SAX parser makes the tool a generic plist parser, which depends only on well-defined standards (plist, SAX and C++), but results in dependence to an external SAX library (such as libxml2), which might not be convenient for ROOT users.
+
+
+TESTED PLATFORMS
+================
+
+This program should work wherever ROOT works. Specifically, this program was tested with the following platforms.
+
+*) Fedora 12, gcc 4.4.3, ROOT 5.26
+*) Mac OS 10.6, gcc 4.2.1, ROOT 5.26
+
+
+CHANGES
+=======
+30 March 2010: Version 1.2.0: error message printing option added
+24 March 2010: Version 1.1.0: T(Obj)String read/write added to TOrcaRootHeader
+ 1 March 2010: Version 1.0.0: Initial Release
