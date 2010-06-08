@@ -30,7 +30,7 @@
 * only pointers to memory and the length of memory to be read in (0 for
 * non-arrays).
 */
-struct ORVOrcaReqInputOutput; 
+
 
 
 //! Class handling Requests from Orca.
@@ -71,6 +71,13 @@ class ORVOrcaRequestProcessor
 
     enum EORVOrcaRequestProcessorConsts { kString, kStringVec, kInt,
                                           kIntVec, kReal, kRealVec};
+    struct ORVOrcaReqInputOutput {
+      ORVOrcaRequestProcessor::EORVOrcaRequestProcessorConsts type;
+      void* varAddress;
+      std::string description;
+    };
+
+
     // The following two functions are called by the Request Manager to begin
     // procesing.  They must be defined by the derived class.
     virtual const std::string GetNameOfRequestProcessor() = 0; 
@@ -106,12 +113,5 @@ class ORVOrcaRequestProcessor
     std::map< std::string, ORVOrcaReqInputOutput> fInputMap;
     std::map< std::string, ORVOrcaReqInputOutput> fOutputMap;
 };
-
-struct ORVOrcaReqInputOutput {
-  ORVOrcaRequestProcessor::EORVOrcaRequestProcessorConsts type;
-  void* varAddress;
-  std::string description;
-};
-
 
 #endif

@@ -66,8 +66,8 @@ bool OROrcaRequestProcessor::LoadRequestHandler(const std::string& processor)
 bool OROrcaRequestProcessor::LoadInputs()
 {
   const ORDictionary* inputDict; 
-  const std::map< std::string, ORVOrcaReqInputOutput>* mapOfInput; 
-  std::map< std::string, ORVOrcaReqInputOutput>::const_iterator inputIter; 
+  const std::map< std::string, ORVOrcaRequestProcessor::ORVOrcaReqInputOutput>* mapOfInput; 
+  std::map< std::string, ORVOrcaRequestProcessor::ORVOrcaReqInputOutput>::const_iterator inputIter; 
   inputDict = fOrcaRequestDecoder->GetRequestInputs();
   mapOfInput = fCurrentReqProcessor->GetInputMap();
   inputIter = mapOfInput->begin();
@@ -129,8 +129,8 @@ bool OROrcaRequestProcessor::LoadOutputs()
    * It could be done more quickly, but we're not as concerned about speed for the
    * Orca Socket. We have to assemble the output into a dictionary. */
   ORLog(kDebug) << "Getting outputs to submit to Orca..." << endl;
-  const std::map< std::string, ORVOrcaReqInputOutput>* mapOfOutput; 
-  std::map< std::string, ORVOrcaReqInputOutput>::const_iterator mapOfOutputIter; 
+  const std::map< std::string, ORVOrcaRequestProcessor::ORVOrcaReqInputOutput>* mapOfOutput; 
+  std::map< std::string, ORVOrcaRequestProcessor::ORVOrcaReqInputOutput>::const_iterator mapOfOutputIter; 
   mapOfOutput = fCurrentReqProcessor->GetOutputMap();
   
   /* We need to now set up the output into ORDictionaries. */
