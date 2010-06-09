@@ -20,6 +20,7 @@
    */
 
 #include <pthread.h>
+#include <signal.h>
 #include "ORReadWriteLock.hh"
 class ORHandlerThread 
 {
