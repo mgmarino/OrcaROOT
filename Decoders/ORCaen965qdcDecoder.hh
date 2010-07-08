@@ -46,4 +46,14 @@ class ORCaen965qdcDecoder : public ORVBasicTreeDecoder
     UInt_t* fRecord;
 };
 
+class ORCaen965AqdcDecoder : public ORCaen965qdcDecoder
+{
+	public:
+		virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
+			{ return (GetLocPtr(record, iRow)[0] & 0x001E0000) >> 17; }
+
+	virtual std::string GetDataObjectPath() { return "ORCaen965AModel:965AQdc"; }
+    virtual std::string GetValueName() { return "ORCaen965ADecoderForQdc"; }
+};
+
 #endif
