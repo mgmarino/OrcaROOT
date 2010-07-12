@@ -52,7 +52,7 @@ class ORCaen965AqdcDecoder : public ORCaen965qdcDecoder
 		virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
 			{ return (GetLocPtr(record, iRow)[0] & 0x001C0000) >> 18; }
 
-	virtual std::string GetDataObjectPath() { return "ORCaen965AModel:965AQdc"; }
+	virtual std::string GetDataObjectPath() { return "ORCaen965Model:965AQdc"; }
     virtual std::string GetValueName() { return "ORCaen965ADecoderForQdc"; }
 };
 
