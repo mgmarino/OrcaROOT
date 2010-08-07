@@ -89,6 +89,8 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
     
     virtual UInt_t GetEventFlags(size_t /*event*/) { return GetFlags(); }
     
+    // added 06 Aug 2009, A. Schubert
+    virtual Bool_t WaveformDataIsSigned() { return false; }
 
     //Error checking:
     virtual bool IsValid();
