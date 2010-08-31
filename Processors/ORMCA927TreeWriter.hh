@@ -11,7 +11,8 @@ class ORMCA927TreeWriter : public ORVTreeWriter
   public:
     ORMCA927TreeWriter(std::string treeName = "");
     virtual ~ORMCA927TreeWriter();
-    enum ORMCA927TreeWriterConsts{kMaxSpLength = 0x3fff};
+    // changed from 0x3fff to 0x4fff 31 aug 2010, A. Schubert
+    enum ORMCA927TreeWriterConsts{kMaxSpLength = 0x4fff};
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
 		{	
