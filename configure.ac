@@ -159,7 +159,8 @@ echo
 echo "**********************************************************************************"
 echo "**********************************************************************************"
 echo
-echo "You have successfully configured OrcaRoot.  Please now compile by issuing the command:"
+echo "You have successfully configured OrcaRoot.  Please now compile by issuing"
+echo "the command:"
 echo 
 echo "     make"
 echo 

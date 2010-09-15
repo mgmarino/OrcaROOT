@@ -12,7 +12,8 @@
 #include "ORSocketReader.hh"
 #include "ORHandlerThread.hh"
 
-#include "ORCaen965qdcDecoder.hh"
+#include "ORTrigger32ShaperTreeWriter.hh"
+#include "ORShaperShaperTreeWriter.hh"
 
 using namespace std;
 
@@ -124,7 +125,7 @@ int main(int argc, char** argv)
     }else{
       ORLog(kRoutine) << "More than 1 inputs: Using all implemented decoders   ... " << endl;
     }    
-    // END check for IPE Katrin Crate file -tb- 2008-02-19
+
     reader = new ORFileReader;
     for (int i=optind; i<argc; i++) {
       ((ORFileReader*) reader)->AddFileToProcess(argv[i]);
@@ -132,7 +133,6 @@ int main(int argc, char** argv)
   } else {
     reader = new ORSocketReader(readerArg.substr(0, iColon).c_str(), 
                                 atoi(readerArg.substr(iColon+1).c_str()));
-    // stopper = new ORProcessStopper; //removed -tb-
   }
 
   if (!reader->OKToRead()) {
@@ -147,11 +147,13 @@ int main(int argc, char** argv)
   ORFileWriter fileWriter(label);
   dataProcManager.AddProcessor(&fileWriter);
 
-  ORCaen965qdcDecoder caen965qdcDecoder;
-
   ORLog(kRoutine) << "Saving as a tree..." << endl;
-  ORBasicTreeWriter vmeTreeWriter(&caen965qdcDecoder,"chargeTree");
-  dataProcManager.AddProcessor(&vmeTreeWriter);
+
+  ORShaperShaperTreeWriter treeWriter("shaperTree");
+  dataProcManager.AddProcessor(&treeWriter);
+
+  // ORTrigger32ShaperTreeWriter treeWriter;
+  // dataProcManager.AddProcessor(&treeWriter);
 
   ORLog(kRoutine) << "Start processing..." << endl;
   dataProcManager.ProcessDataStream();
