@@ -31,11 +31,11 @@ public:
   virtual inline UInt_t   HitRateLengthOf(UInt_t* record) { return record[3]; }
   virtual inline UInt_t   TotalHitRateOf(UInt_t* record) { return record[4]; }
   virtual inline UShort_t ChannelOf(UInt_t i,UInt_t* record)
-  { return ( record[(i+1)+kHeaderSize] & 0xFF00000 ) >> 20; }
+  { return ( record[i+kHeaderSize] & 0xFF00000 ) >> 20; }
   virtual inline Bool_t   OverflowOf(UInt_t i,UInt_t* record)
-  { return ( record[(i+1)+kHeaderSize] & 0x10000 ) >> 16; }
+  { return ( record[i+kHeaderSize] & 0x10000 ) >> 16; }
   virtual inline UShort_t HitRateOf(UInt_t i,UInt_t* record)
-  { return ( record[(i+1)+kHeaderSize] & 0xFFFF ); }
+  { return ( record[i+kHeaderSize] & 0xFFFF ); }
 
   // for basic trees
   virtual size_t GetNPars() { return 6; }
