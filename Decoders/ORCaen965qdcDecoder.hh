@@ -16,18 +16,20 @@ class ORCaen965qdcDecoder : public ORVBasicTreeDecoder
 
     virtual size_t NValuesOf(UInt_t* record);
     virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
-      { return (GetLocPtr(record, iRow)[0] & 0x001E0000) >> 17; }
+		{ return (GetLocPtr(record, iRow)[0] & 0x001E0000) >> 17; }
+	virtual inline UInt_t IthRangeBitOf(UInt_t* record, size_t iRow)
+		{ return (GetLocPtr(record, iRow)[0] & 0x00010000) >> 16; }
     virtual inline UInt_t IthValueOf(UInt_t* record, size_t iRow)
-      { return GetLocPtr(record, iRow)[0] & 0x00000fff; }
+		{ return GetLocPtr(record, iRow)[0] & 0x00000fff; }
     virtual inline UInt_t IthValueIsUnderThreshold(UInt_t* record, size_t iRow)
-      { return (GetLocPtr(record, iRow)[0] & 0x00002000) >> 13; }
+		{ return (GetLocPtr(record, iRow)[0] & 0x00002000) >> 13; }
     virtual inline UInt_t IthValueIsOverflow(UInt_t* record, size_t iRow)
-      { return (GetLocPtr(record, iRow)[0] & 0x00001000) >> 12; }
+		{ return (GetLocPtr(record, iRow)[0] & 0x00001000) >> 12; }
     virtual inline UInt_t IthValueIsValid(UInt_t* record, size_t iRow)
-      { return ((GetLocPtr(record, iRow)[0] & 0x07000000) >> 24) == 0x000; }
+		{ return ((GetLocPtr(record, iRow)[0] & 0x07000000) >> 24) == 0x000; }
 
     virtual std::string GetDataObjectPath() { return "ORCaen965Model:Qdc"; }
-    virtual std::string GetValueName() { return "ORCaen965DecoderForQdc"; }
+    virtual std::string GetValueName()		{ return "ORCaen965DecoderForQdc"; }
 
     // for basic trees
     virtual size_t GetNPars() { return 7; }
@@ -51,9 +53,11 @@ class ORCaen965AqdcDecoder : public ORCaen965qdcDecoder
 	public:
 		virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
 			{ return (GetLocPtr(record, iRow)[0] & 0x001C0000) >> 18; }
+	virtual inline UInt_t IthRangeBitOf(UInt_t* record, size_t iRow)
+			{ return (GetLocPtr(record, iRow)[0] & 0x00020000) >> 17; }
 
 	virtual std::string GetDataObjectPath() { return "ORCaen965Model:965AQdc"; }
-    virtual std::string GetValueName() { return "ORCaen965ADecoderForQdc"; }
+    virtual std::string GetValueName()		{ return "ORCaen965ADecoderForQdc"; }
 };
 
 #endif
