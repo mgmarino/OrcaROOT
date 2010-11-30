@@ -30,6 +30,7 @@ bool ORSIS3302Decoder::SetDataRecord(UInt_t* dataRecord)
 
 //Channel functions: ******************************************************************
 
+// Thse methods have not been changed to accomodate the extended pretrigger 
 
 //copies the waveform data to the array pointed to by
 //waveform, which is of length len
@@ -65,6 +66,7 @@ size_t ORSIS3302Decoder::CopyWaveformDataDouble(double* waveform, size_t len)
   }
   return len;
 }
+
 
 //copies the energy waveform data to the array pointed to by
 //waveform, which is of length len
@@ -103,6 +105,9 @@ bool ORSIS3302Decoder::IsValid()
   }
   if(GetChannelNum() != ((fDataRecord[1] & 0xFF00) >> 8)) {
     ORLog(kError) << "Channel numbers are inconsistent" << std::endl; 
+		ORLog(kError) << "((fDataRecord[1] & 0xFF00) >> 8)) = " << ((fDataRecord[1] & 0xFF00) >> 8) << std::endl; 
+		ORLog(kError) << "GetChannelNum() = " << GetChannelNum() << std::endl; 
+
     return false;
   }
   return true;
@@ -143,6 +148,9 @@ void ORSIS3302Decoder::Dump(UInt_t* dataRecord) //debugging
 	  << "    The channel is " << GetChannelNum() << std::endl
 	  << "    Timestamp: " << GetTimeStamp() << std::endl
 	  << "    Energy: " << GetEnergyMax() << std::endl  
+	  << "    Is Buffer Wrap Enabled: " << IsBufferWrapEnabled() << std::endl  
+	  << "    The buffer starts at index (0 = not enbabled): " << GetWrapStartIndex() << std::endl
+	  << "    The buffer wrap has (0 = not enbabled): " << GetNofWrapSamples() << "  samples" << std::endl
 	  << "    Retrigger Flag: " << IsRetriggerFlag() << std::endl  
 	  << "    ADC N+1 Flag: " << IsADCNPlusOneTriggerFlag() << std::endl  
 	  << "    ADC N-1 Flag: " << IsADCNMinusOneTriggerFlag() << std::endl  
@@ -153,7 +161,8 @@ void ORSIS3302Decoder::Dump(UInt_t* dataRecord) //debugging
 	  << "    The waveform data has " << GetWaveformLen() 
 	  << " (16-bit) words" << std::endl
 	  << "    The energy waveform data has " << GetEnergyWaveformLen() 
-	  << " (32-bit) words" << std::endl;
+	  << " (32-bit) words" << std::endl
+	  << "    TRAILER (should end in 0xDEADBEEF):  " << GetTrailer() << std::endl;
 
 }
 

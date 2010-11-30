@@ -10,6 +10,7 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
   public:
     ORSIS3302Decoder();
     virtual ~ORSIS3302Decoder() {}
+    //use these as defaults and only change if the wrap mode is enabled
     enum ESIS3302Consts { kOrcaHeaderLen = 4,
                           kBufferHeaderLen = 2,
                           kBufferTrailerLen = 4 };
@@ -19,12 +20,38 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
                              kValidation };
     
     virtual std::string GetDataObjectPath() { return "ORSIS3302:Energy"; }  
-    virtual std::string GetDictionaryObjectPath() { return "ORSIS3302Model"; }  
+    virtual std::string GetDictionaryObjectPath() { return "ORSIS3302Model"; }
     virtual bool SetDataRecord(UInt_t* record);
+    
+    
        
     //Functions that return data from buffer header:
+    //-------------------------------------------------------------
+    // Extended pre-trigger mode, P. Finnerty 11/30/2010
+    // IF this enabled, then the format of the data record changes.
+    virtual inline Bool_t IsBufferWrapEnabled() 
+      { return (fDataRecord[1] & 0x1 == 0x1); }
+      
     virtual inline size_t GetBufHeadLen() 
-      { return (size_t) (kBufferHeaderLen);}
+      { 
+        // new buffer header has two extra words in it
+        if ( IsBufferWrapEnabled() ){ return (size_t) (4);}
+        else{ return (size_t) (kBufferHeaderLen); }
+      }
+    
+    // inline functions accomodating the extended pretrigger
+    virtual inline unsigned long GetNofWrapSamples()
+    {
+      if ( IsBufferWrapEnabled() ){ return fDataRecord[6];}
+      else{ return 0; }
+    }
+    
+    virtual inline unsigned long GetWrapStartIndex()
+    {
+      if ( IsBufferWrapEnabled() ){ return fDataRecord[7];}
+      else{ return 0; }
+    }
+    //-------------------------------------------------------------
     virtual inline size_t GetTrailerLen() 
       { return (size_t) (kBufferTrailerLen);}
     virtual inline UShort_t GetBoardId();
@@ -40,7 +67,6 @@ class ORSIS3302Decoder: public ORVDigitizerDecoder
     virtual inline UInt_t GetEnergyInitial();
     virtual inline UInt_t GetFlags();
     virtual inline UInt_t GetTrailer();
-
 
     virtual inline Bool_t IsPileupFlag()
       { return ((GetFlags() & 0x80000000) == 0x80000000); }
