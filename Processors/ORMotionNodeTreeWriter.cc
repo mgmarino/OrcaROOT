@@ -15,6 +15,7 @@ ORVTreeWriter(new ORMotionNodeDecoder, treeName)
 	fDevice			= 0;
 	fChannel		= 0;
 	fWaveformLength = 0;
+    fTimeStamp      = 0;
 	SetDoNotAutoFillTree();
 }
 
@@ -29,7 +30,8 @@ ORDataProcessor::EReturnCode ORMotionNodeTreeWriter::InitializeBranches()
 	fTree->Branch("device",   &fDevice,			"device/s");
 	fTree->Branch("channel",  &fChannel,		"channel/s");
 	fTree->Branch("waveform", fWaveform,		"waveform[wLength]/i");
-	return kSuccess;
+	fTree->Branch("timeStamp", &fTimeStamp,      "timeStamp/i");
+    return kSuccess;
 }
 
 ORDataProcessor::EReturnCode ORMotionNodeTreeWriter::ProcessMyDataRecord(UInt_t* record)
@@ -40,13 +42,15 @@ ORDataProcessor::EReturnCode ORMotionNodeTreeWriter::ProcessMyDataRecord(UInt_t*
 	fDevice			= fEventDecoder->Device();
 	fChannel		= fEventDecoder->GetChannelNum();
 	fWaveformLength = fEventDecoder->GetWaveformLength();
+    fTimeStamp      = fEventDecoder->GetTimeStamp();
 	if (ORLogger::GetSeverity() >= ORLogger::kDebug) { 
 		ORLog(kDebug) << "ProcessMyDataRecord(): "
 			<< "device-channel-length- = "
 			<< fDevice << "-"
 			<< fChannel << "-"
 			<< fWaveformLength << "-"
-			<< endl;
+			<< fTimeStamp << "-"
+            << endl;
 	}
 
 	if (fWaveformLength > kMaxwLength) {

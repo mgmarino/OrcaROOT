@@ -1,5 +1,27 @@
 // ORAmi286Decoder.hh
 /*
+ //------------------------------------------------------------------------------------------------
+ // Data Format
+ //xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+ //^^^^ ^^^^ ^^^^ ^^-----------------------data id
+ //                 ^^ ^^^^ ^^^^ ^^^^ ^^^^-length in longs
+ //
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+ // ^^^^------------------------------------ fill state for level 3
+ //      ^^^^------------------------------- fill state for level 2
+ //           ^^^^-------------------------- fill state for level 1
+ //                ^^^^--------------------- fill state for level 0
+ //                          ^^^^ ^^^^ ^^^^- device id
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  level chan 0 encoded as a float
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  time level 0 taken in seconds since Jan 1, 1970
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  level chan 1 encoded as a float
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  time level 1 taken in seconds since Jan 1, 1970
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  level chan 2 encoded as a float
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  time level 2 taken in seconds since Jan 1, 1970
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  level chan 3 encoded as a float
+ // xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx  time level 3 taken in seconds since Jan 1, 1970
+ //-----------------------------------------------------------------------------------------------
+ 
 */
 #ifndef _ORAmi286Decoder_hh_
 #define _ORAmi286Decoder_hh_
@@ -25,7 +47,10 @@ class ORAmi286Decoder: public ORVDataDecoder
 
     virtual UInt_t GetTimeOfChannel(UInt_t* record, UInt_t channel); 
     /* Time in channel given in seconds since 1 Jan 1970. */
-
+  
+    virtual UShort_t GetStatusOfChannel(UInt_t* record, UInt_t channel);
+    /* Status of the solenoid valve */
+  
     virtual void Dump(UInt_t* record);
     /* Provides a debug dump of the record. */
 

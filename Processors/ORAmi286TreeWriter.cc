@@ -25,6 +25,7 @@ ORDataProcessor::EReturnCode ORAmi286TreeWriter::InitializeBranches()
   fTree->Branch("time", &fTime, "time/i");
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("deviceID", &fDeviceID, "deviceID/s");
+  fTree->Branch("status",&fStatus, "status/s");
   return kSuccess;
 }
 
@@ -34,11 +35,13 @@ ORDataProcessor::EReturnCode ORAmi286TreeWriter::ProcessMyDataRecord(UInt_t* rec
   for (UInt_t i=0; i<fAmi286Decoder->GetNumberOfChannels();i++) {
     fLevel = fAmi286Decoder->GetLevelOfChannel(record, i);
     fTime = fAmi286Decoder->GetTimeOfChannel(record, i);
+    fStatus = fAmi286Decoder->GetStatusOfChannel(record,i);
     fChannel = i;
     if(ORLogger::GetSeverity() >= ORLogger::kDebug) { 
-      ORLog(kDebug) << "channel:level:time = "  
-        << fChannel << ":" << fLevel << ":" 
-        << ":" << fTime << endl;
+      ORLog(kDebug) << std::endl << "   Channel: " << fChannel << std::endl
+      << "     Level: " << fLevel << std::endl
+      << "     Time: " << fTime << std::endl
+      << "     Status: " << fStatus << std::endl;
     }
     fTree->Fill();
   }

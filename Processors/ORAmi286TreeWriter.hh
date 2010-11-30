@@ -13,7 +13,7 @@ class ORAmi286TreeWriter : public ORVTreeWriter
     virtual ~ORAmi286TreeWriter();
 
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
-    virtual inline void Clear() { fLevel = 0.; fTime = 0; fChannel = 0; fDeviceID = 0;}
+    virtual inline void Clear() { fStatus = 0.; fLevel = 0.; fTime = 0; fChannel = 0; fDeviceID = 0;}
 
   protected:
     virtual EReturnCode InitializeBranches();
@@ -24,6 +24,7 @@ class ORAmi286TreeWriter : public ORVTreeWriter
     UInt_t fTime; 
     UShort_t fDeviceID;
     UShort_t fChannel;
+    UShort_t fStatus;
 };
 
 #endif

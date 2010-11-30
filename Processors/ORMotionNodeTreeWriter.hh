@@ -18,6 +18,7 @@ class ORMotionNodeTreeWriter : public ORVTreeWriter
 			fDevice			= 0;  
 			fChannel		= 0; 
 			fWaveformLength = 0;
+            fTimeStamp      = 0;
 		}
   protected:
     virtual EReturnCode InitializeBranches();
@@ -25,7 +26,7 @@ class ORMotionNodeTreeWriter : public ORVTreeWriter
   protected:
     ORMotionNodeDecoder* fEventDecoder;
     UShort_t fDevice, fChannel;
-    UInt_t fWaveform[kMaxwLength];
+    UInt_t fWaveform[kMaxwLength], fTimeStamp;
     size_t fWaveformLength;
 };
 

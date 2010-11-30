@@ -33,7 +33,7 @@ class ORMCA927Decoder: public ORVMCADecoder
     enum EMCA927Consts {kBufHeadLen = 10};
                                            
     virtual std::string GetDataObjectPath()			{ return "ORMCA927Model:Spectrum"; }  
-    virtual std::string GetDictionaryObjectPath()	{ return "ORMCA927Model"; }  
+    //virtual std::string GetDictionaryObjectPath()	{ return "ORMCA927Model"; }  
     virtual bool SetDataRecord(UInt_t* record);
        
 	//inline functions: ************************************************************************
