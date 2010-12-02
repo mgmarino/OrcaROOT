@@ -30,7 +30,7 @@ class ORKatrinV4FLTEnergyHistogramDecoder : public ORVBasicTreeDecoder
     virtual bool SetDataRecord(UInt_t* dataRecord);
     
     virtual inline UInt_t ChannelOf(UInt_t* record)
-      { return ( record[1] & 0x00000ff0 ) >> 8; }
+      { return ( record[1] & 0x0000ff00 ) >> 8; }
       
     //Functions that return data from buffer header:
     virtual inline UInt_t  ReadoutSecOf(UInt_t* record)  { return record[2]; }
