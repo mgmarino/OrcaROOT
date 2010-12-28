@@ -3,6 +3,7 @@
 #include "ORAmi286Decoder.hh"
 #include "ORLogger.hh" 
 
+using namespace std;
 
 //**************************************************************************************
 
@@ -30,29 +31,28 @@ UShort_t ORAmi286Decoder::GetStatusOfChannel(UInt_t* record, UInt_t channel)
       // shift to right to ensure we ship a UShort_t, 
       // rather than a ULong_t
       return (record[1] & 0xf0000000) >> 28;
-      break;
     case 2:
       return (record[1] & 0xf000000) >> 24;
-      break;
     case 1:
       return (record[1] & 0xf00000)>> 20;
-      break;
     case 0:
       return (record[1] & 0xf0000) >> 16;
-      break;
+    default:
+      ORLog(kWarning) << "Unknown channel " << channel << endl;
+      return 0;
   }
 
 }
 
 void ORAmi286Decoder::Dump(UInt_t* record)
 {
-  ORLog(kDebug) << "*************** Dumping out Ami286 Data *************" << std::endl;
-  ORLog(kDebug) << "Number of Channels: " << GetNumberOfChannels() << std::endl;
+  ORLog(kDebug) << "*************** Dumping out Ami286 Data *************" << endl;
+  ORLog(kDebug) << "Number of Channels: " << GetNumberOfChannels() << endl;
   for (size_t i=0; i<GetNumberOfChannels();i++) {
-    ORLog(kDebug) << "Channel: " << i << std::endl
-      << " Level: " << GetLevelOfChannel(record, i) << std::endl
-      << " Time: " << GetTimeOfChannel(record, i) << std::endl
-      << " Status: " << GetStatusOfChannel(record, i) << std::endl;
+    ORLog(kDebug) << "Channel: " << i << endl
+      << " Level: " << GetLevelOfChannel(record, i) << endl
+      << " Time: " << GetTimeOfChannel(record, i) << endl
+      << " Status: " << GetStatusOfChannel(record, i) << endl;
   }
-  ORLog(kDebug) << "********************************************************" << std::endl;
+  ORLog(kDebug) << "********************************************************" << endl;
 }
