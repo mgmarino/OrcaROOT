@@ -42,6 +42,7 @@ void ORDataProcessor::SetDataId()
   } else {
     fDataId = tempID;
   }
+  ORLog(kDebug) << fDataDecoder->GetDataObjectPath() << " got data ID " << fDataId << endl;
 }
 
 void ORDataProcessor::SetDecoderDictionary()
