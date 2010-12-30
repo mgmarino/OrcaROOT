@@ -26,14 +26,24 @@ class ORFileReader : public std::ifstream, public ORVReader
 
     //! Open the next file in the file list.
     virtual bool OpenDataStream();
-    virtual void Close() { close(); }
+    virtual void Close() { close(); fCurrentFileName = ""; }
 
     //! Add a file to the file list.
     virtual void AddFileToProcess(std::string filename)
       { fFileList.push_back(filename); }
 
+    //! Get last-modified-date string of current file
+    virtual std::string GetFileDate();
+    //! Get path of current file
+    virtual std::string GetFilePath();
+    //! Get last-modification UTC time of current file
+    virtual int GetFileTime();
+    //! Get time interval in seconds since 1 January 2001, GMT of current file
+    virtual int GetFileRefTime();
+
   protected:
     std::vector<std::string> fFileList;
+    std::string fCurrentFileName;
 };
 
 #endif
