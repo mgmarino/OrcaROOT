@@ -16,6 +16,12 @@ class ORFileWriter : public ORUtilityProcessor
 
     virtual EReturnCode StartRun();
     virtual EReturnCode EndRun();
+
+    // The following function is used to check if we are in a new sub-run. Since
+    // the original OrcaRoot architects decided to write the header to file in
+    // this class, we will also write the subrun headers from here.
+    virtual EReturnCode ProcessDataRecord(UInt_t*);
+
     virtual EReturnCode EndProcessing();
 
     virtual std::string GetLabel() { return fLabel; }
@@ -23,11 +29,12 @@ class ORFileWriter : public ORUtilityProcessor
 
   protected:
     virtual TFile* UpdateFilePointer();
-
+  
   protected:
     std::string fLabel;
     std::string fSavedName;
     TFile* fFile;
+    UInt_t fLastSubRunNumber;
 };
 
 #endif

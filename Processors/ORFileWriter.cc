@@ -38,6 +38,8 @@ ORDataProcessor::EReturnCode ORFileWriter::StartRun()
   TObjString headerXML(fRunContext->GetHeader()->GetRawXML().Data());
   headerXML.Write("headerXML");
 
+  fLastSubRunNumber = 0;
+
   return kSuccess;
 }
 
@@ -55,6 +57,18 @@ ORDataProcessor::EReturnCode ORFileWriter::EndRun()
   fFile->cd();
   // other processors will write their data after this processor; close the file at
   // the beginning of the next run or at the end of processing.
+  return kSuccess;
+}
+
+ORDataProcessor::EReturnCode ORFileWriter::ProcessDataRecord(UInt_t*)
+{
+  if (fRunContext->GetSubRunNumber()!=fLastSubRunNumber)
+  {
+    fFile->cd();
+    TObjString headerXML(fRunContext->GetHeader()->GetRawXML().Data());
+    headerXML.Write(::Form("headerXML_%d",fRunContext->GetSubRunNumber()));
+    fLastSubRunNumber = fRunContext->GetSubRunNumber();
+  }
   return kSuccess;
 }
 
