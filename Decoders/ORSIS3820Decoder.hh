@@ -12,9 +12,9 @@ public:
   virtual ~ORSIS3820Decoder() {}
 
   virtual inline UInt_t CrateOf(UInt_t* record)
-  { return (record[1] & 0x000f0000) >> 16; }
+  { return (record[1] & 0x1e00000) >> 21; }
   virtual inline UInt_t CardOf(UInt_t* record)
-  { return (record[1] & 0x0000001f); }
+  { return (record[1] & 0x1f0000) >> 16; }
   virtual inline size_t NScalersOf(UInt_t* /*record*/)
   { return 32; }
   virtual inline UInt_t TimeRead(UInt_t* record)
@@ -30,7 +30,7 @@ public:
   virtual inline UInt_t IthChannelOf(UInt_t* /*record*/, size_t i) 
   { return i+1; }
   virtual inline UInt_t IthScalerOf(UInt_t* record, size_t i) 
-  { return record[6+i]; }
+  { return record[7+i]; }
 
   virtual std::string GetDataObjectPath() { return "ORSIS3820Model:Counts"; }
 
