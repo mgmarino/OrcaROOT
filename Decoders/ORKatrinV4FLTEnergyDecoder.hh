@@ -33,10 +33,17 @@ class ORKatrinV4FLTEnergyDecoder : public ORVBasicTreeDecoder
     virtual inline UInt_t EventIDOf(UInt_t* record) 
       { return ( record[5] & 0x3FF ); }
     virtual inline UInt_t PageNumberOf(UInt_t* record) 
-      { return ( record[5] & 0x1FF0000 ) >> 16; }
+      { return ( record[5] & 0xfc00 ) >> 10; }
+    virtual inline UShort_t TimePrecisionOf(UInt_t* record)
+      { return ( record[5] & 0x30000 ) >> 16; }
+    virtual inline UShort_t FIFOFlagsOf(UInt_t* record)
+      { return ( record[5] & 0xf00000 ) >> 20; }
+    virtual inline UShort_t FLTRunModeOf(UInt_t* record)
+      { return ( record[5] & 0xf000000) >> 24; }
     virtual inline UInt_t EnergyOf(UInt_t* record) { return record[6]; }
     virtual inline UInt_t ResetSecondsOf(UInt_t* record) { return record[7]; }
     virtual inline UInt_t ResetSubSecondsOf(UInt_t* record) { return record[8]; }
+  
 
     // for basic trees
     virtual size_t GetNPars() { return 6; }
