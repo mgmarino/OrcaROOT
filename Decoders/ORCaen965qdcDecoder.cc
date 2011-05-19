@@ -81,4 +81,3 @@ UInt_t ORCaen965qdcDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
       return 0;
   }
 }
-
