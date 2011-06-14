@@ -31,7 +31,7 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTWaveformTreeWriter::InitializeBranches
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
-  fTree->Branch("eventID", &fEventID, "eventID/i");
+  fTree->Branch("fifoEventID", &fEventID, "fifoEventID/i");
   fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
   fTree->Branch("eventFlags", &fEventFlags, "eventFlags/i");
   fTree->Branch("eventInfo", &fEventInfo, "eventInfo/i");

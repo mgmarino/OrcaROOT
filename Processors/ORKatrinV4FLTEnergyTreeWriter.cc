@@ -23,7 +23,7 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTEnergyTreeWriter::InitializeBranches()
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
   //fTree->Branch("resetSec", &fResetSec, "resetSec/i");//removed 2011-06-14 -tb-
   //fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");//removed 2011-06-14 -tb-
-  fTree->Branch("eventID", &fEventID, "eventID/s");
+  fTree->Branch("fifoEventID", &fEventID, "fifoEventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("channel", &fChannel, "channel/s");
