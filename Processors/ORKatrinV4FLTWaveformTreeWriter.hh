@@ -15,7 +15,6 @@ class ORKatrinV4FLTWaveformTreeWriter : public ORVTreeWriter
     virtual inline void Clear() 
       { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; 
         fChannel = 0; fEnergy = 0; fWaveformLength = 0;
-        fResetSec=0; fResetSubSec=0;   //-tb- 2008-02-12
 		fChannelMap=0;  //-tb- 2010-02-17
 		fEventID=0; fEventFlags=0; fEventInfo=0;  //-tb- 2010-02-17
         fSaveOnlyNonemptyTrees=true; }
@@ -28,7 +27,7 @@ class ORKatrinV4FLTWaveformTreeWriter : public ORVTreeWriter
 
   protected:
     ORKatrinV4FLTWaveformDecoder* fEventDecoder;
-    UInt_t fSec, fSubSec, fResetSec, fResetSubSec;
+    UInt_t fSec, fSubSec;
     UInt_t fChannelMap;
     UShort_t fCrate, fCard, fChannel;
     UShort_t fWaveform[kMaxWFLength];
