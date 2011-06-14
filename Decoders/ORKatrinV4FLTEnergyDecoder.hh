@@ -30,8 +30,8 @@ class ORKatrinV4FLTEnergyDecoder : public ORVBasicTreeDecoder
     virtual inline UInt_t SubSecondsOf(UInt_t* record) { return record[3]; }
     virtual inline UInt_t ChannelMapOf(UInt_t* record) 
       { return (record[4] & 0x3FFFFF); }
-    virtual inline UInt_t EventIDOf(UInt_t* record) 
-      { return ( record[5] & 0x3FF ); }
+    virtual inline UInt_t EventInfoOf(UInt_t* record) 
+      { return record[5] ; }
     virtual inline UInt_t PageNumberOf(UInt_t* record) 
       { return ( record[5] & 0xfc00 ) >> 10; }
     virtual inline UShort_t TimePrecisionOf(UInt_t* record)
@@ -40,9 +40,11 @@ class ORKatrinV4FLTEnergyDecoder : public ORVBasicTreeDecoder
       { return ( record[5] & 0xf00000 ) >> 20; }
     virtual inline UShort_t FLTRunModeOf(UInt_t* record)
       { return ( record[5] & 0xf000000) >> 24; }
-    virtual inline UInt_t EnergyOf(UInt_t* record) { return record[6]; }
-    virtual inline UInt_t ResetSecondsOf(UInt_t* record) { return record[7]; }
-    virtual inline UInt_t ResetSubSecondsOf(UInt_t* record) { return record[8]; }
+    virtual inline UInt_t EnergyOf(UInt_t* record) { return record[6] & 0x000FFFFF; }
+    virtual inline UInt_t EventIDOf(UInt_t* record) 
+      { return ( record[6] & 0xFFF00000 ) >> 20; }//changed 2011-06-14 -tb-
+    //virtual inline UInt_t ResetSecondsOf(UInt_t* record) { return record[7]; }//removed 2011-06-14 -tb-
+    //virtual inline UInt_t ResetSubSecondsOf(UInt_t* record) { return record[8]; }//removed 2011-06-14 -tb-
   
 
     // for basic trees

@@ -23,7 +23,7 @@ class ORKatrinV4FLTEnergyTreeWriter : public ORVTreeWriter
    UInt_t fSec, fSubSec;
    UShort_t fEventID, fChannelMap, fPageNumber;
     UShort_t fCrate, fCard, fChannel;
-    UInt_t fEnergy, fResetSec, fResetSubSec;
+    UInt_t fEnergy, fEventInfo; // removed 2011-06-14 -tb-  fResetSec, fResetSubSec;
     //Bool_t saveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-02-19 - MOVED TO BASE CLASS -tb-
 };
 

@@ -38,10 +38,10 @@ public:
     virtual inline UInt_t GetSubSec();
     virtual inline UInt_t GetChannelMap();
     virtual inline UShort_t GetChannel();
-    virtual inline UInt_t GetEventID();
-    virtual inline UInt_t GetEnergy();
-    virtual inline UInt_t GetEventFlags();
     virtual inline UInt_t GetEventInfo();
+    virtual inline UInt_t GetEnergy();
+    virtual inline UInt_t GetEventID();
+    virtual inline UInt_t GetEventFlags();
 	
     // Waveform Functions
     virtual inline size_t GetWaveformLen(); 
@@ -96,24 +96,24 @@ inline UInt_t ORKatrinV4FLTWaveformDecoder::GetChannelMap()
 	return (fDataRecord[4]);
 }
 
-inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventID() //this holds now more info than only the page #, see ORKatrinV4FLTDecoder -tb-
+inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventInfo() //changed  2011-06-14 -tb-
 {
 	return ( fDataRecord[5] );
 }
 
 inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEnergy()
 {
-	return (fDataRecord[6]);
+	return (fDataRecord[6] & 0x000FFFFF);
+}
+
+inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventID()
+{
+	return ( ( fDataRecord[6] & 0xFFF00000 ) >> 20);
 }
 
 inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventFlags()
 {
 	return (fDataRecord[7]);
-}
-
-inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventInfo()
-{
-	return (fDataRecord[8]);
 }
 
 inline UShort_t ORKatrinV4FLTWaveformDecoder::GetChannel()

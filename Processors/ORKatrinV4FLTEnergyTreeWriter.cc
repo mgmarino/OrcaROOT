@@ -21,8 +21,8 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTEnergyTreeWriter::InitializeBranches()
 {
   fTree->Branch("eventSec", &fSec, "eventSec/i");
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
-  fTree->Branch("resetSec", &fResetSec, "resetSec/i");
-  fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");
+  //fTree->Branch("resetSec", &fResetSec, "resetSec/i");//removed 2011-06-14 -tb-
+  //fTree->Branch("resetSubSec", &fResetSubSec, "resetSubSec/i");//removed 2011-06-14 -tb-
   fTree->Branch("eventID", &fEventID, "eventID/s");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
@@ -30,6 +30,7 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTEnergyTreeWriter::InitializeBranches()
   fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/s");
   fTree->Branch("pageNumber", &fPageNumber, "pageNumber/s");
+  fTree->Branch("eventInfo", &fEventInfo, "eventInfo/i");
   return kSuccess;
 }
 
@@ -40,8 +41,8 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTEnergyTreeWriter::ProcessMyDataRecord(
       // check severity to improve speed:
   fSec = fEventDecoder->SecondsOf(record);
   fSubSec = fEventDecoder->SubSecondsOf(record);
-  fResetSec = fEventDecoder->ResetSecondsOf(record);
-  fResetSubSec = fEventDecoder->ResetSubSecondsOf(record);
+  //fResetSec = fEventDecoder->ResetSecondsOf(record);//removed 2011-06-14 -tb-
+  //fResetSubSec = fEventDecoder->ResetSubSecondsOf(record);//removed 2011-06-14 -tb-
   fEnergy = fEventDecoder->EnergyOf(record);
   fCrate = fEventDecoder->CrateOf(record);
   fCard = fEventDecoder->CardOf(record);
@@ -49,12 +50,14 @@ ORDataProcessor::EReturnCode ORKatrinV4FLTEnergyTreeWriter::ProcessMyDataRecord(
   fChannelMap = fEventDecoder->ChannelMapOf(record);
   fPageNumber = fEventDecoder->PageNumberOf(record);
   fEventID = fEventDecoder->EventIDOf(record);
+  fEventInfo =  fEventDecoder->EventInfoOf(record);//TODO: not yet in kDebug output, see below -tb-
   if (ORLogger::GetSeverity() >= ORLogger::kDebug) 
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
       << "sec-subsec-ID-crate-card-channel-energy_adc = "
-      << fSec << "-" << fSubSec << "-" << fCrate << "-"
+      << fSec << "-" << fSubSec << "-" 
       << fEventID << "-"
+	  << fCrate << "-"
       << fCard << "-" << fChannel << "-" << fEnergy << endl;
   }
   return kSuccess;
