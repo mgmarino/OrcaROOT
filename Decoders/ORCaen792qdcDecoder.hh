@@ -36,13 +36,13 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
   protected:
     virtual void LoadLocPtrs(UInt_t* record);
     virtual inline UInt_t IthWordIsHeader(UInt_t* record, size_t iWord)
-      { return ((record[iWord] & 0x07000000) >> 24) == 0x010; }
+      { return ((record[iWord] & 0x07000000) >> 24) == 2; }
     virtual inline UInt_t IthWordIsData(UInt_t* record, size_t iWord)
-      { return ((record[iWord] & 0x07000000) >> 24) == 0x000 || ((record[iWord] & 0x07000000) >> 24) == 0x110; }
+      { return ((record[iWord] & 0x07000000) >> 24) == 0 || ((record[iWord] & 0x07000000) >> 24) != 6; }
     virtual inline UInt_t IthWordIsEndOfBlock(UInt_t* record, size_t iWord)
-      { return ((record[iWord] & 0x07000000) >> 24) == 0x100; }
+      { return ((record[iWord] & 0x07000000) >> 24) == 4; }
     virtual inline size_t NChannelsInBlock(UInt_t* headerPtr)
-      { return (headerPtr[0] & 0x00003700) >> 8; }
+      { return (headerPtr[0] & 0x00003F00) >> 8; }
     virtual UInt_t* GetLocPtr(UInt_t* record, size_t i);
     std::vector<UInt_t*> fLocPtrs;
     UInt_t* fRecord;
