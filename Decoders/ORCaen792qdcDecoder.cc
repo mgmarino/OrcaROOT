@@ -22,33 +22,21 @@ size_t ORCaen792qdcDecoder::NValuesOf(UInt_t* record)
 
 void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
 {
-  fLocPtrs.clear();
-  size_t i=2;
-  while(i<LengthOf(record)) {
-    if(!IthWordIsHeader(record, i)) {
-      ORLog(kWarning) << "expected word " << i << " to be a block header." << std::endl;
-      return;
-    }
-
-    for(size_t j=0; j<NChannelsInBlock(record+i); j++) {
-      if(!IthWordIsData(record, i+1+j)) {
-        ORLog(kWarning) << "expected word " << i+1+j << " to be a data word." << std::endl;
-        return;
-      }
-      fLocPtrs.push_back(record+i+1+j);
-    }
-
-    if(!IthWordIsEndOfBlock(record, i+1+NChannelsInBlock(record+i))) {
-      ORLog(kWarning) << "expected word " << i+1+NChannelsInBlock(record+i) 
-                      << " to be end-of-block." << std::endl;
-      return;
-    }
-    i += NChannelsInBlock(record+i) + 2;
-  }
-  if(i > LengthOf(record)) {
-    ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
-                    << LengthOf(record) << std::endl;
-  }
+	fLocPtrs.clear();
+	size_t i=2;
+	while(i<LengthOf(record)) {
+		if(!IthWordIsData(record, i)) {
+			ORLog(kWarning) << "expected word " << i+1 << " to be a data word." << std::endl;
+			return;
+		}
+		fLocPtrs.push_back(record+i);
+		i++;
+		if(i > LengthOf(record)) {
+			ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
+			<< LengthOf(record) << std::endl;
+		}
+	}
+	
 }
 
 UInt_t* ORCaen792qdcDecoder::GetLocPtr(UInt_t* record, size_t i)
