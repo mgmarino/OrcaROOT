@@ -34,7 +34,7 @@ class ORFileWriter : public ORUtilityProcessor
     std::string fLabel;
     std::string fSavedName;
     TFile* fFile;
-    UInt_t fLastSubRunNumber;
+    Int_t fLastSubRunNumber;
 };
 
 #endif
