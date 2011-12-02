@@ -1,0 +1,70 @@
+
+*.o
+# /
+/Makefile
+/*.dylib
+/*.so
+/.depend
+/bin*
+/lib*
+/config.status
+/config.log
+/autom4te.cache
+/*/Makefile
+
+# /Applications/
+/Applications/Makefile
+/Applications/getHeaderInRootFile
+/Applications/orcaroot
+/Applications/orcaroot_minesh
+/Applications/orcarootIgor
+/Applications/orhexdump
+/Applications/writeShaperTree
+/Applications/.depend
+/Applications/testStopper
+/Applications/testHeaderReadin
+/Applications/testUtil
+/Applications/orcaroot_KATRIN_PS
+/Applications/orcaroot_KATRIN_Filter
+/Applications/orcaroot_ipe_katrin
+/Applications/orcaroot_ipe_unc
+/Applications/orcaroot_vme_unc
+
+# /Decoders/
+/Decoders/Makefile
+/Decoders/.depend
+/Decoders/*.so
+/Decoders/*.dylib
+
+# /IO/
+/IO/Makefile
+/IO/.depend
+/IO/*.so
+/IO/*.dylib
+
+# /Management/
+/Management/Makefile
+/Management/.depend
+/Management/*.so
+/Management/*.dylib
+
+# /Processors/
+/Processors/Makefile
+/Processors/.depend
+/Processors/*.so
+/Processors/*.dylib
+
+# /Util/
+/Util/Makefile
+/Util/.depend
+/Util/*.so
+/Util/*.dylib
+
+# /buildTools/
+/buildTools/Makefile
+/buildTools/*.o
+/buildTools/*.dylib
+/buildTools/.depend
+/buildTools/config.mk
+/buildTools/BasicMakefile
+/buildTools/BasicAppMakefile
