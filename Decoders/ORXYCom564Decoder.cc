@@ -15,7 +15,15 @@ UInt_t ORXYCom564Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 0: return CrateOf(record);
     case 1: return CardOf(record);
     case 2: return (record[iRow + kXYCom564HeaderSize] >> 16) & 0xFF;
-    case 3: return (record[iRow + kXYCom564HeaderSize] + 0xFF) & 0xFFFF ;
+    case 3: { 
+      UShort_t rawValue = (record[iRow + kXYCom564HeaderSize]) & 0xFFFF ;
+      if (rawValue < 32767) {
+          rawValue += 32767;
+      } else {
+          rawValue -= 32767;
+      }
+      return rawValue;
+    }
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
                       << ") out of range." << std::endl;
