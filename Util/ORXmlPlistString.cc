@@ -35,10 +35,10 @@ void ORXmlPlistString::LoadDictValue(const ORVDictValue* dictValue)
     const ORDictionary* dictValuePtr = 
       dynamic_cast<const ORDictionary*>(dictValue);
     append("<dict>\n");
-    const std::map<const std::string, ORVDictValue*>* dictMap = 
+    const ORDictionary::DictMap& dictMap = 
       dictValuePtr->GetDictMap();
-    std::map<const std::string, ORVDictValue*>::const_iterator dictMapIter;
-    for(dictMapIter=dictMap->begin();dictMapIter!=dictMap->end();dictMapIter++) {
+    ORDictionary::DictMap::const_iterator dictMapIter;
+    for(dictMapIter=dictMap.begin();dictMapIter!=dictMap.end();dictMapIter++) {
       append("<key>");
       append(dictMapIter->first);
       append("</key>\n"); 
