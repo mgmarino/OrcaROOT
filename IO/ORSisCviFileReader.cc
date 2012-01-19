@@ -113,7 +113,7 @@ bool ORSisCviFileReader::ReadRecord(vector<UInt_t>& buffer)
 string ORSisCviFileReader::ReadHeader()
 {
   ORLog(kTrace) << "Starting ReadHeader()..." << endl;
-  if (!OKToRead()) return false;
+  if (!OKToRead()) return "";
   static const int kSisCviHeaderLength = 16;
   UInt_t buffer[kSisCviHeaderLength];
   size_t nBytesToRead = kSisCviHeaderLength*sizeof(UInt_t);
