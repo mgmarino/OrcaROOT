@@ -32,7 +32,7 @@ public:
     // Extended pre-trigger mode, P. Finnerty 11/30/2010
     // IF this enabled, then the format of the data record changes.
     virtual inline Bool_t IsBufferWrapEnabled() 
-	{ return (fDataRecord[1] & 0x1 == 0x1); }
+	{ return ((fDataRecord[1] & 0x1) == 0x1); }
 	
     virtual inline size_t GetBufHeadLen() 
 	{ 
