@@ -17,10 +17,10 @@ UInt_t ORXYCom564Decoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 2: return (record[iRow + kXYCom564HeaderSize] >> 16) & 0xFF;
     case 3: { 
       UShort_t rawValue = (record[iRow + kXYCom564HeaderSize]) & 0xFFFF ;
-      if (rawValue < 32767) {
-          rawValue += 32767;
+      if (rawValue < 32768) {
+          rawValue += 32768;
       } else {
-          rawValue -= 32767;
+          rawValue -= 32768;
       }
       return rawValue;
     }
