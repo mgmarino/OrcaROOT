@@ -108,6 +108,17 @@ AC_SUBST(ROOTFFTWLIB)
 echo "${BOLD}ROOT seems to be successfully installed. ${OFFBOLD}"
 #end root
 
+#########################################################################
+#Find python, this is necessary for some of the build 
+#########################################################################
+m4_include(aclocal.m4)
+m4_include(python.m4)
+AM_PATH_PYTHON([2.5],
+               [HAVE_PYTHON=yes
+                PYTHONLIBDIR=`$PYTHON -c 'from distutils.sysconfig import get_python_lib; print "%s/config" % get_python_lib(0,1)'`],
+               [HAVE_PYTHON=no
+                AC_MSG_ERROR([python not found, required for build])])
+AC_SUBST(HAVE_PYTHON)
 
 # we also must check for endianness 
 # throw an error if it can't tell. 
