@@ -21,6 +21,7 @@ class ORVTrigger32GTIDDecoder : public ORVBasicTreeDecoder, public ORVEventCount
     virtual inline size_t GetNPars() { return 2; }
     virtual std::string GetParName(size_t iPar);
     virtual UInt_t GetPar(UInt_t* record, size_t iPar, size_t /*iRow*/);
+    virtual inline std::string GetDataObjectPath() { return ""; }
 
     // for event counters
     virtual inline size_t GetEventCount(UInt_t* /*record*/) { return 1; }
