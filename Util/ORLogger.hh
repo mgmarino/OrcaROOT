@@ -5,7 +5,11 @@
 
 #include <iostream>
 #include <map>
+#ifndef __CINT__
 #include <pthread.h>
+#else
+typedef int pthread_t;
+#endif
 
 #define ERRLINE_HACK_1(line)   #line
 #define ERRLINE_HACK_2(line)   ERRLINE_HACK_1(line)

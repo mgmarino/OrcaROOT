@@ -19,6 +19,7 @@
    thread, then don't instantiate this class. 
    */
 
+#ifndef __CINT__
 #include <pthread.h>
 #include <signal.h>
 #include "ORReadWriteLock.hh"
@@ -42,4 +43,5 @@ class ORHandlerThread
     static sigset_t fSigsToBlock;
 
 };
-#endif
+#endif /* __CINT__ */
+#endif /* _ORHandlerThread_hh */
