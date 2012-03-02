@@ -114,3 +114,30 @@ UInt_t ORSIS3302GenericDecoder::GetEventWaveformPoint( size_t /*event*/,
 	} 
 }
 
+
+UInt_t ORSIS3302GenericDecoder::GetAveragingForChannel( size_t chan )
+{
+  return GetIntValueFromKeyArray("averagingSettings", 
+    CrateOf(), CardOf(), chan/2);
+}
+ORSIS3302GenericDecoder::EClockType 
+  ORSIS3302GenericDecoder::GetClockType()
+{
+  return (EClockType) GetIntValueFromKey("clockSource", 
+    CrateOf(), CardOf());
+}
+
+double ORSIS3302GenericDecoder::GetSamplingFrequency()
+{
+  switch(GetClockType()) {
+    case k100MHzBad:
+    case k100MHz: return 0.1;  
+    case k50MHz: return 0.05;
+    case k25MHz: return 0.025;
+    case k10MHz: return 0.01;
+    case k1MHz: return  0.001;
+    case kExternalRand:
+    case kExternal:
+    default: return 1.;
+  } 
+}

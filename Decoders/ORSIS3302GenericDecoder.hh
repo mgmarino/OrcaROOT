@@ -39,7 +39,7 @@ public:
      * advantage of this and maybe not query during each record.      */
 	
     /* Functions satisfying the ORVDigitizerDecoder interface. */
-    virtual inline double GetSamplingFrequency() { return .1; }
+    virtual inline double GetSamplingFrequency();
     virtual inline UShort_t GetBitResolution() { return 16; }
     virtual inline size_t GetNumberOfEvents() { return 1; }
     virtual inline ULong64_t GetEventTime(size_t /*event*/) 
@@ -63,11 +63,26 @@ public:
 	
     //debugging:
     void Dump(UInt_t* dataRecord);
+
+    enum EClockType
+    {
+      k100MHzBad = 0,
+      k50MHz,
+      k25MHz,
+      k10MHz,
+      k1MHz,
+      kExternalRand,
+      kExternal,
+      k100MHz
+    };
     
 protected:
     /* GetRecordOffset() returns how many words the record is offset from the 
 	 beginning.  This is useful when additional headers are added. */
     virtual inline size_t GetRecordOffset() {return kOrcaHeaderLen;}
+
+    UInt_t GetAveragingForChannel(size_t chan); 
+    EClockType GetClockType(); 
 };
 
 //inline functions: ************************************************************************
