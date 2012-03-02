@@ -39,10 +39,10 @@ public:
      * advantage of this and maybe not query during each record.      */
 	
     /* Functions satisfying the ORVDigitizerDecoder interface. */
-    virtual inline double GetSamplingFrequency();
-    virtual inline UShort_t GetBitResolution() { return 16; }
-    virtual inline size_t GetNumberOfEvents() { return 1; }
-    virtual inline ULong64_t GetEventTime(size_t /*event*/) 
+    virtual double GetSamplingFrequency();
+    virtual UShort_t GetBitResolution() { return 16; }
+    virtual size_t GetNumberOfEvents() { return 1; }
+    virtual ULong64_t GetEventTime(size_t /*event*/) 
 	{ return 0; }
     virtual inline UInt_t GetEventEnergy(size_t /*event*/) 
 	{ return 0; }
