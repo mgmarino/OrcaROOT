@@ -2,6 +2,8 @@
 
 #include "ORServer.hh"
 
+ClassImp(ORServer)
+
 ORServer::ORServer(int aPort) : TServerSocket(aPort, kTRUE)
 {
   /* Setup no blocking. */
