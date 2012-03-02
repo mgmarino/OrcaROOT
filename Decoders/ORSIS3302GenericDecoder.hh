@@ -76,13 +76,13 @@ public:
       k100MHz
     };
     
+    UInt_t GetAveragingForChannel(size_t chan); 
+    EClockType GetClockType(); 
 protected:
     /* GetRecordOffset() returns how many words the record is offset from the 
 	 beginning.  This is useful when additional headers are added. */
     virtual inline size_t GetRecordOffset() {return kOrcaHeaderLen;}
 
-    UInt_t GetAveragingForChannel(size_t chan); 
-    EClockType GetClockType(); 
 };
 
 //inline functions: ************************************************************************
