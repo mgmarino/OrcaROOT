@@ -30,8 +30,8 @@ class ORVXMDecoder: public ORVDataDecoder
     virtual ~ORVXMDecoder() {}
     enum EORVXMConsts {kNumMotors = 2};
     
-    virtual std::string GetDataObjectPath()			{ return "ORMCA927Model:Spectrum"; }  // FIXME
-    virtual std::string GetDictionaryObjectPath()	{ return "ORMCA927Model"; }  		    // FIXME
+    virtual std::string GetDataObjectPath()			{ return "VXMModel:Position"; }
+    virtual std::string GetDictionaryObjectPath()	{ return "VXMModel"; }
 
 		// ============================================
 		// = The number of motors in this VXM module. =
@@ -54,10 +54,10 @@ class ORVXMDecoder: public ORVDataDecoder
 		virtual inline Double_t GetXPosition(UInt_t* record) {
 			union {
 			    long asLong;
-			    double asDouble;
+			    float asFloat;
 			}thePosition;
 			thePosition.asLong = record[3];
-			return thePosition.asDouble; }
+			return thePosition.asFloat; }
 	
 		// ================================================
 		// = Return Y position, this is in STEPS, not mm. =
@@ -65,10 +65,10 @@ class ORVXMDecoder: public ORVDataDecoder
 		virtual inline Double_t GetYPosition(UInt_t* record) {
 			union {
 			    long asLong;
-			    double asDouble;
+			    float asFloat;
 			}thePosition;
 			thePosition.asLong = record[4];
-			return thePosition.asDouble; }
+			return thePosition.asFloat; }
 
 		// ================
 		// = Debugging... =

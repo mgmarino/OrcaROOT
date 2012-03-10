@@ -23,8 +23,8 @@ class ORVXMTreeWriter : public ORVTreeWriter
 		UInt_t fNumberOfMotors;
 		Long64_t fTime;
 		UShort_t fIsRunning;
-		Double_t fX;
-		Double_t fY;
+		Float_t fX;
+		Float_t fY;
 };
 #endif
 
