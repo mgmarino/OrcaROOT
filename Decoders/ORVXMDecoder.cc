@@ -8,7 +8,7 @@
 
 Double_t ORVXMDecoder::GetConvertedPosition(UInt_t* record)
 {	
-	Float_t cal_pos = GetRawPosition(record)/GetConversion(record);
+	Float_t cal_pos = GetRawPosition(record)/GetConversionFactor(record);
 	return cal_pos;
 }
 
@@ -20,6 +20,6 @@ void ORVXMDecoder::Dump(UInt_t* record)
   ORLog(kDebug) << "\tMotor ID        	   : " << GetMotorID(record) << std::endl;
   ORLog(kDebug) << "\tPosition (steps)     : " << GetRawPosition(record) << std::endl;
   ORLog(kDebug) << "\tPosition (mm)        : " << GetConvertedPosition(record) << std::endl;
-  ORLog(kDebug) << "\tPosition (steps/mm)  : " << GetConversion(record) << std::endl;
+  ORLog(kDebug) << "\tPosition (steps/mm)  : " << GetConversionFactor(record) << std::endl;
   ORLog(kDebug) << "**************************************************" << std::endl;
 }

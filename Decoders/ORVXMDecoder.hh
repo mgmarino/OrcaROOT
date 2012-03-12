@@ -75,7 +75,7 @@ class ORVXMDecoder: public ORVDataDecoder
 		// ================================================
 		// = Return Y position, this is in STEPS, not mm. =
 		// ================================================
-		virtual inline Float_t GetConversion(UInt_t* record) {
+		virtual inline Float_t GetConversionFactor(UInt_t* record) {
 			union {
 			    long asLong;
 			    float asFloat;

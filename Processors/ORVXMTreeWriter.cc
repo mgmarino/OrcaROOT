@@ -38,7 +38,7 @@ ORDataProcessor::EReturnCode ORVXMTreeWriter::ProcessMyDataRecord(UInt_t* record
 	fMotorID        = fVXMDecoder->GetMotorID(record);
 	fRawPosition    = fVXMDecoder->GetRawPosition(record);       //steps
 	fPositon_in_mm  = fVXMDecoder->GetConvertedPosition(record); // mm
-	fConversion     = fVXMDecoder->GetConversion(record);        //steps/mm
+	fConversion     = fVXMDecoder->GetConversionFactor(record);  //steps/mm
 	
 	fTree->Fill();
   
