@@ -1,4 +1,15 @@
-// ORVXMTreeWriter.hh
+/*
+Author        :  Padraic Finnerty   
+Contact       :  paddy@unc.edu
+Date Created  :  3/12/2012
+
+CLASS DECLARATION:  ORVXMTreeWriter.hh
+
+DESCRIPTION: Class to write VXM motor controller data to a TTree.
+
+REVISIONS:
+	*
+*/
 
 #ifndef _ORVXMTreeWriter_hh_
 #define _ORVXMTreeWriter_hh_
