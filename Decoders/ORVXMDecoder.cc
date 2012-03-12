@@ -15,11 +15,11 @@ Double_t ORVXMDecoder::GetConvertedPosition(UInt_t* record)
 void ORVXMDecoder::Dump(UInt_t* record)
 {
   ORLog(kDebug) << "*************** ORVXMDecoder::Dump() *************" << std::endl;
-  ORLog(kDebug) << "\tNumber of motors     : " << GetNumberOfMotors() << std::endl;
-  ORLog(kDebug) << "\tTime            	   : " << GetTime(record) << std::endl;
-  ORLog(kDebug) << "\tMotor ID        	   : " << GetMotorID(record) << std::endl;
-  ORLog(kDebug) << "\tPosition (steps)     : " << GetRawPosition(record) << std::endl;
-  ORLog(kDebug) << "\tPosition (mm)        : " << GetConvertedPosition(record) << std::endl;
-  ORLog(kDebug) << "\tPosition (steps/mm)  : " << GetConversionFactor(record) << std::endl;
+  ORLog(kDebug) << "\tNumber of motors              : " << GetNumberOfMotors() << std::endl;
+  ORLog(kDebug) << "\tTime            	            : " << GetTime(record) << std::endl;
+  ORLog(kDebug) << "\tMotor ID        	            : " << GetMotorID(record) << std::endl;
+  ORLog(kDebug) << "\tPosition (steps)              : " << GetRawPosition(record) << std::endl;
+  ORLog(kDebug) << "\tPosition (mm)                 : " << GetConvertedPosition(record) << std::endl;
+  ORLog(kDebug) << "\tConversion Factor (steps/mm)  : " << GetConversionFactor(record) << std::endl;
   ORLog(kDebug) << "**************************************************" << std::endl;
 }
