@@ -22,9 +22,10 @@ ORDataProcessor::EReturnCode ORVXMTreeWriter::InitializeBranches()
 {
   fTree->Branch("fNumberOfMotors", &fNumberOfMotors, "fNumberOfMotors/i");
   fTree->Branch("fTime", &fTime, "fTime/L");
-  fTree->Branch("fIsRunning", &fIsRunning, "fIsRunning/s");
-  fTree->Branch("fX", &fX, "fX/F");
-  fTree->Branch("fY", &fY, "fY/F");
+  fTree->Branch("fMotorID", &fMotorID, "fMotorID/s");
+  fTree->Branch("fRawPosition", &fRawPosition, "fRawPosition/F"); 
+  fTree->Branch("fPositon_in_mm", &fPositon_in_mm, "fPositon_in_mm/F"); 
+  fTree->Branch("fConversion", &fConversion, "fConversion/F");
   return kSuccess;
 }
 
@@ -34,9 +35,10 @@ ORDataProcessor::EReturnCode ORVXMTreeWriter::ProcessMyDataRecord(UInt_t* record
 	if(ORLogger::GetSeverity() >= ORLogger::kDebug) { fVXMDecoder->Dump(record); }
 	fNumberOfMotors = fVXMDecoder->GetNumberOfMotors();
 	fTime           = fVXMDecoder->GetTime(record);
-	fIsRunning      = fVXMDecoder->GetIsRunning(record);
-	fX              = fVXMDecoder->GetXPosition(record);
-	fY              = fVXMDecoder->GetYPosition(record);
+	fMotorID        = fVXMDecoder->GetMotorID(record);
+	fRawPosition    = fVXMDecoder->GetRawPosition(record);       //steps
+	fPositon_in_mm  = fVXMDecoder->GetConvertedPosition(record); // mm
+	fConversion     = fVXMDecoder->GetConversion(record);        //steps/mm
 	
 	fTree->Fill();
   

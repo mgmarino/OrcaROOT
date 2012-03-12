@@ -13,7 +13,7 @@ class ORVXMTreeWriter : public ORVTreeWriter
     virtual ~ORVXMTreeWriter();
 
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
-	virtual inline void Clear() { fNumberOfMotors = 0; fTime = 0; fIsRunning = 0; fX = 0.0; fY = 0.0;}
+	virtual inline void Clear() { fNumberOfMotors = 0; fTime = 0; fMotorID = 0; fRawPosition = 0.0; fPositon_in_mm = 0.0, fConversion = 0.0;}
 
   protected:
     virtual EReturnCode InitializeBranches();
@@ -22,9 +22,10 @@ class ORVXMTreeWriter : public ORVTreeWriter
     ORVXMDecoder* fVXMDecoder;
 		UInt_t fNumberOfMotors;
 		Long64_t fTime;
-		UShort_t fIsRunning;
-		Float_t fX;
-		Float_t fY;
+		UShort_t fMotorID;
+		Float_t fRawPosition;
+		Float_t fPositon_in_mm;
+		Float_t fConversion;
 };
 #endif
 
