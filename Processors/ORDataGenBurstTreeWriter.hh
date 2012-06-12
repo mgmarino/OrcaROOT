@@ -23,6 +23,7 @@ class ORDataGenBurstTreeWriter : public ORVTreeWriter
     ORDataGenBurstDataDecoder* fBurstDecoder;
     UShort_t fCrate, fCard, fChannel, fValue;
 	UInt_t fTime;
+	UInt_t fLastTime,fDiffTime;
 };
 
 #endif
