@@ -3,6 +3,7 @@
 #include "ORLogger.hh"
 
 #include <sstream>
+#include "TSystem.h"
 
 
 /* This is not thread-safe, but it doesn't matter what gets written to this when. */
@@ -39,7 +40,7 @@ std::ostream& ORLogger::msg(pthread_t thread, ORLogger::ESeverity severity, cons
   }
   /* end critical part. */
   if (severity >= theThreadSeverity) {
-    *theThreadStream << toString(severity) << ": " << "(pid: " << getpid() << "): " << location << ": ";
+    *theThreadStream << toString(severity) << ": " << "(pid: " << gSystem->GetPid() << "): " << location << ": ";
   } else {
     return *fgMyNullstream ;
   }
