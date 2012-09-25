@@ -1,0 +1,48 @@
+# Configuration file for the OrcaROOT init script
+# ===============================================
+
+#############################################################################
+# Paths
+# ~~~~~
+#
+# Configure the paths to ROOT and OrcaROOT below. By default, the script
+# tries to find them automatically if orcaroot and root-config are in
+# the system PATH.
+# DO NOT rely on this being the case but configure them explicitly in this
+# file. Failing to do so can lead to strange errors, for example the init
+# script might work if you run it manually but not when run on system start.
+#############################################################################
+
+# Path to the OrcaROOT directory containing Applications, lib, ...
+ORCAROOT_PATH=$(dirname $(which orcaroot))
+# Path to the ROOT directory containing bin, lib, ...
+ROOT_PATH=$(root-config --libdir)
+
+
+#############################################################################
+# UID and GID
+# ~~~~~~~~~~~
+#
+# It is not advisable to run OrcaROOT with full root privileges. To create
+# a new user for OrcaROOT, use
+#   useradd --system --shell /bin/false --user-group orcaroot
+#############################################################################
+
+ORCAROOT_UID=orcaroot
+ORCAROOT_GID=orcaroot
+
+#############################################################################
+# Other settings
+# ~~~~~~~~~~~~~~
+#
+# Other settings can be set below.
+#############################################################################
+
+# Port where OrcaROOT will listen
+ORCAROOT_PORT=9090
+
+# Number of connections that OrcaROOT accepts
+ORCAROOT_MAX_CONN=100
+
+# Extra arguments for the OrcaROOT daemon (normally not needed)
+ORCAROOT_EXTRA_ARGS=
