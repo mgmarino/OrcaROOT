@@ -51,6 +51,28 @@ I. Installation
   There are additionally several options to the provided examples
   executables. Entering just the executable (with no arguments or data
   files) will typically list the usage information and available options.
+  
+  6) Run OrcaROOT as daemon (optional)
+  You can run OrcaROOT as daemon to do fits directly from Orca. To faciliate
+  the configuration, a suitable init script for Debian GNU/Linux (also works
+  on Ubuntu and probably any other LSB compliant distribution) is included.
+    
+    cp Applications/etc/default/orcaroot /etc/default/orcaroot
+  
+  Open /etc/default/orcaroot with your favourite text editor and set all
+  settings according to the comments.
+
+    cp Applications/etc/init.d/orcaroot /etc/init.d/orcaroot
+    chmod a+x /etc/init.d/orcaroot
+
+  Configure your System to run /etc/init.d/orcaroot on boot. For Debian:
+
+    update-rc.d orcaroot defaults
+  
+  OrcaROOT will now be started whenever you reboot your system. To start it
+  right now without rebooting, use
+
+    /etc/init.d/orcaroot start
 
 
 II. General Description
