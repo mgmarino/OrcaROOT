@@ -7,23 +7,62 @@
 
 //**************************************************************************************
 
-ORSIS3302GenericDecoder::ORSIS3302GenericDecoder() 
+ORSIS3302GenericDecoder::ORSIS3302GenericDecoder()
+ : fNumberOfEvents(0), fWaveformDataPtr(NULL)
 { 
-	fDataRecord = NULL; 
 }
 
 bool ORSIS3302GenericDecoder::SetDataRecord(UInt_t* dataRecord) 
 {
-	fDataRecord = dataRecord;
-	
-	ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
-	if(!IsValid()) {
-		ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
-		fDataRecord = NULL;
-		return false;
-	}
-	ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;
-	return true;
+    fDataRecord = dataRecord;
+    UShort_t card = CardOf(); 
+    UShort_t crate = CrateOf(); 
+    UShort_t channel = GetEventChannel(0); 
+    UInt_t lenOfRecord = LengthOf(dataRecord);
+    UInt_t len = GetTotalWaveformLength(); 
+    fNumberOfEvents = 1;
+    ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
+    if(!IsValid()) {
+        ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
+        fDataRecord = NULL;
+        fNumberOfEvents = 0;
+        return false;
+    }
+    ORLog(kDebug) << "SetDataRecord(): Exiting" << std::endl;
+    if (len == kOrcaHeaderLen) return true; 
+    if (lenOfRecord - kOrcaHeaderLen == len) {
+	fWaveformDataPtr =  fDataRecord + GetRecordOffset();
+        return true;
+    } else {
+      WFKey key = (( 0xFF & crate) << 24) + 
+                  (( 0xFF & card ) << 16) +
+                  (( 0xFF & channel) << 8); 
+      WFVec& vec = fWFCache[key].first;
+      bool&  isFullWF = fWFCache[key].second;
+      if (vec.size() + (lenOfRecord - kOrcaHeaderLen) == len) {
+        // Append
+	vec.insert(vec.end(), &dataRecord[4], &dataRecord[4] + (lenOfRecord -
+          kOrcaHeaderLen)); 
+        fWaveformDataPtr = &vec[0];
+        isFullWF = true;
+      } else {
+        if (vec.size() == 0) {
+          // Means this is the first cache entry, be sure we have set the WF flag
+          isFullWF = false;
+        }
+        if (isFullWF) {
+          // Means we are resetting a previously full waveform
+          isFullWF = false;
+          vec.resize(0);
+        }
+	vec.insert(vec.begin(), &dataRecord[4], &dataRecord[4] + (lenOfRecord -
+          kOrcaHeaderLen)); 
+        fWaveformDataPtr = NULL;
+        fNumberOfEvents = 0;
+      } 
+    }
+    
+    return true;
 }
 
 

@@ -27,7 +27,7 @@ public:
     // Waveform Functions
 	
     // Waveform length in number of 16-bit words
-    virtual inline size_t GetWaveformLen() { return (LengthOf(fDataRecord)-kOrcaHeaderLen)*2; }
+    virtual inline size_t GetWaveformLen() { return fDataRecord[3]*2; }
     virtual size_t CopyWaveformData(UShort_t* waveform, size_t len);
     virtual size_t CopyWaveformDataDouble(double* waveform, size_t len);
     virtual inline UInt_t* GetWaveformDataPointer();
@@ -41,7 +41,7 @@ public:
     /* Functions satisfying the ORVDigitizerDecoder interface. */
     virtual double GetSamplingFrequency();
     virtual UShort_t GetBitResolution() { return 16; }
-    virtual size_t GetNumberOfEvents() { return 1; }
+    virtual size_t GetNumberOfEvents() { return fNumberOfEvents; }
     virtual ULong64_t GetEventTime(size_t /*event*/) 
 	{ return 0; }
     virtual inline UInt_t GetEventEnergy(size_t /*event*/) 
@@ -82,6 +82,12 @@ protected:
     /* GetRecordOffset() returns how many words the record is offset from the 
 	 beginning.  This is useful when additional headers are added. */
     virtual inline size_t GetRecordOffset() {return kOrcaHeaderLen;}
+    typedef UInt_t WFKey;
+    typedef std::vector<UInt_t> WFVec;
+    typedef std::map<WFKey, std::pair<WFVec, bool> > WFCache; 
+    WFCache fWFCache;  // For very long waveforms
+    size_t  fNumberOfEvents;
+    UInt_t* fWaveformDataPtr;
 
 };
 
@@ -97,10 +103,9 @@ inline UInt_t ORSIS3302GenericDecoder::GetTotalWaveformLength()
 	return fDataRecord[3];
 }
 
-
 inline UInt_t* ORSIS3302GenericDecoder::GetWaveformDataPointer()
 {
-	return (fDataRecord + GetRecordOffset());
+	return fWaveformDataPtr; 
 }
 
 #endif
