@@ -55,7 +55,7 @@ bool ORSIS3302GenericDecoder::SetDataRecord(UInt_t* dataRecord)
           isFullWF = false;
           vec.resize(0);
         }
-	vec.insert(vec.begin(), &dataRecord[4], &dataRecord[4] + (lenOfRecord -
+	vec.insert(vec.end(), &dataRecord[4], &dataRecord[4] + (lenOfRecord -
           kOrcaHeaderLen)); 
         fWaveformDataPtr = NULL;
         fNumberOfEvents = 0;
