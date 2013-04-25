@@ -85,8 +85,8 @@
   #include "ORKatrinV4FLTEnergyHistogramDecoder.hh"
   #include "ORKatrinV4FLTEnergyHistogramTreeWriter.hh"
 
-//TODO: -tb-  #include "ORIpeV4FLTHitrateDecoder.hh"
-//TODO: -tb-  #include "ORIpeV4FLTHitrateTreeWriter.hh"
+  #include "ORKatrinV4FLTHitRateDecoder.hh"
+  #include "ORKatrinV4FLTHitRateTreeWriter.hh"
 
 
   //ADDITION FOR KATRIN - Stop
@@ -298,6 +298,9 @@ int main(int argc, char** argv)
 	
 	ORKatrinV4FLTEnergyHistogramTreeWriter katrinV4FLTEnergyHistogramTreeWriter("katrinV4EnergyHistogramTree");
 	dataProcManager.AddProcessor(&katrinV4FLTEnergyHistogramTreeWriter);
+	
+	ORKatrinV4FLTHitRateTreeWriter katrinV4FLTHitRateTreeWriter("katrinV4HitRateTree");
+	dataProcManager.AddProcessor(&katrinV4FLTHitRateTreeWriter);
 	
 	
   //this part is for the UW crate
