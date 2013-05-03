@@ -79,6 +79,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
 
     UInt_t* buffer = &vecbuffer[0];
     // Check if it is a header
+
     if(fHeaderProcessor.ProcessDataRecord(buffer) == kSuccess) {
       // It is a header, perform the setup
       // Set the default flag, header is not read in yet
@@ -88,13 +89,16 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       /* Also check to see if we can write to the reader. */
       if (ORVWriter* theMonitor = dynamic_cast<ORVWriter*>(fReader)) {
         fRunContext->SetWritableSocket(theMonitor);
+
       } else {
         fRunContext->SetWritableSocket(NULL);
+
       }
       
       // 4. Load the header dictionary
       ORLog(kDebug) << "ProcessRun(): loading dictionary..." << std::endl;
       if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader(), fRunAsDaemon)) {
+
         /* We have encountered a problem loading the header file. */
         /* Kill Run, try going to the next run. */
         ORLog(kError) << "ProcessRun(): Error loading header file.  Stopping run." << std::endl;
@@ -103,8 +107,11 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       // 5. Set all the IDs, dictionary
       ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << std::endl;
+
       SetDataId();
+
       SetDecoderDictionary();
+
       headerIsReadIn = true;
       
       // Read the next record
@@ -113,21 +120,23 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     if (!headerIsReadIn) break;
 
     fRunContext->ResetRecordFlags();
-
     if (!fRunAsDaemon) {
       fRunDataProcessor->ProcessDataRecord(buffer);
     }
-  
+
     if (fRunContext->GetState() <= ORRunContext::kStarting) {
+
       // Starting a run
       retCode = StartRun();
       if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
       if (retCode >= kAlarm) return kAlarm;
       if (!fRunAsDaemon) {
+
         fRunDataProcessor->OnStartRunComplete(); 
       }
     }      
     if (fDoProcessRun) {
+
     // let all processors process the data record
       if (ProcessDataRecord(buffer) >= kAlarm) return kAlarm;
     }
@@ -135,15 +144,13 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     if (fRunContext->GetState() == ORRunContext::kStopping) {
       break;
     }
-  
 
     if (TestCancel()) break;
-
   }
   // 3. Set up Run Context
   ORLog(kDebug) << "ProcessRun(): finished reading records..." << std::endl;
-  
   retCode = EndRun();
+
   if (retCode >= kAlarm) return kAlarm;
   if (!fRunAsDaemon) {
     fRunDataProcessor->OnEndRunComplete();

@@ -38,7 +38,7 @@ ORDataProcessor::EReturnCode ORCompoundDataProcessor::StartProcessing()
 ORDataProcessor::EReturnCode ORCompoundDataProcessor::StartRun()
 {
   for (size_t i=0; i<fDataProcessors.size(); i++) {
-    EReturnCode retCode = fDataProcessors[i]->StartRun();
+     EReturnCode retCode = fDataProcessors[i]->StartRun();
     if (retCode >= kFailure) fDataProcessors[i]->KillRun();
     if (retCode >= kBreak) return fBreakRetCode;
     if (retCode >= kAlarm) return retCode;

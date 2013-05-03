@@ -31,6 +31,7 @@ class TPlistNode {
     inline const std::vector<std::string>& Keys(void) const;
     template<typename T> inline operator T() const;
     inline const TPlistNode& operator[](const std::string& Key) const;
+  inline const TPlistNode& operator[](const char* key) const; 
     inline const TPlistNode& operator[](int Index) const;
     inline std::string NodePath(void) const;
     virtual void Dump(std::ostream& os, const std::string& CurrentPath = "");
@@ -177,6 +178,12 @@ inline const TPlistNode& TPlistNode::operator[](const std::string& Key) const
     else {
 	return *_ChildNodeList[i->second];
     }
+}
+
+//sloppy sloppy slopppy slpppy sloppy
+inline const TPlistNode& TPlistNode::operator[](const char* key) const
+{
+  return (*this)[std::string(key)];
 }
 
 inline const TPlistNode& TPlistNode::operator[](int Index) const
