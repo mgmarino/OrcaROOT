@@ -11,6 +11,7 @@ include(cmake/FindROOT.cmake)
 include_directories(${ROOT_INCLUDE_DIR})
 link_directories(${ROOT_LIBRARY_DIR})
 find_library(ROOT_XML_LIBRARY XMLParser ${ROOT_LIBRARY_DIR})
+find_package (Threads)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   get_filename_component(BUILD_PARENT_DIR ${CMAKE_BINARY_DIR} PATH)
@@ -34,26 +35,26 @@ install(TARGETS ORUtil LIBRARY DESTINATION lib)
 file(GLOB DECODERS_SRC ${PROJECT_SOURCE_DIR}/Decoders/*.cc)
 file(GLOB DECODERS_HEADERS ${PROJECT_SOURCE_DIR}/Decoders/*.hh)
 add_library(ORDecoders SHARED ${DECODERS_SRC} ${DECODERS_HEADERS})
-target_link_libraries(ORDecoders ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ORUtil)
+target_link_libraries(ORDecoders ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ORUtil)
 install(TARGETS ORDecoders LIBRARY DESTINATION lib)
 
 file(GLOB IO_SRC ${PROJECT_SOURCE_DIR}/IO/*.cc)
 file(GLOB IO_HEADERS ${PROJECT_SOURCE_DIR}/IO/*.hh)
 add_library(ORIO SHARED ${IO_SRC} ${IO_HEADERS})
-target_link_libraries(ORIO ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ORUtil ORDecoders )
+target_link_libraries(ORIO ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ORUtil ORDecoders )
 install(TARGETS ORIO LIBRARY DESTINATION lib)
 
 file(GLOB PROCESSORS_SRC ${PROJECT_SOURCE_DIR}/Processors/*.cc)
 file(GLOB PROCESSORS_HEADERS ${PROJECT_SOURCE_DIR}/Processors/*.hh)
 add_library(ORProcessors SHARED ${PROCESSORS_SRC} ${PROCESSORS_HEADERS})
-target_link_libraries(ORProcessors ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ORDecoders ORIO)
+target_link_libraries(ORProcessors ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ORDecoders ORIO)
 install(TARGETS ORProcessors LIBRARY DESTINATION lib)
 
 
 file(GLOB MANAGEMENT_SRC ${PROJECT_SOURCE_DIR}/Management/*.cc)
 file(GLOB MANAGEMENT_HEADERS ${PROJECT_SOURCE_DIR}/Management/*.hh)
 add_library(ORManagement SHARED ${MANAGEMENT_SRC} ${MANAGEMENT_HEADERS})
-target_link_libraries(ORManagement ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ORProcessors)
+target_link_libraries(ORManagement ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ORProcessors)
 install(TARGETS ORManagement LIBRARY DESTINATION lib)
 
 set(SOURCES
@@ -75,7 +76,7 @@ set(HEADERS
 install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 add_library(OrcaRoot SHARED ${SOURCES} ${HEADERS})
-target_link_libraries(OrcaRoot ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY})
+target_link_libraries(OrcaRoot ${ROOT_LIBRARIES}  ${ROOT_XML_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 install(TARGETS OrcaRoot LIBRARY DESTINATION lib)
 
 add_executable(getHeaderInRootFile Applications/getHeaderInRootFile.cc)
@@ -136,7 +137,6 @@ install(TARGETS
 	testUtil
 	writeShaperTree
 	DESTINATION bin)
-configure_file(${CMAKE_INSTALL_PREFIX}/bin/orcaroot_exe ${CMAKE_INSTALL_PREFIX}/bin/orcaroot COPYONLY)
 
 
 option(BUILD_TOOLKIT "Build Toolkit" ON)
@@ -162,4 +162,4 @@ install(FILES
   "${PROJECT_BINARY_DIR}/OrcaRootEnv.sh"	
   DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT dev)
 
-
+install(PROGRAMS ${CMAKE_INSTALL_PREFIX}/bin/orcaroot_exe DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/orcaroot)
