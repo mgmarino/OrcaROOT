@@ -19,6 +19,7 @@ ORRunContext::ORRunContext(ORHeader* header, const char* runCtrlPath)
   fIsRecordSwapped = false;
   fRunType = 0;
   fStartTime = 0;
+  fStopTime = 0;
   fState = kIdle;
   if (header != NULL) LoadHeader(header, runCtrlPath);
   fHardwareDict = NULL;
@@ -100,6 +101,17 @@ void ORRunContext::LoadRunStartRecord(UInt_t* record)
   fSubRunNumber = runDecoder.SubRunNumberOf(record);
   //fRunType = ?? FIXME
   fStartTime = runDecoder.UtimeOf(record);
+}
+
+void ORRunContext::LoadRunStopRecord(UInt_t* record)
+{
+  ORRunDecoder runDecoder;
+  if(fRunNumber != runDecoder.RunNumberOf(record)) {
+    ORLog(kWarning) << "Got a run stop packet for run "
+                    << runDecoder.RunNumberOf(record)
+                    << " while processing run " << fRunNumber << endl;
+  }
+  fStopTime = runDecoder.UtimeOf(record);
 }
 
 void ORRunContext::SetIdle()

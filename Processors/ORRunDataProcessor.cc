@@ -85,6 +85,7 @@ ORDataProcessor::EReturnCode ORRunDataProcessor::ProcessMyDataRecord(UInt_t* rec
 
   } else if (fRunDecoder->IsRunStop(record)) {
 
+    fRunContext->LoadRunStopRecord(record);
     fRunContext->SetStopping();
     ORLog(kRoutine) << "Stop processing run " << fRunContext->GetRunNumber() << endl;
     return ProcessRunStop(record);

@@ -73,6 +73,7 @@ class ORRunContext
     virtual Bool_t IsQuickStartRun() const { return fIsQuickStartRun; }
     virtual Int_t GetRunType() const { return fRunType; }
     virtual Int_t GetStartTime() const { return fStartTime; }
+    virtual Int_t GetStopTime() const { return fStopTime; }
     virtual const ORHeader* GetHeader() const { return fHeader; }
     virtual const ORHardwareDictionary* GetHardwareDict() const { return fHardwareDict; }
     virtual inline Bool_t MustSwap() const { return fMustSwap; }
@@ -127,6 +128,7 @@ class ORRunContext
       const char* runCtrlPath = "ObjectInfo:DataChain");
       /* Returns true if success, false if not. */
     virtual void LoadRunStartRecord(UInt_t* record);
+    virtual void LoadRunStopRecord(UInt_t* record);
     virtual void SetWritableSocket(ORVWriter* aSocket) { fWritableSocket = aSocket; }
 
     /* To be called at the beginning of each record by a managing processor. */
@@ -147,6 +149,7 @@ class ORRunContext
     Bool_t fMustSwap;
     Int_t fRunType;
     Int_t fStartTime;
+    Int_t fStopTime; // won't be valid until the end of a run
     std::string fStringOfState; 
 
     ORVWriter* fWritableSocket;
