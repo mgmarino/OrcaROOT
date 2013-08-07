@@ -89,13 +89,11 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       /* Also check to see if we can write to the reader. */
       if (ORVWriter* theMonitor = dynamic_cast<ORVWriter*>(fReader)) {
         fRunContext->SetWritableSocket(theMonitor);
-
       } else {
         fRunContext->SetWritableSocket(NULL);
-
       }
       
-      // 4. Load the header dictionary
+      // Load the header dictionary
       ORLog(kDebug) << "ProcessRun(): loading dictionary..." << std::endl;
       if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader(), fRunAsDaemon)) {
 
@@ -105,7 +103,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
         break;
       } 
       
-      // 5. Set all the IDs, dictionary
+      // Set all the IDs, dictionary
       ORLog(kDebug) << "ProcessRun(): setting dataIDs..." << std::endl;
 
       SetDataId();
@@ -125,19 +123,16 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     }
 
     if (fRunContext->GetState() <= ORRunContext::kStarting) {
-
       // Starting a run
       retCode = StartRun();
       if (retCode >= kFailure) KillRun(); // but keep processing: skips to next run
       if (retCode >= kAlarm) return kAlarm;
       if (!fRunAsDaemon) {
-
         fRunDataProcessor->OnStartRunComplete(); 
       }
     }      
     if (fDoProcessRun) {
-
-    // let all processors process the data record
+      // let all processors process the data record
       if (ProcessDataRecord(buffer) >= kAlarm) return kAlarm;
     }
   
@@ -147,7 +142,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
 
     if (TestCancel()) break;
   }
-  // 3. Set up Run Context
+  // Set up Run Context
   ORLog(kDebug) << "ProcessRun(): finished reading records..." << std::endl;
   retCode = EndRun();
 
