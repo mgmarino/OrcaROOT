@@ -47,8 +47,8 @@ size_t ORKatrinV4FLTEnergyHistogramDecoder::CopyHistogramData(UInt_t* histogram,
   for(size_t i=0;i<len;i++) 
   {
     histogram[i] = histogramData[i];  
-    ORLog(kWarning) << "CopyHistogramData():   histogram[i]" <<  histogram[i] 
-                    << "histogramData[i] " << histogramData[i]  << std::endl;
+    ORLog(kDebug) << "CopyHistogramData():   histogram[" << i << "]" <<  histogram[i] 
+                    << "histogramData[" << i << "] " << histogramData[i]  << std::endl;
   }
   return len;
 }
