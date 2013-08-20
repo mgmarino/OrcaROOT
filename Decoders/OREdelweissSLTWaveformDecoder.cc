@@ -12,7 +12,11 @@ OREdelweissSLTWaveformDecoder::OREdelweissSLTWaveformDecoder() { fDataRecord = N
 bool OREdelweissSLTWaveformDecoder::SetDataRecord(UInt_t* dataRecord) 
 {
   fDataRecord = dataRecord;
-  fWaveformLength = (  LengthOf(fDataRecord) / (kWaveformLength/2)  )  * 10000;//this sets GetWaveformLen() -tb-//TODO: check it -tb-
+  UInt_t eventFlags=dataRecord[7];
+  UInt_t eventFlags4bit=eventFlags & 0xf;
+  if(eventFlags4bit==0x2) fWaveformLength = 2048;
+  else fWaveformLength = 10000;
+  //fWaveformLength = (  LengthOf(fDataRecord) / (kWaveformLength/2)  )  * 10000;//this sets GetWaveformLen() -tb-//TODO: check it -tb-
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   // remarks for Till: LengthOf(...) is from ORVDataDecoder and is the length extracted from data record (in longs/int32s) -tb-
