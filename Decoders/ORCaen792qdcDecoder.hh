@@ -24,7 +24,7 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
     virtual inline UInt_t IthValueIsValid(UInt_t* record, size_t iRow)
       { return ((GetLocPtr(record, iRow)[0] & 0x07000000) >> 24) == 0x000; }
 
-    virtual std::string GetDataObjectPath() { return "ORCaen792Model:qdc"; }
+    virtual std::string GetDataObjectPath() { return "ORCaen792Model:QdcN"; }
     virtual std::string GetValueName() { return "qdc"; }
 
     // for basic trees
