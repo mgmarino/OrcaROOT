@@ -30,6 +30,8 @@
 #include "ORTrigger32LiveTimeDecoder.hh"
 #include "ORVTrigger32GTIDDecoder.hh"
 
+#include "ORHexDumpAllProc.hh"
+
 using namespace std;
 
 static const char Usage[] =
@@ -129,30 +131,33 @@ int main(int argc, char** argv)
   ORLog(kRoutine) << "Setting up data processing manager..." << endl;
   ORDataProcManager dataProcManager(reader);
 
-  OR1DHistoHistogramsDecoder histDecoder;
-  ORDataProcessor histProc(&histDecoder);
-  histProc.SetDebugRecord();
-  dataProcManager.AddProcessor(&histProc);
+  //OR1DHistoHistogramsDecoder histDecoder;
+  //ORDataProcessor histProc(&histDecoder);
+  //histProc.SetDebugRecord();
+  //dataProcManager.AddProcessor(&histProc);
 
-  ORAD3511ADCDecoder ad3511ADCDecoder;
-  ORDataProcessor adc3511ADCProc(&ad3511ADCDecoder);
-  adc3511ADCProc.SetDebugRecord();
-  dataProcManager.AddProcessor(&adc3511ADCProc);
+  //ORAD3511ADCDecoder ad3511ADCDecoder;
+  //ORDataProcessor adc3511ADCProc(&ad3511ADCDecoder);
+  //adc3511ADCProc.SetDebugRecord();
+  //dataProcManager.AddProcessor(&adc3511ADCProc);
 
-  ORAD413ADCDecoder ad413ADCDecoder;
-  ORDataProcessor ad413ADCProc(&ad413ADCDecoder);
-  ad413ADCProc.SetDebugRecord();
-  dataProcManager.AddProcessor(&ad413ADCProc);
+  //ORAD413ADCDecoder ad413ADCDecoder;
+  //ORDataProcessor ad413ADCProc(&ad413ADCDecoder);
+  //ad413ADCProc.SetDebugRecord();
+  //dataProcManager.AddProcessor(&ad413ADCProc);
 
-  ORAD811ADCDecoder ad811ADCDecoder;
-  ORDataProcessor ad811ADCProc(&ad811ADCDecoder);
-  ad811ADCProc.SetDebugRecord();
-  dataProcManager.AddProcessor(&ad811ADCProc);
+  //ORAD811ADCDecoder ad811ADCDecoder;
+  //ORDataProcessor ad811ADCProc(&ad811ADCDecoder);
+  //ad811ADCProc.SetDebugRecord();
+  //dataProcManager.AddProcessor(&ad811ADCProc);
 
-  ORKatrinFLTEnergyDecoder augerFLTEnergyDecoder;
-  ORDataProcessor augerFLTProc(&augerFLTEnergyDecoder);
-  augerFLTProc.SetDebugRecord();
-  dataProcManager.AddProcessor(&augerFLTProc);
+  //ORKatrinFLTEnergyDecoder augerFLTEnergyDecoder;
+  //ORDataProcessor augerFLTProc(&augerFLTEnergyDecoder);
+  //augerFLTProc.SetDebugRecord();
+  //dataProcManager.AddProcessor(&augerFLTProc);
+
+  ORHexDumpAllProc hexDumper;
+  dataProcManager.AddProcessor(&hexDumper);
 
   //ORCaen775tdcDecoder
   //ORCaen785adcDecoder
