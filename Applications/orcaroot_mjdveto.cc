@@ -257,8 +257,11 @@ int main(int argc, char** argv)
   ORDataProcManager dataProcManager(reader);
 
   /* Declare processors here. */
+  ORFileWriter fileWriter(label);
+
   ORCaen792qdcDecoder caen792qdcDecoder;
   ORBasicTreeWriter caen792TreeWriter(&caen792qdcDecoder, "vetoTree");
+
   OROrcaRequestProcessor orcaReq;
   if (runAsDaemon) {
     /* Add them here if you wish to run them in daemon mode ( not likely ).*/
@@ -266,6 +269,7 @@ int main(int argc, char** argv)
     dataProcManager.AddProcessor(&orcaReq);
   } else {
     /* Add the processors here to run them in normal mode. */
+    dataProcManager.AddProcessor(&fileWriter);
     dataProcManager.AddProcessor(&caen792TreeWriter);
   }
 
