@@ -29,10 +29,8 @@ void ORDataProcessor::SetDataId()
                   << ": header was NULL!" << endl;
     return;
   }
-  //std::cout<<__FILE__<<" : "<<__LINE__<<std::endl;
   UInt_t tempID = header->GetDataId(fDataDecoder->GetDataObjectPath());
   // check to see if this has been set already.
-  //std::cout<<__FILE__<<" : "<<__LINE__<<std::endl;
   if (tempID == ORVDataDecoder::GetIllegalDataId()) {
     ORLog(kWarning) << "SetDataId(): Couldn't get a valid data id for data "
                   << "object path " << fDataDecoder->GetDataObjectPath()
@@ -44,9 +42,7 @@ void ORDataProcessor::SetDataId()
   } else {
     fDataId = tempID;
   }
-  //std::cout<<__FILE__<<" : "<<__LINE__<<std::endl;
   ORLog(kDebug) << fDataDecoder->GetDataObjectPath() << " got data ID " << fDataId << endl;
-  //std::cout<<__FILE__<<" : "<<__LINE__<<std::endl;
 }
 
 void ORDataProcessor::SetDecoderDictionary()
