@@ -7,8 +7,6 @@
 ORCaen792qdcDecoder::ORCaen792qdcDecoder()
 {
   fRecord = NULL;
-  ORLog(kWarning) << "This decoder is untested. If you have problems with it, "
-                  << "contact Jason immediately (jasondet@gmail.com)." << std::endl;
 }
 
 size_t ORCaen792qdcDecoder::NValuesOf(UInt_t* record)
@@ -22,21 +20,20 @@ size_t ORCaen792qdcDecoder::NValuesOf(UInt_t* record)
 
 void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
 {
-	fLocPtrs.clear();
-	size_t i=2;
-	while(i<LengthOf(record)) {
-		if(!IthWordIsData(record, i)) {
-			ORLog(kWarning) << "expected word " << i+1 << " to be a data word." << std::endl;
-			return;
-		}
-		fLocPtrs.push_back(record+i);
-		i++;
-		if(i > LengthOf(record)) {
-			ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
-			<< LengthOf(record) << std::endl;
-		}
-	}
-	
+  fLocPtrs.clear();
+  size_t i=2;
+  while(i<LengthOf(record)) {
+    if(!IthWordIsData(record, i)) {
+      ORLog(kWarning) << "expected word " << i+1 << " to be a data word." << std::endl;
+      return;
+    }
+    fLocPtrs.push_back(record+i);
+    i++;
+    if(i > LengthOf(record)) {
+      ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
+      << LengthOf(record) << std::endl;
+    }
+  }
 }
 
 UInt_t* ORCaen792qdcDecoder::GetLocPtr(UInt_t* record, size_t i)

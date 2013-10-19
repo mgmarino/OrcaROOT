@@ -14,7 +14,7 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
 
     virtual size_t NValuesOf(UInt_t* record);
     virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
-      { return (GetLocPtr(record, iRow)[0] & 0x001f0000) >> 16; }
+      { return (GetLocPtr(record, iRow)[0] & 0x003f0000) >> 16; }
     virtual inline UInt_t IthValueOf(UInt_t* record, size_t iRow)
       { return GetLocPtr(record, iRow)[0] & 0x00000fff; }
     virtual inline UInt_t IthValueIsUnderThreshold(UInt_t* record, size_t iRow)
