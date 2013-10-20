@@ -18,7 +18,7 @@
 #include "ORServer.hh"
 #include "ORHandlerThread.hh"
 
-#include "ORCaen792qdcDecoder.hh"
+#include "ORCaen792NqdcDecoder.hh"
 #include "ORBasicTreeWriter.hh"
 
 using namespace std;
@@ -259,8 +259,8 @@ int main(int argc, char** argv)
   /* Declare processors here. */
   ORFileWriter fileWriter(label);
 
-  ORCaen792qdcDecoder caen792qdcDecoder;
-  ORBasicTreeWriter caen792TreeWriter(&caen792qdcDecoder, "vetoTree");
+  ORCaen792NqdcDecoder caen792NqdcDecoder;
+  ORBasicTreeWriter caen792NTreeWriter(&caen792NqdcDecoder, "vetoTree");
 
   OROrcaRequestProcessor orcaReq;
   if (runAsDaemon) {
@@ -270,7 +270,7 @@ int main(int argc, char** argv)
   } else {
     /* Add the processors here to run them in normal mode. */
     dataProcManager.AddProcessor(&fileWriter);
-    dataProcManager.AddProcessor(&caen792TreeWriter);
+    dataProcManager.AddProcessor(&caen792NTreeWriter);
   }
 
   ORLog(kRoutine) << "Start processing..." << endl;
