@@ -24,7 +24,7 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
     virtual inline UInt_t IthValueIsValid(UInt_t* record, size_t iRow)
       { return ((GetLocPtr(record, iRow)[0] & 0x07000000) >> 24) == 0x000; }
 
-    virtual std::string GetDataObjectPath() { return "ORCaen792Model:QdcN"; }
+    virtual std::string GetDataObjectPath() { return "ORCaen792Model:Qdc"; }
     virtual std::string GetValueName() { return "qdc"; }
 
     // for basic trees
@@ -35,15 +35,23 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
 
   protected:
     virtual void LoadLocPtrs(UInt_t* record);
+    virtual UInt_t* GetLocPtr(UInt_t* record, size_t i);
+
     virtual inline UInt_t IthWordIsHeader(UInt_t* record, size_t iWord)
       { return ((record[iWord] & 0x07000000) >> 24) == 2; }
+    virtual inline size_t NChannelsInBlock(UInt_t* headerPtr)
+      { return (headerPtr[0] & 0x00003f00) >> 8; }
+
     virtual inline UInt_t IthWordIsData(UInt_t* record, size_t iWord)
-      { return ((record[iWord] & 0x07000000) >> 24) == 0 || ((record[iWord] & 0x07000000) >> 24) != 6; }
+      { return ((record[iWord] & 0x07000000) >> 24) == 0; }
+    virtual inline UInt_t IthWordIsInvalidData(UInt_t* record, size_t iWord)
+      { return ((record[iWord] & 0x07000000) >> 24) == 6; }
+
     virtual inline UInt_t IthWordIsEndOfBlock(UInt_t* record, size_t iWord)
       { return ((record[iWord] & 0x07000000) >> 24) == 4; }
-    virtual inline size_t NChannelsInBlock(UInt_t* headerPtr)
-      { return (headerPtr[0] & 0x00003F00) >> 8; }
-    virtual UInt_t* GetLocPtr(UInt_t* record, size_t i);
+    virtual inline size_t GetEventCounter(UInt_t* endOfBlockPtr)
+      { return (endOfBlockPtr[0] & 0x00ffffff); }
+
     std::vector<UInt_t*> fLocPtrs;
     UInt_t* fRecord;
 };

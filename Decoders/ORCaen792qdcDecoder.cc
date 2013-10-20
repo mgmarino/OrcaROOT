@@ -4,6 +4,8 @@
 #include "ORCaen792qdcDecoder.hh"
 #include "ORLogger.hh"
 
+using namespace std;
+
 ORCaen792qdcDecoder::ORCaen792qdcDecoder()
 {
   fRecord = NULL;
@@ -24,14 +26,20 @@ void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
   size_t i=2;
   while(i<LengthOf(record)) {
     if(!IthWordIsData(record, i)) {
-      ORLog(kWarning) << "expected word " << i+1 << " to be a data word." << std::endl;
+      if(IthWordIsEndOfBlock(record, i)) {
+        ORLog(kRoutine) << "Received end of block reporting " << GetEventCounter(record+i) << " events." << endl;
+      }
+      else {
+        ORLog(kWarning) << "expected word " << i+1 << " to be a data word. Hex dump:" << endl;
+        DumpHex(record);
+      }
       return;
     }
     fLocPtrs.push_back(record+i);
     i++;
     if(i > LengthOf(record)) {
       ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
-      << LengthOf(record) << std::endl;
+      << LengthOf(record) << endl;
     }
   }
 }
@@ -40,13 +48,13 @@ UInt_t* ORCaen792qdcDecoder::GetLocPtr(UInt_t* record, size_t i)
 {
   if(i >= NValuesOf(record)) {
     ORLog(kWarning) << "you asked for qdc value " << i << ", but there are only " 
-                    << NValuesOf(record) << " records" << std::endl;
+                    << NValuesOf(record) << " records" << endl;
     return NULL;
   }
   return fLocPtrs[i];
 }
 
-std::string ORCaen792qdcDecoder::GetParName(size_t iPar)
+string ORCaen792qdcDecoder::GetParName(size_t iPar)
 {
   switch(iPar) {
     case 0: return "crate";
@@ -58,7 +66,7 @@ std::string ORCaen792qdcDecoder::GetParName(size_t iPar)
     case 6: return "isValid";
     default:
       ORLog(kWarning) << "GetParName(): index (" << iPar
-                      << ") out of range." << std::endl;
+                      << ") out of range." << endl;
       return "unknown";
   }
 }
@@ -75,7 +83,7 @@ UInt_t ORCaen792qdcDecoder::GetPar(UInt_t* record, size_t iPar, size_t iRow)
     case 6: return IthValueIsValid(record, iRow);
     default:
       ORLog(kWarning) << "GetPar(): index (" << iPar
-                      << ") out of range." << std::endl;
+                      << ") out of range." << endl;
       return 0;
   }
 }
