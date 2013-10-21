@@ -13,13 +13,9 @@ class ORCaen792qdcTreeWriter : public ORVTreeWriter
     ORCaen792qdcTreeWriter(E792Model model = k792A, std::string treeName = "");
     virtual ~ORCaen792qdcTreeWriter();
     
-    enum ORCaen792qdcTreeWriterConsts{kMaxSpLength = 4095, fSizeMax = 16};
-
-    virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
-	void Dump(UInt_t* record, size_t iRow);
-  
     virtual inline void Clear();
-		
+    virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
+
   protected:
     virtual EReturnCode InitializeBranches();
 
@@ -27,7 +23,6 @@ class ORCaen792qdcTreeWriter : public ORVTreeWriter
     ORCaen792qdcDecoder* fEventDecoder;
     UInt_t fCrate;
     UInt_t fCard;
-    std::vector<UInt_t> fChannel;
     std::vector<UInt_t> fQDCVal;
     std::vector<UInt_t> fIsUnderThreshold;
     std::vector<UInt_t> fIsOverflow;
