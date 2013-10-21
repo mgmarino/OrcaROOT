@@ -20,6 +20,7 @@
 
 #include "ORCaen792NqdcDecoder.hh"
 #include "ORBasicTreeWriter.hh"
+#include "ORCaen792qdcTreeWriter.hh"
 
 using namespace std;
 
@@ -259,8 +260,9 @@ int main(int argc, char** argv)
   /* Declare processors here. */
   ORFileWriter fileWriter(label);
 
-  ORCaen792NqdcDecoder caen792NqdcDecoder;
-  ORBasicTreeWriter caen792NTreeWriter(&caen792NqdcDecoder, "vetoTree");
+  //ORCaen792NqdcDecoder caen792NqdcDecoder;
+  //ORBasicTreeWriter caen792NTreeWriter(&caen792NqdcDecoder, "vetoTree");
+  ORCaen792qdcTreeWriter caen792NTreeWriter(ORCaen792qdcTreeWriter::k792N, "vetoTree");
 
   OROrcaRequestProcessor orcaReq;
   if (runAsDaemon) {
