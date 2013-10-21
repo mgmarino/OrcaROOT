@@ -11,6 +11,7 @@ class ORCaen792NqdcDecoder : public ORCaen792qdcDecoder
     virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
       { return (GetLocPtr(record, iRow)[0] & 0x003e0000) >> 17; }
     virtual std::string GetDataObjectPath() { return "ORCaen792Model:QdcN"; }
+    virtual size_t GetNChannels() { return 16; }
 };
 
 #endif

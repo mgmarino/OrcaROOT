@@ -26,6 +26,7 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
 
     virtual std::string GetDataObjectPath() { return "ORCaen792Model:Qdc"; }
     virtual std::string GetValueName() { return "qdc"; }
+    virtual size_t GetNChannels() { return 32; }
 
     // for basic trees
     virtual size_t GetNPars() { return 7; }
