@@ -23,10 +23,11 @@ class ORCaen792qdcTreeWriter : public ORVTreeWriter
     ORCaen792qdcDecoder* fEventDecoder;
     UInt_t fCrate;
     UInt_t fCard;
+    UInt_t fEventCount;
+    UInt_t fNValues;
     std::vector<UInt_t> fQDCVal;
     std::vector<UInt_t> fIsUnderThreshold;
     std::vector<UInt_t> fIsOverflow;
-    std::vector<UInt_t> fIsValidData;
 };
 
 #endif

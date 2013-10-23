@@ -8,39 +8,35 @@ using namespace std;
 
 ORCaen792qdcDecoder::ORCaen792qdcDecoder()
 {
-  fRecord = NULL;
+  fLastEventCount = -1;
 }
 
 size_t ORCaen792qdcDecoder::NValuesOf(UInt_t* record)
 {
-  if(record != fRecord) {
+  if(EventCountOf(record) != fLastEventCount) {
     LoadLocPtrs(record);
-    fRecord = record;
+    fLastEventCount = EventCountOf(record);
   }
   return fLocPtrs.size();
 }
 
 void ORCaen792qdcDecoder::LoadLocPtrs(UInt_t* record)
 {
+  // loop over record and look for / skip over bad data
   fLocPtrs.clear();
   size_t i=2;
-  while(i<LengthOf(record)) {
+  while(i<LengthOf(record)-1) {
     if(!IthWordIsData(record, i)) {
-      if(IthWordIsEndOfBlock(record, i)) {
-        ORLog(kRoutine) << "Received end of block reporting " << GetEventCounter(record+i) << " events." << endl;
-      }
-      else {
-        ORLog(kWarning) << "expected word " << i+1 << " to be a data word. Hex dump:" << endl;
-        DumpHex(record);
-      }
+      ORLog(kWarning) << "expected word " << i+1 << " to be a data word. Hex dump:" << endl;
+      DumpHex(record);
       return;
     }
     fLocPtrs.push_back(record+i);
     i++;
-    if(i > LengthOf(record)) {
-      ORLog(kWarning) << "i = " << i << " is greater than the record length = " 
-      << LengthOf(record) << endl;
-    }
+  }
+  // check that we end with a end-of-block word
+  if(!IthWordIsEndOfBlock(record, i)) {
+      ORLog(kWarning) << "expected word " << i+1 << " to be end-of-block. Hex dump:" << endl;
   }
 }
 

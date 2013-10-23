@@ -18,6 +18,8 @@ ORVTreeWriter(NULL, treeName)
   fEventDecoder = dynamic_cast<ORCaen792qdcDecoder*>(fDataDecoder);
   fCrate = 0;
   fCard = 0;
+  fEventCount = 0;
+  fNValues = 0;
   SetDoNotAutoFillTree();
 }
 
@@ -31,21 +33,23 @@ void ORCaen792qdcTreeWriter::Clear()
 { 
   fCrate = 0;
   fCard = 0;
+  fEventCount = 0;
+  fNValues = 0;
   size_t n = fEventDecoder->GetNChannels();
   fQDCVal.assign(n, 0);
   fIsUnderThreshold.assign(n, 0);
   fIsOverflow.assign(n, 0);
-  fIsValidData.assign(n, 0);
 }
 
 ORDataProcessor::EReturnCode ORCaen792qdcTreeWriter::InitializeBranches()
 {
   fTree->Branch("crate",         &fCrate,             "cr/i");
   fTree->Branch("card",          &fCard,              "ca/i");
+  fTree->Branch("eventCount",    &fEventCount,        "nE/i");
+  fTree->Branch("nValues",       &fNValues,           "nV/i");
   fTree->Branch("qdc",           &fQDCVal);
   fTree->Branch("isUnderThresh", &fIsUnderThreshold);
   fTree->Branch("isOverflow",    &fIsOverflow);
-  fTree->Branch("isValid",       &fIsValidData);
   return kSuccess;
 }
 
@@ -54,18 +58,18 @@ ORDataProcessor::EReturnCode ORCaen792qdcTreeWriter::ProcessMyDataRecord(UInt_t*
   Clear();
   fCrate = fEventDecoder->CrateOf(record);
   fCard = fEventDecoder->CardOf(record);
-  for(size_t i=0; i<fEventDecoder->GetNRows(record); i++) {
+  fEventCount = fEventDecoder->EventCountOf(record);
+  fNValues = fEventDecoder->NValuesOf(record);
+  for(size_t i=0; i<fNValues; i++) {
     size_t iCh = fEventDecoder->IthChannelOf(record, i);
     if(iCh >= fEventDecoder->GetNChannels()) {
-      if(fEventDecoder->IthValueIsValid(record, i)) { // okay to silently skip invalid records
-        ORLog(kError) << "invalid channel " << iCh << ", skipping" << endl;
-      }
+      ORLog(kError) << "invalid channel " << iCh << ", hex dump and skip" << endl;
+      fEventDecoder->DumpHex(record);
       continue;
     }
     fQDCVal[iCh]           = fEventDecoder->IthValueOf(record, i);
     fIsUnderThreshold[iCh] = fEventDecoder->IthValueIsUnderThreshold(record, i);
     fIsOverflow[iCh]       = fEventDecoder->IthValueIsOverflow(record, i);
-    fIsValidData[iCh]      = fEventDecoder->IthValueIsValid(record, i);
   }	
   fTree->Fill();
   return kSuccess;

@@ -12,6 +12,8 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
     ORCaen792qdcDecoder();
     virtual ~ORCaen792qdcDecoder() {}
 
+    virtual size_t EventCountOf(UInt_t* record) 
+      { return record[LengthOf(record)-1] & 0xffffff; }
     virtual size_t NValuesOf(UInt_t* record);
     virtual inline UInt_t IthChannelOf(UInt_t* record, size_t iRow)
       { return (GetLocPtr(record, iRow)[0] & 0x003f0000) >> 16; }
@@ -50,11 +52,9 @@ class ORCaen792qdcDecoder : public ORVBasicTreeDecoder
 
     virtual inline UInt_t IthWordIsEndOfBlock(UInt_t* record, size_t iWord)
       { return ((record[iWord] & 0x07000000) >> 24) == 4; }
-    virtual inline size_t GetEventCounter(UInt_t* endOfBlockPtr)
-      { return (endOfBlockPtr[0] & 0x00ffffff); }
 
     std::vector<UInt_t*> fLocPtrs;
-    UInt_t* fRecord;
+    UInt_t fLastEventCount;
 };
 
 #endif
