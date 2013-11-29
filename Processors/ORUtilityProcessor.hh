@@ -25,10 +25,12 @@ class ORUtilityProcessor : public ORDataProcessor
     // fDataDecoder is NULL by definition here and should not be accessed 
     // by deriving classes (to eliminate seg faults): make it private. If a
     // deriving class suddenly needs a decoder, it should make its own.
-    ORDataProcessor::fDataDecoder; 
+    // We know this hack is terrible OO but this achieves what we need without
+    // having to refactor the entire code structure for this small feature.
+    using ORDataProcessor::fDataDecoder; 
     // for that matter, make fDataId private too! It doesn't make any sense
     // in this context.
-    ORDataProcessor::fDataId;
+    using ORDataProcessor::fDataId;
 };
 
 #endif
