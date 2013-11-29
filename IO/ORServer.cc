@@ -1,6 +1,7 @@
 // ORServer.cc
 
 #include "ORServer.hh"
+#include <unistd.h>
 
 ORServer::ORServer(int aPort) : TServerSocket(aPort, kTRUE)
 {

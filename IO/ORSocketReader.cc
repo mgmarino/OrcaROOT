@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/errno.h>
+#include <unistd.h>
 
 
 ORSocketReader::ORSocketReader(const char* host, int port, bool writable) 
