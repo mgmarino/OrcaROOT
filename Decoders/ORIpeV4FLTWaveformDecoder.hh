@@ -40,7 +40,7 @@ class ORIpeV4FLTWaveformDecoder: public ORVDigitizerDecoder
     virtual inline UShort_t GetChannel();
     virtual inline UInt_t GetEventID();
     virtual inline UInt_t GetEnergy();
-    virtual inline UInt_t GetEventFlags();
+    virtual inline UInt_t GetEventFlags(size_t event=0);
     virtual inline UInt_t GetEventInfo();
 
     // Waveform Functions
@@ -106,7 +106,7 @@ inline UInt_t ORIpeV4FLTWaveformDecoder::GetEnergy()
   return (fDataRecord[6]);
 }
 
-inline UInt_t ORIpeV4FLTWaveformDecoder::GetEventFlags()
+inline UInt_t ORIpeV4FLTWaveformDecoder::GetEventFlags(size_t)
 {
   return (fDataRecord[7]);
 }

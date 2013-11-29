@@ -41,7 +41,7 @@ public:
     virtual inline UInt_t GetEventInfo();
     virtual inline UInt_t GetEnergy();
     virtual inline UInt_t GetEventID();
-    virtual inline UInt_t GetEventFlags();
+    virtual inline UInt_t GetEventFlags(size_t event=0);
 	
     // Waveform Functions
     virtual inline size_t GetWaveformLen(); 
@@ -111,7 +111,7 @@ inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventID()
 	return ( ( fDataRecord[6] & 0xFFF00000 ) >> 20);
 }
 
-inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventFlags()
+inline UInt_t ORKatrinV4FLTWaveformDecoder::GetEventFlags(size_t)
 {
 	return (fDataRecord[7]);
 }

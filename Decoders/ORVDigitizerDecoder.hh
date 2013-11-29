@@ -18,7 +18,9 @@ class ORVDigitizerDecoder: public ORVDataDecoder
     virtual UShort_t GetBitResolution() = 0;
     virtual bool SetDataRecord(UInt_t* dataRecord) = 0;
     virtual inline UInt_t CrateOf();
+    using ORVDataDecoder::CrateOf;
     virtual inline UInt_t CardOf();
+    using ORVDataDecoder::CardOf;
 
     /* Event Functions */
 
