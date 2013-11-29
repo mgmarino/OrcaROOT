@@ -15,7 +15,9 @@ class ORDGF4cLiveTimeDecoder : public ORVDataDecoder
     ORDGF4cLiveTimeDecoder() {}
     virtual ~ORDGF4cLiveTimeDecoder() {}
     virtual inline bool SetDataRecord(UInt_t* record);
+    using ORVDataDecoder::CrateOf;
     virtual inline UInt_t CrateOf();
+    using ORVDataDecoder::CardOf;
     virtual inline UInt_t CardOf();
     virtual inline Double_t GetRealTime();
     virtual inline Double_t GetOldRealTime();
@@ -68,12 +70,12 @@ inline bool ORDGF4cLiveTimeDecoder::SetDataRecord(UInt_t* record)
 
 inline UInt_t ORDGF4cLiveTimeDecoder::CrateOf() //returns crate # of XIA card
 { 
-  return (fDataRecord[2] & 0x01e00000) >> 21; 
+  return (fDataRecord[1] & 0x01e00000) >> 21; 
 }
 
 inline UInt_t ORDGF4cLiveTimeDecoder::CardOf()
 { 
-  return (fDataRecord[2] & 0x001f0000) >> 16; 
+  return (fDataRecord[1] & 0x001f0000) >> 16; 
 }
 
 /*
