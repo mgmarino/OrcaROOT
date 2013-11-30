@@ -33,7 +33,7 @@ class ORGretina4MDecoder : public ORVDigitizerDecoder
     virtual ~ORGretina4MDecoder() {}
 
     virtual inline std::string GetDataObjectPath() { return "ORGretina4M:Gretina4M"; }  
-    virtual inline std::string GetDictionaryObjectPath() { return "ORGretina4M"; }  
+    virtual inline std::string GetDictionaryObjectPath() { return "ORGretina4MModel"; }  
 
     // Complete the set of functions satisfying the ORVDigitizerDecoder
     // interface. Gives access to the raw (hybrid) waveform; the
@@ -44,12 +44,12 @@ class ORGretina4MDecoder : public ORVDigitizerDecoder
     virtual inline double GetSamplingFrequency() { return 0.1; } // in GHz. 
     virtual inline UShort_t GetBitResolution() { return 14; }
     virtual inline size_t GetNumberOfEvents() { return (LengthOf(fDataRecord)-2)/kEventDataLen; }
-
     virtual inline ULong64_t GetEventTime(size_t iEvent) { return GetTimeStamp(EP(iEvent)); }
     virtual inline UInt_t GetEventEnergy(size_t iEvent) { return GetEnergy(EP(iEvent)); }
     virtual inline UShort_t GetEventChannel(size_t iEvent) { return GetChannel(EP(iEvent)); }
     virtual inline size_t GetEventWaveformLength(size_t) { return kWFLen; }
     virtual inline UInt_t GetEventWaveformPoint(size_t iEvent, size_t iSample) { return WFPS(iEvent)[iSample]; }
+    virtual inline Short_t GetSignedWaveformSample(size_t iEvent, size_t iSample) { return WFPS(iEvent)[iSample]; }
 
     // energy waveform: pre-sum and shift every N samples of rising-edge portion
     // as necessary to get one waveform of constant sampling frequency
@@ -58,6 +58,11 @@ class ORGretina4MDecoder : public ORVDigitizerDecoder
     // rising edge waveform: access to everything that is at the highest
     // sampling frequency
     //virtual double GetRisingEdgeWFSamplingFrequency(); // in GHz. 
+
+    // Other available digitizer information
+    virtual inline UShort_t GetBoardSerialNumber(size_t iEvent) 
+      { return (EP(iEvent)[1] & 0xfff0) >> 4; }
+
 
     // Functions related to setting / accessing card parameters)
     virtual void SetDecoderDictionary(const ORDecoderDictionary* dict);
@@ -72,7 +77,7 @@ class ORGretina4MDecoder : public ORVDigitizerDecoder
 
     // fast pointers to waveform data
     virtual UInt_t* WFP(size_t iEvent) { return EP(iEvent)+kEventHeaderLen; }
-    virtual UShort_t* WFPS(size_t iEvent) { return (UShort_t*) WFP(iEvent); }
+    virtual Short_t* WFPS(size_t iEvent) { return (Short_t*) WFP(iEvent); }
 
     // event header decoding
     virtual ULong64_t GetTimeStamp(UInt_t* header); // time of trigger, in clock ticks

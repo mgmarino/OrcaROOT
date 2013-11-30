@@ -18,7 +18,6 @@ bool ORGretina4MDecoder::SetDataRecord(UInt_t* dataRecord)
     return false;
   }
   fDataRecord = dataRecord;
-  ORLog(kError) << GetChannelParameter(kChPreSum, CrateOf(), CardOf(), GetEventChannel(0));
   return true;
 }
 
