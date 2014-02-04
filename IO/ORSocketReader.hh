@@ -2,6 +2,8 @@
 
 #ifndef _ORSocketReader_hh_
 #define _ORSocketReader_hh_
+// This class can not have a dictionary made for it.
+#ifndef __CINT__
 
 #include "ORVReader.hh"
 #include "ORVWriter.hh"
@@ -117,4 +119,5 @@ class ORSocketReader : public ORVReader, public ORVSigHandler, public ORVWriter
 
 };
 
-#endif
+#endif /* __CINT__ */
+#endif /* _ORSocketReader_hh_ */

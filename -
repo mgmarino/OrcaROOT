@@ -1,0 +1,5 @@
+tv__tree = (TTree *) gROOT->FindObject("ORTree");
+tv__tree_list->Add(tv__tree);
+tv__tree = (TTree *) gROOT->FindObject("tree");
+tv__tree_list->Add(tv__tree);
+tv__tree->Draw("refDate","","", 1683456, 0);

@@ -6,6 +6,21 @@ SOURCES := $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH))
 #SOURCES = $(wildcard OR*.cc)
 HEADERS := $(wildcard OR*.hh)
 OBJECTS := $(SOURCES:.cc=.o)
+PKGNAME := $(notdir $(basename $(shell pwd)))
+
+# NOLINKDEF explicity tells us not to make rootify a directory 
+ifndef NOLINKDEF 
+# Check to see if either LINKDEF is set or if there's a manual one
+  ifndef LINKDEF
+    # use the auto-linkdef
+    AUTOLINKDEF  := OR$(PKGNAME)_LinkDef.h
+    LINKDEF      := $(AUTOLINKDEF)
+    DICTHFILES   := $(HEADERS)
+    LINKDEFIN    := $(wildcard *LinkDef.h.in)
+  endif
+endif
+DICTCFILES   := $(if $(LINKDEF),OR${PKGNAME}_dict.C,)
+DICTOBJECTS  := $(if $(LINKDEF),OR${PKGNAME}_dict.o,)
 
 all: $(SHLIB) $(APPS)
 
@@ -17,10 +32,13 @@ endif
 	@echo Checking dependencies...
 	@$(CXX) -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) $^ > .depend
 
-$(SHLIB): $(OBJECTS) 
-	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $(OBJECTS) $(ORLIBS) $(ROOTLIBS)
+$(SHLIB): $(OBJECTS) $(DICTOBJECTS) 
+	$(SOMAKER) $(SOFLAGS) -o $(SHLIB) $^ $(ORLIBS) $(ROOTLIBS)
 
 .cc.o: 
+	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -c $<
+
+.C.o: 
 	$(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -c $<
 
 %: %.o $(OBJECTS)
@@ -30,4 +48,19 @@ clean:
 	@echo "Cleaning for: $(SHLIB) $(APPS)"
 	@rm -f $(SHLIB) $(APPS) *.o *~ .depend
 
+$(DICTCFILES) : $(DICTHFILES) $(LINKDEF) 
+	@echo "Running rootcint........... $(notdir $(LINKDEF))"
+	@$(ROOTCINT) -f $@ -c $(ORFLAGS) -p $(DICTHFILES) $(LINKDEF)
+
+$(AUTOLINKDEF): $(LINKDEFIN) $(DICTHFILES) 
+	@echo "Auto-making Linkdef........ $(@F)"
+	@$(PYTHON) ../buildTools/makeLinkDef.py \
+        --output=$(AUTOLINKDEF)                           \
+        --basebuild=$(INCLUDEDIR)                         \
+        --input_linkdef=$(LINKDEFIN) $(DICTHFILES)
+
+
+ifneq ($(MAKECMDGOALS), clean)
+-include .depend
+endif
 

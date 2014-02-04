@@ -3,7 +3,11 @@
 #ifndef _ORReadWriteLock_hh
 #define _ORReadWriteLock_hh
 
+#ifndef __CINT__
 #include <pthread.h>
+#else
+struct pthread_rwlock_t;
+#endif
 //! Read/Write lock wrapper class
 /*!
     This class wraps pthread_rwlock_t
