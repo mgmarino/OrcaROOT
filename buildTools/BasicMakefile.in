@@ -35,8 +35,8 @@ endif
 
 $(SHLIB): $(OBJECTS) $(DICTOBJECTS) 
 	@echo "$(OUTPREFIX)Building library .... $(@F)"
-	$(VERBOSE)$(SOMAKER) $(SOFLAGS)$(@F) \
-           -Wl,-rpath,$(ORIGINFLAGS) $^      \
+	$(VERBOSE)$(SOMAKER) $(SOFLAGS)$(@F)      \
+           -Wl,-rpath,$(ORIGINFLAGS) $^ $(LDFLAGS)\
            $(ORLIBS) $(ROOTLIBS) -o $@
 
 .cc.o: 
@@ -54,7 +54,7 @@ $(SHLIB): $(OBJECTS) $(DICTOBJECTS)
           $(LDFLAGS) $(ORLIBS) $(ROOTLIBS) 
 
 clean:
-	@echo "$(OUTPREFIX)Cleaning for: $(SHLIB) $(APPS)"
+	@echo "$(OUTPREFIX)Cleaning"
 	$(VERBOSE)rm -f $(SHLIB) $(APPS) *.o *~ .depend OR${PKGNAME}_dict.?  
 
 $(DICTCFILES) : $(DICTHFILES) $(LINKDEF) 

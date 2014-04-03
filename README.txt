@@ -298,6 +298,11 @@ Applications
 - testStopper: tests/debugs the stopper thread.
 - testUtil: hello world using ORLogger.
 
+Bindings
+- If OrcaROOT can build python bindings, it will try to build them.  This
+  allows OrcaROOT to be called through to using pyROOT.  See the
+  Bindings/README.txt file for more information.
+
 
 IV. ToDo:
 - check throughput/benchmark -- is it getting all the data? Any

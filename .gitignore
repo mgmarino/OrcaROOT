@@ -72,3 +72,8 @@
 *_dict.C
 *_dict.h
 *_LinkDef.h
+
+/Bindings/.depend
+/Bindings/*.o
+/Bindings/*.dylib
+/Bindings/*.so

@@ -5,7 +5,7 @@ SRCDIRS = Util \
 	IO \
 	Processors \
 	Management \
-	Applications
+	Applications @PYTHON_BINDINGS@
 
 all: 
 	@echo "Preparing library links..."
