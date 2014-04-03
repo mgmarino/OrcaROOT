@@ -12,6 +12,11 @@ ORPyBinder::~ORPyBinder()
 }
 
 //______________________________________________________________________________
+void ORPyBinder::SetProxy(PyObject* self)
+{
+    if(fSelf == NULL) fSelf = self;
+}
+//______________________________________________________________________________
 void ORPyBinder::SetupSelf() const
 {
     if (fSelf != NULL) return;

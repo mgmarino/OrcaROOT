@@ -12,6 +12,8 @@ class ORPyBinder : public TObject
     ORPyBinder() : fSelf(0) {}
     ~ORPyBinder();
 
+    void SetProxy(PyObject* self);
+
   protected:
 
     PyObject* CallFunc( const char* funcname, PyObject* args = 0 ) const;
