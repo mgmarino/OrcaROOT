@@ -1,6 +1,7 @@
 // ORFileReader.cc
 
 #include "ORFileReader.hh"
+#include "TSystem.h"
 
 #include "ORLogger.hh"
 #include <ctime>
@@ -8,7 +9,6 @@
 #include <iomanip>
 #include <sys/stat.h>
 #include <sys/param.h>
-#include <unistd.h>
 
 using namespace std;
 
@@ -85,9 +85,7 @@ string ORFileReader::GetFilePath()
   }
 
   // Otherwise, start from the current working directory. 
-  char cwd[MAXPATHLEN];
-  getcwd(cwd, MAXPATHLEN);
-  string globalPath = cwd;
+  string globalPath = gSystem->pwd();
   // Chop off any trailing "/"
   if(globalPath.rfind("/") == globalPath.size()-1) {
     globalPath = globalPath.substr(0, globalPath.size()-1);
