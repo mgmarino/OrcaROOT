@@ -34,6 +34,8 @@ class ORServer : public TServerSocket, ORVSigHandler
     //! Returns a socket, and NULL if there's an error. 
     virtual TSocket* Accept(UChar_t opt = 0);
 
+  ClassDef(ORServer, 0)
+
 };
 
 #endif

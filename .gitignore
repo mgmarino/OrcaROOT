@@ -68,3 +68,7 @@
 /buildTools/config.mk
 /buildTools/BasicMakefile
 /buildTools/BasicAppMakefile
+
+*_dict.C
+*_dict.h
+*_LinkDef.h

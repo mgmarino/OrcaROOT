@@ -5,7 +5,12 @@
 
 #include <vector>
 #include <map>
+#ifndef __CINT__
 #include <pthread.h>
+#else
+// Dealing with CINT
+typedef char pthread_t[SIZEOF_PTHREAD_T];
+#endif
 #include "ORReadWriteLock.hh"
 
 //! Allows asynchronous signals to be handles synchronously 
@@ -86,5 +91,4 @@ class ORVSigHandler
     pthread_t fMyThread;
     
 };
-
-#endif
+#endif /* _ORVSigHandler_hh_ */

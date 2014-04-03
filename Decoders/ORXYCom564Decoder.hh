@@ -9,7 +9,7 @@ class ORXYCom564Decoder : public ORVBasicADCDecoder
 {
   protected: 
     enum { kXYCom564HeaderSize = 4, 
-           kXYCom564MaxChannels = 64 } EXYCom564Consts;
+           kXYCom564MaxChannels = 64 };
   public:
 
     // Disable because we have more than one ADC value in a record 

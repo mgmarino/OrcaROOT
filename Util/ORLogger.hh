@@ -5,7 +5,11 @@
 
 #include <iostream>
 #include <map>
+#ifndef __CINT__
 #include <pthread.h>
+#else
+typedef char pthread_t[SIZEOF_PTHREAD_T];
+#endif
 
 #define ERRLINE_HACK_1(line)   #line
 #define ERRLINE_HACK_2(line)   ERRLINE_HACK_1(line)
@@ -63,12 +67,14 @@ class ORLogger
     */
     enum ESeverity { kDebug, kTrace, kRoutine, kWarning, kError, kFatal };
 
+#ifndef __CINT__
     static ESeverity GetORLoggerSeverity(pthread_t thread);
     static std::ostream& msg(pthread_t thread, ESeverity severity, 
       const char* location);
 
     static void SetORLoggerSeverity(pthread_t thread, ESeverity severity);
     static void SetORLoggerOStream(pthread_t thread, std::ostream* aStream);
+#endif
 
   protected:
     ORLogger() {}
@@ -83,8 +89,8 @@ class ORLogger
     static std::ostream* fgMyOstream;
     static std::ostream* fgMyNullstream;
 
-    static std::map<pthread_t, std::pair<ESeverity, std::ostream*> > fgLoggerMap;
-    static ORReadWriteLock fgRWLock;
+    static std::map<pthread_t, std::pair<ESeverity, std::ostream*> > fgLoggerMap; //!
+    static ORReadWriteLock fgRWLock; //!
 };
 
 #endif

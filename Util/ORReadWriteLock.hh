@@ -3,7 +3,11 @@
 #ifndef _ORReadWriteLock_hh
 #define _ORReadWriteLock_hh
 
+#ifndef __CINT__
 #include <pthread.h>
+#else
+typedef char pthread_rwlock_t[SIZEOF_PTHREAD_RWLOCK_T];
+#endif
 //! Read/Write lock wrapper class
 /*!
     This class wraps pthread_rwlock_t
@@ -11,22 +15,18 @@
 class ORReadWriteLock
 {
   public:
-    ORReadWriteLock() 
-      { pthread_rwlock_init(&fRWLock, 0); }
-    ~ORReadWriteLock() 
-      { pthread_rwlock_destroy(&fRWLock); }
+    ORReadWriteLock(); 
 
-     void readLock()
-       { pthread_rwlock_rdlock(&fRWLock); }
+    ~ORReadWriteLock(); 
 
-     void writeLock()
-       { pthread_rwlock_wrlock(&fRWLock); }
-
-     void unlock()
-       { pthread_rwlock_unlock(&fRWLock); }
+     void readLock();
+     void writeLock();
+     void unlock();
 
   private:
-    pthread_rwlock_t fRWLock; 
+    ORReadWriteLock(const ORReadWriteLock&);
+    ORReadWriteLock& operator=(const ORReadWriteLock&);
+    pthread_rwlock_t fRWLock; //! 
 
 };
 

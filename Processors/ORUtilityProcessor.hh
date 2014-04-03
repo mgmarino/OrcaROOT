@@ -22,6 +22,7 @@ class ORUtilityProcessor : public ORDataProcessor
     virtual void SetDecoderDictionary() {}
 
   private:
+#ifndef __CINT__
     // fDataDecoder is NULL by definition here and should not be accessed 
     // by deriving classes (to eliminate seg faults): make it private. If a
     // deriving class suddenly needs a decoder, it should make its own.
@@ -31,6 +32,7 @@ class ORUtilityProcessor : public ORDataProcessor
     // for that matter, make fDataId private too! It doesn't make any sense
     // in this context.
     using ORDataProcessor::fDataId;
+#endif /* __CINT__ */ // CINT has trouble parsing this.
 };
 
 #endif

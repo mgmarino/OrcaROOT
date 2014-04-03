@@ -8,8 +8,8 @@ SRCDIRS = Util \
 	Applications
 
 all: 
-	@echo Preparing library links...
-	mkdir -p lib;\
+	@echo "Preparing library links..."
+	$(VERBOSE)mkdir -p lib;\
 	 cd lib;\
 	 ln -sf ../Util/libORUtil.$(SOSUFFIX) \
 		../Decoders/libORDecoders.$(SOSUFFIX) \
@@ -17,9 +17,9 @@ all:
 		../Processors/libORProcessors.$(SOSUFFIX) \
 		../Management/libORManagement.$(SOSUFFIX) \
 		.;
-	@for i in $(SRCDIRS); do (echo Entering directory $$i; $(MAKE) -C $$i) || exit $$?; done
+	@for i in $(SRCDIRS); do (echo Entering directory $$i; $(MAKE) --no-print-directory -C $$i) || exit $$?; done
 
 clean: 
 	@rm -rf lib 
-	@for i in $(SRCDIRS); do $(MAKE) -C $$i clean || exit $$?; done
+	@for i in $(SRCDIRS); do $(MAKE) --no-print-directory -C $$i clean || exit $$?; done
 

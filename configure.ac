@@ -24,11 +24,21 @@ SOFLAGS="-shared"
 ORLIBEXTSHARED=so
 case "${host_os}" in
   darwin*)
-  EXTRALIBFLAGS="-bind_at_load" 
-  SOFLAGS="-dynamiclib"
-  ORLIBEXTSHARED=dylib
-  BOLD=`tput smso`
+    EXTRALIBFLAGS="-bind_at_load" 
+    SOFLAGS="-dynamiclib -install_name @rpath/"
+    ORLIBEXTSHARED=dylib
+    ORIGINFLAGS="@loader_path/../lib"
+    BOLD=`tput smso`
+;;
+  linux*)
+    SOFLAGS="-shared -Wl,-soname,"
+    EXTRALIBFLAGS="$LDFLAGS -Wl,-rpath-link,\$(prefix)/lib -Wl,-z,defs" 
+    ORIGINFLAGS=\'\$\$ORIGIN/../lib\',--enable-new-dtags
+  ;;
+  *)
+  AC_MSG_ERROR([Don't know how to build dynamic libraries on your system])
 esac
+AC_SUBST(ORIGINFLAGS)
 
 # doing host cpu (i.e. architecture) specific things
 
@@ -105,8 +115,26 @@ fi
 AC_SUBST(ORROOT_HAS_FFTW)
 AC_SUBST(ROOTFFTWLIB)
   
+#########################################################################
+# Do some checks related to ROOT and dictionary building
+#########################################################################
+AC_CHECK_SIZEOF([pthread_t], [], [#include <pthread.h>;])
+AC_CHECK_SIZEOF([pthread_rwlock_t], [], [#include <pthread.h>;])
+
 echo "${BOLD}ROOT seems to be successfully installed. ${OFFBOLD}"
 #end root
+
+#########################################################################
+#Find python, this is necessary for some of the build 
+#########################################################################
+m4_include(aclocal.m4)
+m4_include(python.m4)
+AM_PATH_PYTHON([2.5],
+               [HAVE_PYTHON=yes
+                PYTHONLIBDIR=`$PYTHON -c 'from distutils.sysconfig import get_python_lib; print "%s/config" % get_python_lib(0,1)'`],
+               [HAVE_PYTHON=no
+                AC_MSG_ERROR([python not found, required for build])])
+AC_SUBST(HAVE_PYTHON)
 
 
 # we also must check for endianness 
