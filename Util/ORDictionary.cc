@@ -9,7 +9,7 @@ ORDictionary::ORDictionary(const ORDictionary& dict) : ORVDictValue(dict)
   SetName(dict.fName);
   /* Now the hard part, copying the dictionary map correctly calling 
      all the copy constructors. */ 
-  std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
+  DictMap::const_iterator dictIter;
   for (dictIter = dict.fDictMap.begin();dictIter!=dict.fDictMap.end();dictIter++) {
     EValType type = dictIter->second->GetValueType(); 
     ORVDictValue* insertDictValue = NULL;
@@ -43,7 +43,7 @@ ORDictionary::ORDictionary(const ORDictionary& dict) : ORVDictValue(dict)
 
 ORDictionary::~ORDictionary()
 {
-  std::map<const std::string, ORVDictValue*>::iterator i;
+  DictMap::iterator i;
   for (i = fDictMap.begin(); i != fDictMap.end(); i++) {
     delete i->second;
   }
@@ -51,7 +51,7 @@ ORDictionary::~ORDictionary()
 
 ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter) 
 {
-  std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
+  DictMap::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
   if (delimPos == std::string::npos) {
     dictIter = fDictMap.find(key); 
@@ -78,7 +78,7 @@ ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter)
 
 const ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter) const 
 {
-  std::map<const std::string, ORVDictValue*>::const_iterator dictIter;
+  DictMap::const_iterator dictIter;
   size_t delimPos = key.find(delimiter); 
   if (delimPos == std::string::npos) {
     dictIter = fDictMap.find(key); 

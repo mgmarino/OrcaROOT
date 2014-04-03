@@ -65,7 +65,7 @@ class ORDictionary : public ORVDictValue
     
     // The following functions are useful for iterating over the contents of
     // the dictionary:
-    typedef std::map<const std::string, ORVDictValue*> DictMap;
+    typedef std::map<std::string, ORVDictValue*> DictMap;
     virtual const DictMap& GetDictMap() const { return fDictMap; }
 
   protected:
