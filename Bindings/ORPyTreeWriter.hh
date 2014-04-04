@@ -17,6 +17,8 @@ class ORPyTreeWriter : public ORVTreeWriter, public ORPyBinder
     EReturnCode ProcessMyDataRecord(UInt_t* record);
     EReturnCode EndProcessing();
 
+    using ORVTreeWriter::Clear;
+    using TObject::Clear;
     void Clear(); 
 
     void DoNotAutoFillTree() { SetDoNotAutoFillTree(); } 
