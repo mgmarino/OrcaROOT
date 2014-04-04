@@ -2,7 +2,7 @@ include @INSTALLDIR@/buildTools/config.mk
 
     
 SOURCESSCRATCH := $(wildcard *.cc)
-SOURCES := $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH))
+SOURCES := $(addprefix $(shell pwd)/, $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH)))
 #SOURCES = $(wildcard OR*.cc)
 HEADERS := $(wildcard OR*.hh)
 OBJECTS := $(SOURCES:.cc=.o)
@@ -40,15 +40,15 @@ $(SHLIB): $(OBJECTS) $(DICTOBJECTS)
            $(ORLIBS) $(ROOTLIBS) -o $@
 
 .cc.o: 
-	@echo "$(OUTPREFIX)Building ............ $<"
+	@echo "$(OUTPREFIX)Building ............ $(<F)"
 	$(VERBOSE)$(BUILDOFILES)
 
 .C.o: 
-	@echo "$(OUTPREFIX)Building ............ $<"
+	@echo "$(OUTPREFIX)Building ............ $(<F)"
 	$(VERBOSE)$(BUILDOFILES)
 
 %: %.o $(OBJECTS)
-	@echo "$(OUTPREFIX)Building App ........ $@"
+	@echo "$(OUTPREFIX)Building App ........ $(@F)"
 	$(VERBOSE)$(CXX) $(CXXFLAGS) -Wl,-rpath,$(ORIGINFLAGS) \
           $(ROOTFLAGS) $(ORFLAGS) -o $@ $< $(OBJECTS)          \
           $(LDFLAGS) $(ORLIBS) $(ROOTLIBS) 
