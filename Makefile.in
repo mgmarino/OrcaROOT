@@ -17,7 +17,11 @@ all:
 		../Processors/libORProcessors.$(SOSUFFIX) \
 		../Management/libORManagement.$(SOSUFFIX) \
 		.;
-	@for i in $(SRCDIRS); do (echo Entering directory $$i; $(MAKE) --no-print-directory -C $$i) || exit $$?; done
+	# Loop through all directories.
+	# This will print out an ERRORHELP message if it detects an error.  It will
+	# *not* print this out if the compilation was interrupted (CTRL-C).
+	@for i in $(SRCDIRS); do (echo Entering directory $$i; $(MAKE) --no-print-directory -C $$i) || \
+       (ret_code=$$?; [ $$ret_code -ne 130 ] && printf $(ERRORHELP); exit $$ret_code) || exit $$?; done
 
 clean: 
 	@rm -rf lib 

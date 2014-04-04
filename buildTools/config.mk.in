@@ -25,3 +25,10 @@ PYTHON     := @PYTHON@
 ORIGINFLAGS:= @ORIGINFLAGS@
 
 OUTPREFIX = "  [$(PKGNAME)]  "
+ERRORHELP = "\n\
+Error detected, try running make again like:\n\
+\n\
+make $(MAKECMDGOALS) VERBOSE=\"\"\n\
+\n\
+to see the command called.\n\
+"
