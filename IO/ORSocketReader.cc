@@ -271,7 +271,9 @@ Int_t WriteToRootSocket(TSocket* sock, void* buffer, Int_t length)
 
 
 }
-Int_t ReadoutRootSocket(TSocket* sock, void* buffer, Int_t length, ESendRecvOptions opt = kDefault)
+Int_t ReadoutRootSocket(TSocket* sock, void* buffer, Int_t length, 
+                        const ORSocketReader& check_cancel,
+                        ESendRecvOptions opt = kDefault) 
 {
     Int_t socketDescriptor = sock->GetDescriptor();
     Int_t numBytesRead;
@@ -287,7 +289,10 @@ Int_t ReadoutRootSocket(TSocket* sock, void* buffer, Int_t length, ESendRecvOpti
       FD_SET(socketDescriptor, &fileDescSet);
 
       numBytesRead = select(socketDescriptor+1, &fileDescSet, 0, 0, &timeout);
-      if (numBytesRead == 0) continue; // timeout
+      if (numBytesRead == 0) {
+        if (check_cancel.TestCancel()) break;
+        continue; // timeout
+      }
       if (numBytesRead < 0) { 
         if (errno == EAGAIN) continue;
         numBytesRead = 0;
@@ -336,7 +341,7 @@ void* SocketReadoutThread(void* input)
     pthread_testcancel(); // When we are here, it is safe to cancel the thread.
 
     numBytesRead = ReadoutRootSocket(sock, scratchBuffer, 
-                                sizeof(UInt_t), kPeek);
+                                sizeof(UInt_t), *socketReader, kPeek);
     if (numBytesRead <= 0) {
       // Something is wrong with the socket
       socketReader->fSocketIsOK = false;
@@ -391,7 +396,7 @@ void* SocketReadoutThread(void* input)
       while (numLongsToRead > 0) {
         numBytesRead = ReadoutRootSocket(sock, scratchBuffer, 
           (((size_t)numLongsToRead > sizeOfScratchBuffer) ? 
-            sizeOfScratchBuffer : numLongsToRead)*sizeof(UInt_t));
+            sizeOfScratchBuffer : numLongsToRead)*sizeof(UInt_t), *socketReader);
         if (numBytesRead <=0 || numBytesRead % sizeof(UInt_t) != 0) break;
         numLongsToRead -= numBytesRead/sizeof(UInt_t);
       }
@@ -430,7 +435,7 @@ void* SocketReadoutThread(void* input)
     numBytesRead = ReadoutRootSocket(sock, 
               socketReader->fCircularBuffer.buffer 
               + socketReader->fCircularBuffer.writeIndex, 
-              firstRead*sizeof(UInt_t)); 
+              firstRead*sizeof(UInt_t), *socketReader); 
     if (numBytesRead <= 0 || numBytesRead != (Int_t)(firstRead*sizeof(UInt_t))) {
       // Problem in the socket, or closed connection. 
       pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
@@ -449,7 +454,7 @@ void* SocketReadoutThread(void* input)
       numBytesRead = ReadoutRootSocket(sock, 
                 socketReader->fCircularBuffer.buffer 
                 + socketReader->fCircularBuffer.writeIndex,
-                secondRead*sizeof(UInt_t)); 
+                secondRead*sizeof(UInt_t), *socketReader); 
       if (numBytesRead <= 0 || numBytesRead != (Int_t)(secondRead*sizeof(UInt_t))) {
         // Problem in the socket, or closed connection. 
         pthread_rwlock_unlock(&socketReader->fCircularBuffer.cbMutex);
