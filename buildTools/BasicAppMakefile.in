@@ -3,6 +3,7 @@ ORFLAGS = -I@INSTALLDIR@/Util -I@INSTALLDIR@/Decoders -I@INSTALLDIR@/IO \
           -I@INSTALLDIR@/Processors -I@INSTALLDIR@/Management
 ORLIBS = -L@INSTALLDIR@/lib -lORUtil -lORDecoders -lORIO -lORProcessors -lORManagement
 
+NOLINKDEF := 
 include @INSTALLDIR@/buildTools/BasicMakefile
 
     

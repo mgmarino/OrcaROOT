@@ -2,12 +2,20 @@ include @INSTALLDIR@/buildTools/config.mk
 
     
 SOURCESSCRATCH := $(wildcard *.cc)
-SOURCES := $(addprefix $(shell pwd)/, $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH)))
+PWD     := $(shell pwd)
+SOURCES := $(addprefix $(PWD)/, $(filter-out $(patsubst %, %.cc, $(APPS)), $(SOURCESSCRATCH)))
+APPS    := $(patsubst %,$(PWD)/%,$(APPS))
+DEPFILES := $(patsubst %.cc, %.d, $(SOURCES)) $(patsubst %,%.d,$(APPS))
 #SOURCES = $(wildcard OR*.cc)
 HEADERS := $(wildcard OR*.hh)
 OBJECTS := $(SOURCES:.cc=.o)
 PKGNAME := $(notdir $(basename $(shell pwd)))
 BUILDOFILES = $(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -c $<
+MAKEDEPEND = rm -rf $@; $(CXX) $(CXXFLAGS) $(ROOTFLAGS) $(ORFLAGS) -MM $< > $@.$$$$; \
+        cp $@.$$$$ $@.temp.$$$$; sed -e 's/\#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+        -e '/^$$/ d' -e 's/$$/ :/' < $@.$$$$ >> $@.temp.$$$$;                         \
+        sed 's,\($*\)\.o[ :]*,$(PWD)/\1.o $@ : ,g' < $@.temp.$$$$ > $@ ;              \
+        rm -f $@*.$$$$
 
 # NOLINKDEF explicity tells us not to make rootify a directory 
 ifndef NOLINKDEF 
@@ -26,12 +34,12 @@ DICTOBJECTS  := $(if $(LINKDEF),OR${PKGNAME}_dict.o,)
 all: $(SHLIB) $(APPS)
 
 ifneq ($(MAKECMDGOALS), clean)
--include .depend
+-include $(DEPFILES) 
 endif
 
-.depend depend: $(SOURCESSCRATCH)
-	@echo "$(OUTPREFIX)Checking dependencies"
-	$(VERBOSE)$(CXX) -M $(CXXFLAGS) ${ROOTFLAGS} $(ORFLAGS) $^ > .depend
+$(DEPFILES): $(PWD)/%.d: $(PWD)/%.cc 
+	@echo "$(OUTPREFIX)Check dependencies .. $(<F)"
+	$(VERBOSE)$(MAKEDEPEND)
 
 $(SHLIB): $(OBJECTS) $(DICTOBJECTS) 
 	@echo "$(OUTPREFIX)Building library .... $(@F)"
@@ -55,7 +63,7 @@ $(SHLIB): $(OBJECTS) $(DICTOBJECTS)
 
 clean:
 	@echo "$(OUTPREFIX)Cleaning"
-	$(VERBOSE)rm -f $(SHLIB) $(APPS) *.o *~ .depend OR${PKGNAME}_dict.?  
+	$(VERBOSE)rm -f $(SHLIB) $(APPS) *.o $(DEPFILES) OR${PKGNAME}_dict.?  
 
 $(DICTCFILES) : $(DICTHFILES) $(LINKDEF) 
 	@echo "$(OUTPREFIX)Running rootcint .... $(notdir $(LINKDEF))"
@@ -69,7 +77,4 @@ $(AUTOLINKDEF): $(LINKDEFIN) $(DICTHFILES)
         --input_linkdef=$(LINKDEFIN) $(DICTHFILES)
 
 
-ifneq ($(MAKECMDGOALS), clean)
--include .depend
-endif
 
