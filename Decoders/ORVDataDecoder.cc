@@ -1,9 +1,11 @@
 // ORVDataDecoder.cc
 
 #include "ORVDataDecoder.hh"
+#include "ORDecoderDictionary.hh"
 #include "ORUtils.hh"
 #include "ORLogger.hh"
 #include <iomanip>
+using ORUtils::BitConcat;
 
 void ORVDataDecoder::Swap(UInt_t* dataRecord)
 {

@@ -1,7 +1,6 @@
 #ifndef _ORVMCADecoder_hh_
 #define _ORVMCADecoder_hh_
 #include <string>
-#include "TROOT.h"
 #include "ORVDataDecoder.hh"
 
 //! Defines an interface for MultiChannel Analysers decoders.

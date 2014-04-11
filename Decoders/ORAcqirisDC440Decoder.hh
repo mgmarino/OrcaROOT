@@ -4,6 +4,8 @@
 #define _ORAcqirisDC440Decoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 
 class ORAcqirisDC440Decoder: public ORVDigitizerDecoder
 {

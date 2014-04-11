@@ -4,6 +4,8 @@
 #define _ORSIS3302Decoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 
 class ORSIS3302Decoder: public ORVDigitizerDecoder
 {

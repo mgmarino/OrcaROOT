@@ -4,6 +4,8 @@
 #define _ORGretaDecoder_hh_
 
 #include "ORVDigitizerDecoder.hh"
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 
 class ORGretaDecoder: public ORVDigitizerDecoder
 {

@@ -3,6 +3,7 @@
 #include "OR1DHistoHistogramsWriter.hh"
 #include "ORLogger.hh"
 #include "TH1.h"
+#include "TROOT.h"
 
 using namespace std;
 

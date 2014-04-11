@@ -4,6 +4,8 @@
 #define _ORGretaMarkIVDecoder_hh_
 
 #include "ORGretaDecoder.hh"
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 /* This card is very similar to the original Greta card, but has some important
    differences.  For example, it is possible that a record has a Master record
    accompanying it and so this is important to check when reading data from a 

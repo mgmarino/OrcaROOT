@@ -1,7 +1,6 @@
 #ifndef _ORVDigitizerDecoder_hh_
 #define _ORVDigitizerDecoder_hh_
 #include <string>
-#include "TROOT.h"
 #include "ORVDataDecoder.hh"
 
 //! Defines an interface for Digitizer decoders.

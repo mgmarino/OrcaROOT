@@ -5,6 +5,7 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "ORLogger.hh"
+#include "TROOT.h"
 
 using namespace std;
 

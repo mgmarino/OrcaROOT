@@ -3,7 +3,9 @@
 #ifndef _ORDataProcessor_hh_
 #define _ORDataProcessor_hh_
 
+#ifndef _ORVDataDecoder_hh
 #include "ORVDataDecoder.hh"
+#endif
 
 class ORCompoundDataProcessor;
 class ORDataProcManager;

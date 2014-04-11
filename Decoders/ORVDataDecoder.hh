@@ -4,11 +4,12 @@
 #define _ORVDataDecoder_hh_
 
 #include <string>
-#include "TROOT.h"
+#ifndef ROOT_Rtypes
+#include "Rtypes.h"
+#endif
+#ifndef _ORDecoderDictionary_hh_
 #include "ORDecoderDictionary.hh"
-#include "ORUtils.hh"
-using ORUtils::BitConcat;
-
+#endif
 //! Base Class for all data decoders
 /** 
   ORVDataDecoder provides a number of functions for all decoders

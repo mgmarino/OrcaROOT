@@ -6,6 +6,7 @@
 #include "ORLogger.hh"
 #include <iostream>
 #include <fstream>
+#include "TROOT.h"
 
 
 using namespace std;

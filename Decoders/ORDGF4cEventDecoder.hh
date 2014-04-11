@@ -6,6 +6,8 @@
 #include "ORVDigitizerDecoder.hh"
 #include <vector>
 #include <map>
+#include "ORUtils.hh"
+using ORUtils::BitConcat;
 
 class ORDGF4cEventDecoder: public ORVDigitizerDecoder
 {
