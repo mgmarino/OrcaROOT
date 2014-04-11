@@ -78,7 +78,7 @@ void ORVSigHandler::UnCancel()
   fRWLock.unlock();
 }
 
-bool ORVSigHandler::TestCancel() 
+bool ORVSigHandler::TestCancel() const
 {
   bool testCancel;  
   fRWLock.readLock();

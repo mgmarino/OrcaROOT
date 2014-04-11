@@ -70,10 +70,6 @@ class ORVSigHandler
 
     //! Reset the Cancel flags.
     void UnCancel();
-    
-  protected:
-    ORVSigHandler();
-    virtual ~ORVSigHandler();
 
     //! This function indicates to the class whether or not it has been canceled.
     /*!
@@ -81,12 +77,17 @@ class ORVSigHandler
      * an interrupt.  It is the coders responsibility to make sure these are
      * placed appropriately.  See, e.g., ORDataProcManager for how to do this. 
      */
-    bool TestCancel();
+    bool TestCancel() const;
+
+  protected:
+    ORVSigHandler();
+    virtual ~ORVSigHandler();
+
     void CancelAnInstance();
 
 
   private:
-    ORReadWriteLock fRWLock;
+    mutable ORReadWriteLock fRWLock;
     bool fSetToCancel;
     static ORReadWriteLock fgBaseRWLock;
     static std::map<pthread_t, std::vector<ORVSigHandler*> > fgHandlers;
