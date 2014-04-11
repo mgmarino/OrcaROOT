@@ -1,7 +1,7 @@
 
 SHLIB = libORManagement.$(SOSUFFIX)
     
-ORFLAGS = -I../Util -I../Decoders -I../IO -I../Processors
-ORLIBS = -L../lib -lORUtil -lORDecoders -lORIO -lORProcessors
+ORFLAGS = $(patsubst %,-I$(INSTALLDIR)/%,Util Decoders IO Processors)
+ORLIBS = -L$(INSTALLDIR)/lib -lORUtil -lORDecoders -lORIO -lORProcessors
 
 include ../buildTools/BasicMakefile

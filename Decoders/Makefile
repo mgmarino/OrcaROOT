@@ -1,7 +1,7 @@
 
 SHLIB = libORDecoders.$(SOSUFFIX)
     
-ORFLAGS = -I../Util 
-ORLIBS = -L../lib -lORUtil 
+ORFLAGS = $(patsubst %,-I$(INSTALLDIR)/%,Util)
+ORLIBS = -L$(INSTALLDIR)/lib -lORUtil 
 
 include ../buildTools/BasicMakefile

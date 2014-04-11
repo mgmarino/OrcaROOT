@@ -1,7 +1,7 @@
 
 SHLIB = libORIO.$(SOSUFFIX)
     
-ORFLAGS = -I../Util -I../Decoders
-ORLIBS = -L../lib -lORUtil -lORDecoders 
+ORFLAGS = $(patsubst %,-I$(INSTALLDIR)/%,Util Decoders)
+ORLIBS = -L$(INSTALLDIR)/lib -lORUtil -lORDecoders 
 
 include ../buildTools/BasicMakefile
