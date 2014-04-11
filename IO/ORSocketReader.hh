@@ -3,12 +3,18 @@
 #ifndef _ORSocketReader_hh_
 #define _ORSocketReader_hh_
 // This class can not have a dictionary made for it.
-#ifndef __CINT__
 
 #include "ORVReader.hh"
 #include "ORVWriter.hh"
 #include "ORVSigHandler.hh"
+#ifndef __CINT__
 #include <pthread.h>
+#else
+// Dealing with CINT
+typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
+typedef struct{ private: char x[SIZEOF_PTHREAD_ATTR_T]; } pthread_attr_t;
+#endif
+
 #include "TSocket.h"
 
 //! Struct encapsulating a circular buffer
@@ -119,5 +125,4 @@ class ORSocketReader : public ORVReader, public ORVSigHandler, public ORVWriter
 
 };
 
-#endif /* __CINT__ */
 #endif /* _ORSocketReader_hh_ */

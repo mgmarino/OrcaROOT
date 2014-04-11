@@ -8,7 +8,7 @@
 #ifndef __CINT__
 #include <pthread.h>
 #else
-typedef char pthread_t[SIZEOF_PTHREAD_T];
+typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
 #endif
 
 #define ERRLINE_HACK_1(line)   #line

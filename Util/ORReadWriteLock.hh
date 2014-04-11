@@ -6,7 +6,7 @@
 #ifndef __CINT__
 #include <pthread.h>
 #else
-typedef char pthread_rwlock_t[SIZEOF_PTHREAD_RWLOCK_T];
+typedef struct { private: char x[SIZEOF_PTHREAD_RWLOCK_T]; } pthread_rwlock_t;
 #endif
 //! Read/Write lock wrapper class
 /*!

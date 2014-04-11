@@ -9,7 +9,7 @@
 #include <pthread.h>
 #else
 // Dealing with CINT
-typedef char pthread_t[SIZEOF_PTHREAD_T];
+typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
 #endif
 #include "ORReadWriteLock.hh"
 
