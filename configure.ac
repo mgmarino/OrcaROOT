@@ -116,6 +116,7 @@ ROOT_FEATURE([python], [ AS_IF([test x"$can_build_bindings" = xyes], [ROOT_HAS_P
 #########################################################################
 AC_CHECK_SIZEOF([pthread_t], [], [#include <pthread.h>;])
 AC_CHECK_SIZEOF([pthread_rwlock_t], [], [#include <pthread.h>;])
+AC_CHECK_SIZEOF([pthread_attr_t], [], [#include <pthread.h>;])
 
 echo "${BOLD}ROOT seems to be successfully installed. ${OFFBOLD}"
 #end root
