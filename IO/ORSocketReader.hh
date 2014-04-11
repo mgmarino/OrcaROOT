@@ -4,9 +4,15 @@
 #define _ORSocketReader_hh_
 // This class can not have a dictionary made for it.
 
+#ifndef _ORVReader_hh_
 #include "ORVReader.hh"
+#endif
+#ifndef _ORVWriter_hh_
 #include "ORVWriter.hh"
+#endif
+#ifndef _ORVSigHandler_hh_
 #include "ORVSigHandler.hh"
+#endif
 #ifndef __CINT__
 #include <pthread.h>
 #else
@@ -15,7 +21,9 @@ typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
 typedef struct{ private: char x[SIZEOF_PTHREAD_ATTR_T]; } pthread_attr_t;
 #endif
 
+#ifndef ROOT_TSocket
 #include "TSocket.h"
+#endif
 
 //! Struct encapsulating a circular buffer
 typedef struct {

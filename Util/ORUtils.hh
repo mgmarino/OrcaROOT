@@ -3,7 +3,9 @@
 #ifndef _ORUtils_hh_
 #define _ORUtils_hh_
 
+#ifndef ROOT_TROOT
 #include "TROOT.h"
+#endif
 
 namespace ORUtils 
 {

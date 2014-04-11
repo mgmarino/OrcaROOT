@@ -4,7 +4,9 @@
 #define _ORHeader_hh_
 
 #include <string>
+#ifndef _ORXmlPlist_hh
 #include "ORXmlPlist.hh"
+#endif
 
 //!ORHeader encapsulates an Orca Header.
 class ORHeader: public ORXmlPlist

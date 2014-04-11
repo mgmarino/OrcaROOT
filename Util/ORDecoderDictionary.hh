@@ -1,7 +1,9 @@
 #ifndef _ORDecoderDictionary_hh_
 #define _ORDecoderDictionary_hh_
 
+#ifndef _ORDictionary_hh_
 #include "ORDictionary.hh"
+#endif
 
 //! Class extending ORDictionary
 /*!

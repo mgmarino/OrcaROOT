@@ -4,7 +4,9 @@
 #define _ORSisCviFileReader_hh_
 
 #include <string>
+#ifndef _ORFileReader_hh_
 #include "ORFileReader.hh"
+#endif
 //! Class to read SIS CVI binary files
 /*!
     This class is extremely particular, creating 

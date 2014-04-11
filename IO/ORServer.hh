@@ -3,8 +3,12 @@
 #ifndef _ORServer_hh_
 #define _ORServer_hh_
 
+#ifndef ROOT_TServerSocket
 #include "TServerSocket.h"
+#endif
+#ifndef _ORVSigHandler_hh_
 #include "ORVSigHandler.hh"
+#endif
 
 //! Implements a server.
 /*!

@@ -3,7 +3,9 @@
 #define _ORXmlPlistString_hh_
 
 #include <string>
+#ifndef _ORDictionary_hh_
 #include "ORDictionary.hh"
+#endif
 
 /*! 
     This class handles receiving information and turning it into a plist xml

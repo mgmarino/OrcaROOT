@@ -22,7 +22,9 @@ typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
 #define SetSeverity(sev)  SetORLoggerSeverity( pthread_self() , sev )
 #define SetOStream(str)   SetORLoggerOStream( pthread_self(), str)
 
+#ifndef _ORReadWriteLock_hh
 #include "ORReadWriteLock.hh"
+#endif
 
 //! Logging class to be used by OrcaROOT
 /*!

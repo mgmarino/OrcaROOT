@@ -1,7 +1,9 @@
 #ifndef _ORHardwareDictionary_hh_
 #define _ORHardwareDictionary_hh_
 
+#ifndef _ORDictionary_hh_
 #include "ORDictionary.hh"
+#endif
 #include <string>
 #include <vector>
 

@@ -11,7 +11,9 @@
 // Dealing with CINT
 typedef struct { private: char x[SIZEOF_PTHREAD_T]; } pthread_t;
 #endif
+#ifndef _ORReadWriteLock_hh
 #include "ORReadWriteLock.hh"
+#endif
 
 //! Allows asynchronous signals to be handles synchronously 
 /*! 

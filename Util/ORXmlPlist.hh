@@ -3,8 +3,12 @@
 #ifndef _ORXmlPlist_hh_
 #define _ORXmlPlist_hh_
 
+#ifndef ROOT_TString
 #include "TString.h"
+#endif
+#ifndef _ORDictionary_hh_ 
 #include "ORDictionary.hh"
+#endif
 
 /*!
    This class handles loading an xml Plist and parsing it into 

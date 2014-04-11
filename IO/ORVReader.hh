@@ -3,8 +3,12 @@
 #ifndef _ORVReader_hh_
 #define _ORVReader_hh_
 
+#ifndef _ORHeaderDecoder_hh
 #include "ORHeaderDecoder.hh"
+#endif
+#ifndef _ORBasicDataDecoder_hh
 #include "ORBasicDataDecoder.hh"
+#endif
 //! Virtual Reader class defining the interface for OrcaROOT Readers.
 /*!
 
