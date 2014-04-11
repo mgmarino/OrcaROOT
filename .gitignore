@@ -78,3 +78,5 @@
 /Bindings/*.o
 /Bindings/*.dylib
 /Bindings/*.so
+
+*/*.d
