@@ -4,8 +4,16 @@
 #define _ORVTreeWriter_hh_
 
 #include <string>
+#ifndef ROOT_TTree
+  #ifndef __CINT__
 #include "TTree.h"
+  #else
+class TTree;
+  #endif
+#endif
+#ifndef _ORDataProcessor_hh_
 #include "ORDataProcessor.hh"
+#endif
 
 
 class ORVTreeWriter : public ORDataProcessor
