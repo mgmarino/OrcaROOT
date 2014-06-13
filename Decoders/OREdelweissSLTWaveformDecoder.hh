@@ -37,7 +37,9 @@ public:
     virtual inline UInt_t GetSec();
     virtual inline UInt_t GetSubSec();
     virtual inline UInt_t GetChannelMap();
+    virtual inline UShort_t GetFiber();
     virtual inline UShort_t GetChannel();
+    virtual inline UShort_t GetTrigChannel();
     virtual inline UInt_t GetEventInfo();
     virtual inline UInt_t GetEnergy();
     virtual inline UInt_t GetEventID();
@@ -116,7 +118,17 @@ inline UInt_t OREdelweissSLTWaveformDecoder::GetEventFlags(size_t)
 	return (fDataRecord[7]);
 }
 
+inline UShort_t OREdelweissSLTWaveformDecoder::GetFiber()
+{
+	return ( fDataRecord[1] & 0xF000 ) >> 12;
+}
+
 inline UShort_t OREdelweissSLTWaveformDecoder::GetChannel()
+{
+	return ( fDataRecord[1] & 0x0F00 ) >> 8;
+}
+
+inline UShort_t OREdelweissSLTWaveformDecoder::GetTrigChannel()
 {
 	return ( fDataRecord[1] & 0xFF00 ) >> 8;
 }

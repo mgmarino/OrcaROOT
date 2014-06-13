@@ -29,6 +29,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTWaveformTreeWriter::InitializeBranche
   fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
+  fTree->Branch("fiber", &fFiber, "fiber/s");
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
   fTree->Branch("fifoEventID", &fEventID, "fifoEventID/i");
@@ -52,6 +53,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTWaveformTreeWriter::ProcessMyDataReco
       // check severity to improve speed:
   fCrate = fEventDecoder->CrateOf();
   fCard = fEventDecoder->CardOf();
+  fFiber = fEventDecoder->GetFiber();
   fChannel = fEventDecoder->GetChannel();
   fChannelMap = fEventDecoder->GetChannelMap();
   fSec = fEventDecoder->GetSec();
@@ -66,7 +68,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTWaveformTreeWriter::ProcessMyDataReco
   { 
     ORLog(kDebug) << "ProcessMyDataRecord(): "
       << "crate-card-channel-sec-subsec-energy_adc-chmap-eventID-eventFlags-eventInfo-wfLen = "
-	  << fCrate << "-"  << fCard << "-" << fChannel << "-" 
+	  << fCrate << "-"  << fCard << "-" << fFiber << "-"  << fChannel << "-" 
 	  << fSec << "-" << fSubSec << "-" << fEnergy 
 	  << "-" << fChannelMap 
       << "-" << fEventID << "-" <<  fEventFlags  //-tb- 2010-02-16

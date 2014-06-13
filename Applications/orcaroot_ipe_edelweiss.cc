@@ -26,6 +26,7 @@
   *
   * New classes:
   * OREdelweissSLTWaveformDecoder and OREdelweissSLTWaveformTreeWriter
+  * OREdelweissSLTFLTEventDecoder and OREdelweissSLTFLTEventTreeWriter
   * and more for the future -tb-
   *
   *
@@ -46,6 +47,8 @@
   #include "OREdelweissSLTWaveformDecoder.hh"
   //#include "OREdelweissSLTWaveformDumper.hh"
   #include "OREdelweissSLTWaveformTreeWriter.hh"
+  #include "OREdelweissSLTFLTEventDecoder.hh"
+  #include "OREdelweissSLTFLTEventTreeWriter.hh"
   //ADDITION FOR EDELWEISS - Stop
 
   //ADDITION FOR KATRIN - Start
@@ -245,9 +248,13 @@ int main(int argc, char** argv)
 
 
   //ADDITION FOR EDELWEISS - Start
-   OREdelweissSLTWaveformDecoder katrinFLTEnergyDecoder;
+   //OREdelweissSLTWaveformDecoder katrinFLTEnergyDecoder;
 	OREdelweissSLTWaveformTreeWriter EdelweissSLTWaveformTreeWriter("IPESLTEdelweissWaveformTree");
 	dataProcManager.AddProcessor(&EdelweissSLTWaveformTreeWriter);
+
+   //OREdelweissSLTFLTEventDecoder katrinFLTEnergyDecoder;
+	OREdelweissSLTFLTEventTreeWriter EdelweissSLTFLTEventTreeWriter("IPESLTEdelweissFLTEventTree");
+	dataProcManager.AddProcessor(&EdelweissSLTFLTEventTreeWriter);
   //ADDITION FOR EDELWEISS - End
 
 

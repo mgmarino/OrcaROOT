@@ -13,8 +13,8 @@ class OREdelweissSLTWaveformTreeWriter : public ORVTreeWriter
     virtual ~OREdelweissSLTWaveformTreeWriter();
     virtual EReturnCode ProcessMyDataRecord(UInt_t* record);
     virtual inline void Clear() 
-      { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; 
-        fChannel = 0; fEnergy = 0; fWaveformLength = 0;
+      { fSec = 0; fSubSec = 0; fEventID = 0;fCrate = 0; fCard = 0; fFiber =0;
+        fChannel = 0; fTrigChannel = 0; fEnergy = 0; fWaveformLength = 0;
 		fChannelMap=0;  //-tb- 2010-02-17
 		fEventID=0; fEventFlags=0; fEventInfo=0;  //-tb- 2010-02-17
         fSaveOnlyNonemptyTrees=true; }
@@ -29,7 +29,7 @@ class OREdelweissSLTWaveformTreeWriter : public ORVTreeWriter
     OREdelweissSLTWaveformDecoder* fEventDecoder;
     UInt_t fSec, fSubSec;
     UInt_t fChannelMap;
-    UShort_t fCrate, fCard, fChannel;
+    UShort_t fCrate, fCard, fFiber, fChannel, fTrigChannel;
     UShort_t fWaveform[kMaxWFLength];
     UInt_t fWaveformLength;
     UInt_t fEnergy;
