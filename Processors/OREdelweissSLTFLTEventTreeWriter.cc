@@ -54,7 +54,8 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::ProcessMyDataReco
   fCrate = fEventDecoder->CrateOf();
   fCard = fEventDecoder->CardOf();
   fFiber = fEventDecoder->GetFiber();
-  fChannel = fEventDecoder->GetChannel();
+  //fChannel = fEventDecoder->GetChannel();
+  fChannel = fEventDecoder->GetTrigChannel();
   fChannelMap = fEventDecoder->GetChannelMap();
   fSec = fEventDecoder->GetSec();
   fSubSec = fEventDecoder->GetSubSec();
