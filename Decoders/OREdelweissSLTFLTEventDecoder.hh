@@ -85,7 +85,7 @@ inline size_t OREdelweissSLTFLTEventDecoder::GetWaveformLen()
 	return fWaveformLength;
 } 
 
-inline UInt_t OREdelweissSLTFLTEventDecoder::GetSubSec()
+inline UInt_t OREdelweissSLTFLTEventDecoder::GetSubSec() 
 {
 	return (fDataRecord[2]); //f0 is lsb of timestamp -tb-
 }

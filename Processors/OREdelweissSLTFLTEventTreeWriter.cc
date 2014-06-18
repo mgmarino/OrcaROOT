@@ -60,7 +60,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::ProcessMyDataReco
   fChannelMap = fEventDecoder->GetChannelMap();
   fSec = fEventDecoder->GetSec();
   fSubSec = fEventDecoder->GetSubSec();
-  fTimeStamp = ((0x000000000000ffff & fSubSec) << 32) | fSec; 
+  fTimeStamp = (  ((ULong64_t)(fSec & 0x0000ffff)) << 32) | fSubSec; 
   fEventID = fEventDecoder->GetEventID();
   fEnergy = fEventDecoder->GetEnergy();
   fWaveformLength = fEventDecoder->GetWaveformLen();
