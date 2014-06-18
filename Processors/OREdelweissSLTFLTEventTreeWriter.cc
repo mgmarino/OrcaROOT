@@ -26,7 +26,8 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::InitializeBranche
 {
   fTree->Branch("wfLength", &fWaveformLength, "wfLength/i");
   fTree->Branch("eventSec", &fSec, "eventSec/i");
-  fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");
+  fTree->Branch("eventSubSec", &fSubSec, "eventSubSec/i");//i=unsigned (capital i=I signed int)
+  fTree->Branch("timeStamp", &fTimeStamp, "timeStamp/l");//l=unsigned long = ULong64_t
   fTree->Branch("crate", &fCrate, "crate/s");
   fTree->Branch("card", &fCard, "card/s");
   fTree->Branch("fiber", &fFiber, "fiber/s");
@@ -59,6 +60,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::ProcessMyDataReco
   fChannelMap = fEventDecoder->GetChannelMap();
   fSec = fEventDecoder->GetSec();
   fSubSec = fEventDecoder->GetSubSec();
+  fTimeStamp = ((0x000000000000ffff & fSubSec) << 32) | fSec; 
   fEventID = fEventDecoder->GetEventID();
   fEnergy = fEventDecoder->GetEnergy();
   fWaveformLength = fEventDecoder->GetWaveformLen();

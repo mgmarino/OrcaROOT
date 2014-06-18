@@ -85,29 +85,29 @@ inline size_t OREdelweissSLTFLTEventDecoder::GetWaveformLen()
 	return fWaveformLength;
 } 
 
-inline UInt_t OREdelweissSLTFLTEventDecoder::GetSec()
-{
-	return (fDataRecord[2]);
-}
-
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetSubSec()
 {
-	return (fDataRecord[3]);
+	return (fDataRecord[2]); //f0 is lsb of timestamp -tb-
+}
+
+inline UInt_t OREdelweissSLTFLTEventDecoder::GetSec()
+{
+	return (fDataRecord[3]); //f1 & 0xffff is msb of timestamp -tb-
 }
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetChannelMap()
 {
-	return (fDataRecord[4]);
-}
-
-inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventInfo() //changed  2011-06-14 -tb-
-{
-	return ( fDataRecord[5] );
+	return (fDataRecord[4]);//f2 = channel map (18 bit) -tb-
 }
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEnergy()
 {
-	return (fDataRecord[6] & 0x000FFFFF);
+	return (fDataRecord[5] & 0x000FFFFF);//f3: energy (and U(?)) -tb-
+}
+
+inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventInfo() //changed  2011-06-14 -tb-
+{
+	return ( fDataRecord[6] );//f4: page + triggAddr
 }
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventID()
@@ -117,8 +117,12 @@ inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventID()
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventFlags(size_t)
 {
-	return (fDataRecord[7]);
+	return (fDataRecord[7]);//flags (WF version etc.)
 }
+
+
+//TODO: fDataRecord[8] = spare
+
 
 inline UShort_t OREdelweissSLTFLTEventDecoder::GetFiber()
 {
