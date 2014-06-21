@@ -34,7 +34,8 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::InitializeBranche
   fTree->Branch("channel", &fChannel, "channel/s");
   fTree->Branch("channelMap", &fChannelMap, "channelMap/i");
   fTree->Branch("fifoEventID", &fEventID, "fifoEventID/i");
-  fTree->Branch("energy_adc", &fEnergy, "energy_adc/i");
+  fTree->Branch("energy_adc", &fEnergy, "energy_adc/I");
+  fTree->Branch("triggerAddr", &fTriggerAddr, "triggerAddr/S");
   fTree->Branch("eventFlags", &fEventFlags, "eventFlags/i");
   fTree->Branch("eventInfo", &fEventInfo, "eventInfo/i");
   fTree->Branch("waveform", fWaveform, "waveform[wfLength]/s");
@@ -63,6 +64,7 @@ ORDataProcessor::EReturnCode OREdelweissSLTFLTEventTreeWriter::ProcessMyDataReco
   fTimeStamp = (  ((ULong64_t)(fSec & 0x0000ffff)) << 32) | fSubSec; 
   fEventID = fEventDecoder->GetEventID();
   fEnergy = fEventDecoder->GetEnergy();
+  fTriggerAddr = fEventDecoder->GetEventInfo() & 0x0fff;
   fWaveformLength = fEventDecoder->GetWaveformLen();
   fEventFlags = fEventDecoder->GetEventFlags();
   fEventInfo = fEventDecoder->GetEventInfo();

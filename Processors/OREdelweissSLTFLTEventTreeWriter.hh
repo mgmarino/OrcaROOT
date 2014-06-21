@@ -33,7 +33,8 @@ class OREdelweissSLTFLTEventTreeWriter : public ORVTreeWriter
     UShort_t fCrate, fCard, fFiber, fChannel, fTrigChannel;
     UShort_t fWaveform[kMaxWFLength];
     UInt_t fWaveformLength;
-    UInt_t fEnergy;
+    Int_t fEnergy;
+    Short_t fTriggerAddr;
     UInt_t fEventID, fEventFlags, fEventInfo;
     //Bool_t saveOnlyNonemptyTrees; //!< flag to skip writing empty trees -tb- 2008-02-19 - MOVED TO BASE CLASS -tb-
 };
