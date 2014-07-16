@@ -13,19 +13,24 @@ bool OREdelweissSLTFLTEventDecoder::SetDataRecord(UInt_t* dataRecord)
 {
   fDataRecord = dataRecord;
   UInt_t eventFlags=dataRecord[7];
+  // changed 2014-07-16: waveform length now is really variable -tb-
   UInt_t eventFlags4bit=eventFlags & 0xf;
   fWaveformLength = 2048;
-  if(eventFlags4bit==0x2) fWaveformLength = 2048;//this may become larger in the future -tb-
+  //if(eventFlags4bit==0x2) fWaveformLength = 2048;//this may become larger in the future -tb-
+  if(eventFlags4bit>=0x2) fWaveformLength = (LengthOf(fDataRecord) - kBufHeadLen)*2;//WF is in shorts - fDataRecord is 32 bit
+  //fWaveformLength = LengthOf(fDataRecord) - kBufHeadLen;
 
 
   //fWaveformLength = (  LengthOf(fDataRecord) / (kWaveformLength/2)  )  * 10000;//this sets GetWaveformLen() -tb-//TODO: check it -tb-
 
   ORLog(kDebug) << "SetDataRecord(): Setting the data record..." << std::endl;
   // remarks for Till: LengthOf(...) is from ORVDataDecoder and is the length extracted from data record (in longs/int32s) -tb-
-  if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + GetWaveformLen()/2) {
+  if(!IsValid() || LengthOf(fDataRecord) != kBufHeadLen + GetWaveformLen()/2 || GetWaveformLen() > kWaveformLength) {
     ORLog(kDebug) << "SetDataRecord(): data record is not valid" << std::endl;
     ORLog(kDebug) << "LengthOf(data record) : " << LengthOf(fDataRecord)
-      << " kBufHeadLen + GetWaveformLen()/2: " << kBufHeadLen + GetWaveformLen()/2 << std::endl;
+      << " kBufHeadLen + GetWaveformLen()/2: " << kBufHeadLen + GetWaveformLen()/2 
+      << " GetWaveformLen(): " <<  GetWaveformLen() 
+      << " kWaveformLength: " << kWaveformLength << std::endl;
     fDataRecord = NULL;
     fWaveformLength = -1;
     return false;
