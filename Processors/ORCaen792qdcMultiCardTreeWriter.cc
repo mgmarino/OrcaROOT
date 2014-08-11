@@ -56,7 +56,6 @@ ORDataProcessor::EReturnCode ORCaen792qdcMultiCardTreeWriter::BeginRun()
 
 ORDataProcessor::EReturnCode ORCaen792qdcMultiCardTreeWriter::ProcessMyDataRecord(UInt_t* record)
 { 
-  cout << "E:N " << fEventCount << ' ' << fNValues << endl;
   if(fEventDecoder->EventCountOf(record) != fEventCount && fNValues > 0) {
     if(fNValues < fEventDecoder->GetNChannels()*fCard.size()) {
       ORLog(kWarning) << "Bad fNValues at event count " << fEventCount 
@@ -84,8 +83,6 @@ ORDataProcessor::EReturnCode ORCaen792qdcMultiCardTreeWriter::ProcessMyDataRecor
   UInt_t crate = fEventDecoder->CrateOf(record);
   UInt_t card = fEventDecoder->CardOf(record);
   size_t iCard = fNValues/fEventDecoder->GetNChannels();
-
-  cout << "i:N:s " << iCard << ' ' << fNValues << ' ' << fCard.size() << endl;
 
   // If iCard is too big, then this is a new card. Add it to the list.
   if(iCard >= fCard.size()) {
