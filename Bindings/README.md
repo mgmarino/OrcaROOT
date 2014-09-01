@@ -1,9 +1,11 @@
+Python Bindings
+===============
 - M. Marino Mar 2013
 
 Adds python bindings for OrcaROOT via PyROOT.  This currently is *experimental*
 and relies on unpublished interfaces to pyROOT (i.e. interfaces not available
-in $(ROOTSYS)/include).  However, newer versions of ROOT should export these
-interfaces. 
+in `$(ROOTSYS)/include`).  _However, newer versions of ROOT should export these
+interfaces._ 
 
 The goal of the bindings is to allow orcaroot to be run from within python and
 to be able to build processors within python that use the OrcaROOT framework.
@@ -23,15 +25,14 @@ Current Limitations:
 
 Example:
 Processors that may be overloaded within python are:
-  ORPyTreeWriter -- Deriving from ORVTreeWriter
-  ORPyDataProcessor -- Deriving from ORDataProcessor
+  - `ORPyTreeWriter` -- Deriving from `ORVTreeWriter`
+  - `ORPyDataProcessor` -- Deriving from `ORDataProcessor`
 
+```python
 """
 The following is an example of how one might overload ORPyTreeWriter to
 generate a tree with waveform data.
 """
-
-
 import ROOT
 import sys
 import array
@@ -43,12 +44,13 @@ ROOT.gSystem.Load(os.path.expandvars("$ORDIR/Bindings/libPyOrcaROOT"))
 # Deriving from ORPyTreeWriter allows us to write a tree in OrcaROOT 
 class WFConvert(ROOT.ORPyTreeWriter):
     def __init__(self, dec, treeName):
+        # Call of the base class is important
         ROOT.ORPyTreeWriter.__init__(self, dec, treeName)
 
-	# array provides a mechanism to store basic variables in ROOT TTrees.
-	# It is also possible (easy) to have objects in a branch of a TTree.
-
-	self.fEventTime = array.array('d', [0.]) 
+        # array provides a mechanism to store basic variables in ROOT TTrees.
+        # It is also possible (easy) to have objects in a branch of a TTree.
+        
+        self.fEventTime = array.array('d', [0.]) 
         self.fCrate = array.array('h', [0])
         self.fCard = array.array('h', [0]) 
         self.fChannel = array.array('h', [0])
@@ -68,8 +70,8 @@ class WFConvert(ROOT.ORPyTreeWriter):
         self.fFlags[0] = 0 
    
     def InitializeBranches(self):
-	# GetTree() is provided in ORPyTreeWriter because fTree is protected
-	t = self.GetTree()
+        # GetTree() is provided in ORPyTreeWriter because fTree is protected
+        t = self.GetTree()
         t.Branch("eventTime", self.fEventTime, "eventTime/D")
         t.Branch("crate", self.fCrate, "crate/s")
         t.Branch("card", self.fCard, "card/s")
@@ -98,7 +100,7 @@ class WFConvert(ROOT.ORPyTreeWriter):
 
 def main(inputs):
     reader = ROOT.ORFileReader()
-    for afile in inputs[1:]: 
+    for afile in inputs: 
       reader.AddFileToProcess(afile)
 
     mgr = ROOT.ORDataProcManager(reader)
@@ -114,4 +116,5 @@ def main(inputs):
     mgr.ProcessDataStream()
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(sys.argv[1:])
+```
