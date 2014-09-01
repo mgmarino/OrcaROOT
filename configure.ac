@@ -128,8 +128,8 @@ m4_include(aclocal.m4)
 m4_include(python.m4)
 AM_PATH_PYTHON([$PYTHON_VERSION],
                [HAVE_PYTHON=yes
-                PYTHONLIBDIR=`$PYTHON -c 'from distutils.sysconfig import get_python_lib; print "%s/config" % get_python_lib(0,1)'`
-                PYTHONLIB=`$PYTHON -c 'from distutils.sysconfig import get_python_version; print "python%s" % get_python_version()'`
+                PYTHONLIBDIR=`$PYTHON -c 'from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write("%s/config" % get_python_lib(0,1))'`
+                PYTHONLIB=`$PYTHON -c 'from distutils.sysconfig import get_python_version; import sys; sys.stdout.write("python%s" % get_python_version())'`
                 ],
                [HAVE_PYTHON=no
                 AC_MSG_ERROR([python not found, required for build])])
