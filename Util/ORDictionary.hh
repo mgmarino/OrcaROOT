@@ -22,8 +22,10 @@ class ORVDictValue
 
     virtual EValType GetValueType() const = 0;
 #ifndef __CINT__
+#ifndef __ROOTCLING__
     virtual bool IsA(EValType valType) const 
       { return valType == GetValueType(); }
+#endif
 #endif
 
     //! Returns a string of the value.
