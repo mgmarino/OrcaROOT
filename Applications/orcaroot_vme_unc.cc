@@ -149,8 +149,7 @@ int main(int argc, char** argv)
 
   ORLog(kRoutine) << "Saving as a tree..." << endl;
 
-  ORShaperShaperTreeWriter treeWriter("shaperTree");
-  dataProcManager.AddProcessor(&treeWriter);
+ 
 
   // ORTrigger32ShaperTreeWriter treeWriter;
   // dataProcManager.AddProcessor(&treeWriter);
