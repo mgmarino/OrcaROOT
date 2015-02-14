@@ -45,13 +45,18 @@ static const char Usage[] =
 "For a socket, the argument should be formatted as host:port.\n"
 "\n"
 "Available options:\n"
-"  --help : print this message and exit\n"
-"  --verbosity [verbosity] : set the severity/verbosity for the logger.\n"
+"  -h, --help : print this message and exit\n"
+"  -v, --verbosity [verbosity] : set the severity/verbosity for the logger.\n"
 "    Choices are: debug, trace, routine, warning, error, and fatal.\n"
+"  -b, --begin  [packet #] : dump packets starting with packet #.\n"
+"  -e, --end    [packet #] : stop dumping packets after packet #.\n"
+"  -p, --packet [packet #] : dump only packet #.\n"
 "\n"
 "Example usage:\n"
 "orhexdump run194ecpu\n"
 "  Hex-dump local file run194ecpu with default verbosity, etc.\n"
+"orhexdump --begin 50 --end 60 run194ecpu\n"
+"  Hex-dump packets 50 through 60 or local file run194ecpu.\n"
 "orhexdump run*\n"
 "  Same as before, but run over all files beginning with \"run\".\n"
 "orhexdump --verbosity debug run194ecpu\n"
@@ -74,13 +79,18 @@ int main(int argc, char** argv)
   static struct option longOptions[] = {
     {"help", no_argument, 0, 'h'},
     {"verbosity", required_argument, 0, 'v'},
+    {"begin", required_argument, 0, 'b'},
+    {"end", required_argument, 0, 'e'},
+    {"packet", required_argument, 0, 'p'}
   };
 
   string label = "OR";
   ORVReader* reader = NULL;
+  Int_t begin = -1;
+  Int_t end = -1;
 
   while(1) {
-    char optId = getopt_long(argc, argv, "", longOptions, NULL);
+    char optId = getopt_long(argc, argv, "hvb:e:p:", longOptions, NULL);
     if(optId == -1) break;
     switch(optId) {
       case('h'): // help
@@ -99,6 +109,20 @@ int main(int argc, char** argv)
           ORLogger::SetSeverity(ORLogger::kRoutine);
         }
         break;
+      case('b'): // begin
+	begin=atoi(optarg);
+	break;
+      case('e'): // end
+        end=atoi(optarg);
+	break;
+      case('p'): // packet
+	if(begin != -1 || end != -1) {
+	  ORLog(kError) << "Cannot set packet option if begin or end is already set." << endl;
+	  return 0;
+	}
+	begin=atoi(optarg);
+	end=begin;
+	break;
       default: // unrecognized option
         ORLog(kError) << Usage;
         return 1;
@@ -157,6 +181,7 @@ int main(int argc, char** argv)
   //dataProcManager.AddProcessor(&augerFLTProc);
 
   ORHexDumpAllProc hexDumper;
+  if(begin != -1 || end != -1) hexDumper.SetLimits(begin, end);
   dataProcManager.AddProcessor(&hexDumper);
 
   //ORCaen775tdcDecoder
