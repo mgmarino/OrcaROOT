@@ -14,7 +14,7 @@
 class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
 {
   public:
-    ORDataProcManager(ORVReader* reader = NULL, ORRunDataProcessor* runDataProc = NULL);
+    ORDataProcManager(ORVReader* reader = NULL, ORRunDataProcessor* runDataProc = NULL, ORHeaderProcessor* headerProc = NULL);
     virtual ~ORDataProcManager();
 
     virtual EReturnCode ProcessDataStream();
@@ -22,16 +22,17 @@ class ORDataProcManager : public ORCompoundDataProcessor, public ORVSigHandler
     virtual void SetReader(ORVReader* reader) { fReader = reader; }
     virtual void SetDataId();
     virtual inline void ValidateHeaderXML(bool doValidate = true)
-      { fHeaderProcessor.GetHeader()->ValidateXML(doValidate); }
+      { fHeaderProcessor->GetHeader()->ValidateXML(doValidate); }
 
     /*! Tells the manager to run as daemon and ignore warning messages related to Run Context, etc. */
     virtual void SetRunAsDaemon(bool runAsDaemon = true) { fRunAsDaemon = runAsDaemon; }
   protected:
     virtual void SetRunContext(ORRunContext* aContext);
     ORVReader* fReader;
-    ORHeaderProcessor fHeaderProcessor;
+    ORHeaderProcessor* fHeaderProcessor;
     ORRunDataProcessor* fRunDataProcessor;
     bool fIOwnRunDataProcessor;
+    bool fIOwnHeaderProcessor;
     bool fRunAsDaemon;
 };
 

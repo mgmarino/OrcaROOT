@@ -67,6 +67,7 @@ class ORDictionary : public ORVDictValue
     // the dictionary:
     typedef std::map<std::string, ORVDictValue*> DictMap;
     virtual const DictMap& GetDictMap() const { return fDictMap; }
+    virtual DictMap& GetDictMap() { return fDictMap; }
 
   protected:
     std::string fName;
@@ -157,9 +158,10 @@ class ORDictValueA : public ORVDictValue
     virtual const std::string& GetName() const { return fName; }
     virtual void LoadValue(ORVDictValue* value) { fDictVals.push_back(value); }
     virtual void SetName(std::string name) { fName = name; }
-    virtual std::string GetStringOfValue() const {return "";}
+    virtual std::string GetStringOfValue() const;
     virtual size_t GetNValues() const { return fDictVals.size(); }
     virtual const ORVDictValue* At(int i) const { return fDictVals[i]; }
+    virtual ORVDictValue* At(int i) { return fDictVals[i]; }
 
   protected:
     std::string fName;
