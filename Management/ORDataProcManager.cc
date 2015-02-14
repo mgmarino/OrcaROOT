@@ -153,6 +153,8 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     }
 
     if (TestCancel()) break;
+
+    fRunContext->fPacketNumber++;
   }
   // Set up Run Context
   ORLog(kDebug) << "ProcessRun(): finished reading records..." << std::endl;

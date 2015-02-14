@@ -20,6 +20,7 @@ ORRunContext::ORRunContext(ORHeader* header, const char* runCtrlPath)
   fRunType = 0;
   fStartTime = 0;
   fStopTime = 0;
+  fPacketNumber = 0;
   fState = kIdle;
   if (header != NULL) LoadHeader(header, runCtrlPath);
   fHardwareDict = NULL;
