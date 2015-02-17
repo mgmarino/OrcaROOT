@@ -102,7 +102,7 @@ inline UInt_t OREdelweissSLTFLTEventDecoder::GetChannelMap()
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEnergy()
 {
-	return (fDataRecord[5] & 0x000FFFFF);//f3: energy (and U(?)) -tb-
+	return (fDataRecord[5] & 0x00FFFFFF);//f3: energy (and U(?)) -tb-
 }
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventInfo() //changed  2011-06-14 -tb-
@@ -112,7 +112,7 @@ inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventInfo() //changed  2011-06-1
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventID()
 {
-	return ( ( fDataRecord[6] & 0xFFF00000 ) >> 20);
+	return ( ( fDataRecord[6] & 0x0000F000 ) >> 12);
 }
 
 inline UInt_t OREdelweissSLTFLTEventDecoder::GetEventFlags(size_t)
