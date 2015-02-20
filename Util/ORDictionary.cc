@@ -103,6 +103,15 @@ const ORVDictValue* ORDictionary::LookUp(std::string key, char delimiter) const
   }
 }
 
+std::string ORDictValueA::GetStringOfValue() const
+{
+  std::string o("{");
+  if(GetNValues()) o+=At(0)->GetStringOfValue();
+  for(size_t i=1; i<GetNValues(); i++) o+=", " + At(i)->GetStringOfValue();
+  o+="}";
+  return o;
+}
+
 std::string ORDictValueI::GetStringOfValue() const
 {
   std::ostringstream o;

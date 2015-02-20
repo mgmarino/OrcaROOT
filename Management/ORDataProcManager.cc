@@ -7,7 +7,7 @@
 #include "ORVWriter.hh"
 #include <vector>
 
-ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runDataProc)
+ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runDataProc, ORHeaderProcessor* headerProc)
 { 
   // the optional runDataProc argument allows the user to pass in an
   // overloaded ORRunDataProcessor
@@ -17,6 +17,17 @@ ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runD
   }
   else {
     fRunDataProcessor = new ORRunDataProcessor;
+    fIOwnRunDataProcessor = true;
+  }
+
+  // the optional headerProc argument allows the user to pass in a header
+  // in case he/she wants to change it after reading it in
+  if (headerProc != NULL) {
+    fHeaderProcessor = headerProc;
+    fIOwnHeaderProcessor = false;
+  }
+  else {
+    fHeaderProcessor = new ORHeaderProcessor;
     fIOwnRunDataProcessor = true;
   }
 
@@ -33,6 +44,7 @@ ORDataProcManager::ORDataProcManager(ORVReader* reader, ORRunDataProcessor* runD
 ORDataProcManager::~ORDataProcManager()
 {
   if(fIOwnRunDataProcessor) delete fRunDataProcessor;
+  if(fIOwnHeaderProcessor) delete fHeaderProcessor;
   /* This class owns fRunContext. */
   delete fRunContext;
 }
@@ -80,7 +92,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     UInt_t* buffer = &vecbuffer[0];
     // Check if it is a header
 
-    if(fHeaderProcessor.ProcessDataRecord(buffer) == kSuccess) {
+    if(fHeaderProcessor->ProcessDataRecord(buffer) == kSuccess) {
       // It is a header, perform the setup
       // Set the default flag, header is not read in yet
       headerIsReadIn = false;
@@ -95,7 +107,7 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
       
       // Load the header dictionary
       ORLog(kDebug) << "ProcessRun(): loading dictionary..." << std::endl;
-      if (!fRunContext->LoadHeader(fHeaderProcessor.GetHeader(), fRunAsDaemon)) {
+      if (!fRunContext->LoadHeader(fHeaderProcessor->GetHeader(), fRunAsDaemon)) {
 
         /* We have encountered a problem loading the header file. */
         /* Kill Run, try going to the next run. */
@@ -141,6 +153,8 @@ ORDataProcManager::EReturnCode ORDataProcManager::ProcessRun()
     }
 
     if (TestCancel()) break;
+
+    fRunContext->fPacketNumber++;
   }
   // Set up Run Context
   ORLog(kDebug) << "ProcessRun(): finished reading records..." << std::endl;

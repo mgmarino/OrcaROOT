@@ -26,6 +26,8 @@ class ORVWriter;
  *    according to crate, card number.
  *  Run start time - actual start time of the run
  *  Run Type - ORCA run type
+ *  Packet Number - How many packets have been read during run. Useful for
+ *    indexing packets.
 
  *  ORRunContext handles several other 'global' aspects of a run, including
  *  determining if the current record is already swapped, and providing
@@ -74,6 +76,7 @@ class ORRunContext
     virtual Int_t GetRunType() const { return fRunType; }
     virtual Int_t GetStartTime() const { return fStartTime; }
     virtual Int_t GetStopTime() const { return fStopTime; }
+    virtual Int_t GetPacketNumber() const { return fPacketNumber; }
     virtual const ORHeader* GetHeader() const { return fHeader; }
     virtual const ORHardwareDictionary* GetHardwareDict() const { return fHardwareDict; }
     virtual inline Bool_t MustSwap() const { return fMustSwap; }
@@ -151,6 +154,7 @@ class ORRunContext
     Int_t fStartTime;
     Int_t fStopTime; // won't be valid until the end of a run
     std::string fStringOfState; 
+    Int_t fPacketNumber;
 
     ORVWriter* fWritableSocket;
 
