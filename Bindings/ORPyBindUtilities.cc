@@ -60,7 +60,7 @@ PyObject* ORPyBindUtils::ObjectFromBuffer(void* buf,
         size_t len, size_t stride_size, bool is_signed, bool is_int)
 {
   // Helper function to generate a PyObject from a buffer
-#if PY_VERSION_HEX >= 0x03000000
+#if PY_VERSION_HEX >= 0x02070000
     std::string type;
     switch (stride_size) {
         case 1: type = 'B'; break;    
@@ -86,7 +86,6 @@ PyObject* ORPyBindUtils::ObjectFromBuffer(void* buf,
 
     return PyMemoryView_FromBuffer(&tempBuffer);    
 #else
-
     PyTypeObject* type;
     switch (stride_size) {
         case 1: type = &PyOrCharBuffer_Type; break;    
